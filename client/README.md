@@ -8,10 +8,10 @@
 
 ```javascript
 // Grab dependencies
-yarn install
+npm install
 
 // Start the client
-yarn start
+npm start
 ```
 
 ## Mockup
