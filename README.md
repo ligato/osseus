@@ -1,3 +1,8 @@
 # osseus
 A visual tool to create Ligato app skeletons
+Mockup A
 ![alt text](https://github.com/Kevin-Velasquez/osseus/blob/master/mockups/Oseuss_Mockup_A.jpg)
+Mockup B
+![alt text](https://github.com/Kevin-Velasquez/osseus/blob/master/mockups/Osseus_Mockup_B.jpg)
+Mockup C
+![alt text](https://github.com/Kevin-Velasquez/osseus/blob/master/mockups/Oseuss_Mockup_C.jpg)
