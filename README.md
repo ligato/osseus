@@ -14,7 +14,7 @@ _Architecture info goes here_
 
 _This is only the web server skeleton installation, will be updated later_
 
-```python
+```bash
 # clone and go into directory
 git clone https://github.com/ligato/osseus
 cd /osseus
