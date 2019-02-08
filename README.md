@@ -30,7 +30,7 @@ docker run -it --name agent --privileged --rm osseus bash
 
 # run agent, which will show it is connected to ETCD
 $: cd go/src/github.com/dev/osseus
-$: go run agent.go
+$: go run agent.go -etcd-config /config/etcd.conf
 ```
 
 ## Common Errors
