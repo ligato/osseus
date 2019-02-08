@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package server;
+
+// Define data coming into server
+
+message Plugin {}
