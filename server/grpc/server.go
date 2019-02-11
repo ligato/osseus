@@ -15,51 +15,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
-
-	"github.com/ligato/cn-infra/agent"
-	"github.com/ligato/cn-infra/logging"
-	"github.com/ligato/cn-infra/rpc/grpc"
-	"github.com/ligato/cn-infra/rpc/rest"
+	"net"
 )
 
-// PluginName represents name of plugin.
-const PluginName = "grpcServer"
+const (
+	port = ":50051"
+)
 
 func main() {
-	p := &Server{
-		GRPC: grpc.NewPlugin(
-			grpc.UseHTTP(&rest.DefaultPlugin),
-		),
-		Log: logging.ForPlugin(PluginName),
+	lis, err := net.Listen("tcp", fmt.Sprintf("localhost: %d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 	}
 
-	a := agent.NewAgent(agent.AllPlugins(p))
-
-	if err := a.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-// Server presents main plugin.
-type Server struct {
-	Log  logging.PluginLogger
-	GRPC grpc.Server
-}
-
-// String return name of the plugin.
-func (plugin *Server) String() string {
-	return PluginName
-}
-
-// Init demonstrates the usage of PluginLogger API.
-func (plugin *Server) Init() error {
-	plugin.Log.Info("Registering connection")
-
-	return nil
-}
-
-// Close closes the plugin.
-func (plugin *Server) Close() error {
-	return nil
+	s := grpc.NewServer()
+	// define proto functions/class pb.RegisterNewService(opts...)
 }
