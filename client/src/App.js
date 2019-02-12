@@ -1,14 +1,18 @@
 import React, { Component } from "react";
+import PluginPicker from './PluginPicker';
+import PluginPalette from './PluginPalette';
+import DraggablePlugins from './DraggablePlugins';
 import "./styles/App.css";
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>Welcome to Osseus</h1>
-        </header>
-      </div>
+        <div>         
+            <PluginPicker>
+                <DraggablePlugins />      
+            </PluginPicker>
+            <PluginPalette />
+        </div>
     );
   }
 }
