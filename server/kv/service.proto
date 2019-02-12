@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package kv;
+
+// Define data coming into server
+service PluginRoutes {
+
+  // Get plugin with specific id
+  rpc GetPlugin(Plugin) returns (PluginData) {}
+
+}
+
+// A plugin is the incoming plugin id
+message Plugin {
+  string id = 1;
+}
+
+// The response containing minified code from a CDN
+message PluginData {
+  string id = 1;
+  string cdn_link = 2;
+  bytes code = 3;
+}
