@@ -16,3 +16,12 @@ _REST API (CLIENT)_ --> _GRPC SERVER_ --> _DEFINE LINK TO ETCD W/ BROKER_ --> _E
 
 - for grpc server, I should be defining a .proto file, a makefile to generate sources & run the build, and server file (grpc.go) to interact with the generated proto file functions
 - still unsure if we need watcher at all, leaning towards no
+
+## TODO
+
+- [x] Compile proto file to useable go class
+  - (command): protoc -I=. service.proto --go_out=plugins=grpc:.
+- [ ] Create go tests (optional right now)
+- [ ] Allow server to register pb service & fire up server
+- [ ] Connect to etcd using Broker API
+- [ ] Create CRUD endpoints
