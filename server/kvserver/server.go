@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"log"
 
+	pb "github.com/anthonydevelops/osseus/server/kv"
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/cn-infra/logging/logrus"
 	"github.com/ligato/cn-infra/rpc/grpc"
 	"github.com/ligato/cn-infra/rpc/rest"
 )
@@ -18,7 +22,7 @@ import (
 const PluginName = "grpcServer"
 
 func main() {
-	p := &Server{
+	p := &KVServer{
 		GRPC: grpc.NewPlugin(
 			grpc.UseHTTP(&rest.DefaultPlugin),
 		),
@@ -32,31 +36,40 @@ func main() {
 	}
 }
 
-// Server presents main plugin.
-type Server struct {
+// KVServer presents main plugin.
+type KVServer struct {
 	Log  logging.PluginLogger
 	GRPC grpc.Server
 }
 
+// PluginRoutesService is used to implement pb.PluginRoutesServer.
+type PluginRoutesService struct{}
+
 // String return name of the plugin.
-func (plugin *Server) String() string {
+func (plugin *KVServer) String() string {
 	return PluginName
 }
 
 // Init demonstrates the usage of PluginLogger API.
-func (plugin *Server) Init() error {
+func (plugin *KVServer) Init() error {
 	plugin.Log.Info("Registering server")
 
-	pb.RegisterPluginRoutesServer(plugin.GRPC.GetServer(), &PluginService{})
+	pb.RegisterPluginRoutesServer(plugin.GRPC.GetServer(), &PluginRoutesService{})
 
 	return nil
 }
 
 // Close closes the plugin.
-func (plugin *Server) Close() error {
+func (plugin *KVServer) Close() error {
 	return nil
 }
 
-// PluginService implements GRPC GreeterServer interface (interface generated from protobuf definition file).
-// It is a simple implementation for testing/demo only purposes.
-type PluginService struct{}
+// GetPlugin to illustrate a possible call
+func (*PluginRoutesService) GetPlugin(ctx context.Context, request *pb.Plugin) (*pb.PluginData, error) {
+	if request.Id == "" {
+		return nil, errors.New("not filled id in the request")
+	}
+	logrus.DefaultLogger().Infof("greeting client: %v", request.Id)
+
+	return &pb.PluginData{Id: "plugin1", CdnLink: "https://example.com", Code: nil}, nil
+}
