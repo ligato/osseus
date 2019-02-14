@@ -42,7 +42,7 @@ COPY ./config/http.conf .
 WORKDIR /root/
 
 # add supervisor conf file
-COPY ./config/supervisord.conf /etc/supervisord.conf
+COPY ./server/config/supervisord.conf /etc/supervisord.conf
 
 # run supervisor as the default executable
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
