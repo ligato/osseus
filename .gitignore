@@ -1,0 +1,7 @@
+*.pyc
+*.so
+*.test
+*.out
+cmd/agent/main
+.idea/*
+
