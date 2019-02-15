@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package server;
 
-import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
 
 // The API handles incoming plugin data
 service Server {
