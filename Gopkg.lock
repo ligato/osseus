@@ -2,21 +2,12 @@
 
 
 [[projects]]
-  digest = "1:6f2b6554fbcb0c7b9b54a9f372ded8b3b577e847b48e90356ce2e2a09cda2bc3"
-  name = "github.com/coreos/etcd"
-  packages = [
-    "auth/authpb",
-    "clientv3",
-    "clientv3/namespace",
-    "etcdserver/api/v3rpc/rpctypes",
-    "etcdserver/etcdserverpb",
-    "mvcc/mvccpb",
-    "pkg/tlsutil",
-    "pkg/types",
-  ]
+  digest = "1:7b81d2ed76bf960333a8020c4b8c22abd6072f0b54ad31c66e90e6a17a19315a"
+  name = "github.com/bshuster-repo/logrus-logstash-hook"
+  packages = ["."]
   pruneopts = "UT"
-  revision = "27fc7e2296f506182f58ce846e48f36b34fe6842"
-  version = "v3.3.10"
+  revision = "dbc1e22735aa6ed7bd9579a407c17bc7c4a4e046"
+  version = "v0.4.1"
 
 [[projects]]
   digest = "1:76dc72490af7174349349838f2fe118996381b31ea83243812a97e5a0fd5ed55"
@@ -27,6 +18,22 @@
   version = "v3.2.0"
 
 [[projects]]
+  digest = "1:ad7ffa16c33f19ee2c17bce7ee865f5632cdc90d908aa313849900ecb3f722df"
+  name = "github.com/evalphobia/logrus_fluent"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "76779e73f35d90f5a873e7feaf6691999b2c5db4"
+  version = "v0.4.0"
+
+[[projects]]
+  digest = "1:f2768df19f076b2f1956b88dc4beb47ae2c5c8f0ff0d16ff4e6942c2dac9b5b1"
+  name = "github.com/fluent/fluent-logger-golang"
+  packages = ["fluent"]
+  pruneopts = "UT"
+  revision = "7a6c9dcd7f14c2ed5d8c55c11b894e5455ee311b"
+  version = "v1.4.0"
+
+[[projects]]
   digest = "1:2cd7915ab26ede7d95b8749e6b1f933f1c6d5398030684e6505940a10f31cfda"
   name = "github.com/ghodss/yaml"
   packages = ["."]
@@ -35,13 +42,9 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:a9c85389dbd301c97a3499fe15a2b65b505b5f0cb0f1120dea59f1f3d6b11d96"
+  digest = "1:d059a146ab350e553c2687d3e17f198eb5b27c7cf55fe6ba0e2d21349df63388"
   name = "github.com/gogo/protobuf"
-  packages = [
-    "gogoproto",
-    "proto",
-    "protoc-gen-gogo/descriptor",
-  ]
+  packages = ["proto"]
   pruneopts = "UT"
   revision = "4cbf7e384e768b4e01799441fdf2a706a5635ae7"
   version = "v1.2.0"
@@ -77,20 +80,14 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:61b2f782a50106fb9c8cb4ea213e65be16708e78b8e5f382c7260c0d4ff57476"
+  digest = "1:310460cad2d986bc98ece1926ebc4b7ed3822a9d107ced9b58a5457264ace58e"
   name = "github.com/ligato/cn-infra"
   packages = [
     "agent",
     "config",
-    "datasync",
-    "datasync/resync",
-    "db/keyval",
-    "db/keyval/etcd",
-    "db/keyval/kvproto",
-    "health/statuscheck",
-    "health/statuscheck/model/status",
     "infra",
     "logging",
+    "logging/logmanager",
     "logging/logrus",
     "logging/measure",
     "logging/measure/model/apitrace",
@@ -98,6 +95,7 @@
     "rpc/rest",
     "rpc/rest/security",
     "rpc/rest/security/model/access-security",
+    "servicelabel",
     "utils/once",
     "utils/safeclose",
   ]
@@ -112,6 +110,14 @@
   pruneopts = "UT"
   revision = "71ceffbeb0ba60fccc853971bb3ed4d7d90bfd04"
   version = "v1.7.4-pre"
+
+[[projects]]
+  digest = "1:5e73b34a27d827212102605789de00bd411b2e434812133c83935fe9897c75e1"
+  name = "github.com/philhofer/fwd"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bb6d471dc95d4fe11e432687f8b70ff496cf3136"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
@@ -130,12 +136,23 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
+  digest = "1:30520eb80678eddf5a5cc350ba4ffb4d8b6838d9f89a7e60efe7f5e30f2f9c18"
   name = "github.com/sirupsen/logrus"
-  packages = ["."]
+  packages = [
+    ".",
+    "hooks/syslog",
+  ]
   pruneopts = "UT"
   revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
   version = "v1.3.0"
+
+[[projects]]
+  digest = "1:c97e8a5e5c435c3287f581cdb4441ba34577ec6ead8422bfedafa6269af7abf6"
+  name = "github.com/tinylib/msgp"
+  packages = ["msgp"]
+  pruneopts = "UT"
+  revision = "af6442a0fcf6e2a1b824f70dd0c734f01e817751"
+  version = "v1.1.0"
 
 [[projects]]
   branch = "master"
@@ -159,10 +176,9 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:fc7b6b4384e1e849d99eab58eca4f8c0a76bad4699117d5077a9a5c3c83e289e"
+  digest = "1:cd17bc5dbd6ff6bd147dcd4712d423c1808f529c77c879c34df6b20b7501562b"
   name = "golang.org/x/net"
   packages = [
-    "context",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -182,7 +198,7 @@
     "windows",
   ]
   pruneopts = "UT"
-  revision = "983097b1a8a340cd1cc7df17d735154d89e10b1a"
+  revision = "e77772198cdc3dbfcf7f2de96630204df9fd3a0b"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -216,7 +232,7 @@
   revision = "4b09977fb92221987e99d190c8f88f2c92727a29"
 
 [[projects]]
-  digest = "1:6dfe7f3314a390dc9e21368dd41236169bf40ae69674f42b7bd45db537751a94"
+  digest = "1:9ab5a33d8cb5c120602a34d2e985ce17956a4e8c2edce7e6961568f95e40c09a"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -231,7 +247,6 @@
     "encoding",
     "encoding/proto",
     "grpclog",
-    "health/grpc_health_v1",
     "internal",
     "internal/backoff",
     "internal/binarylog",
@@ -268,14 +283,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/golang/protobuf/proto",
     "github.com/ligato/cn-infra/agent",
-    "github.com/ligato/cn-infra/db/keyval/etcd",
     "github.com/ligato/cn-infra/logging",
+    "github.com/ligato/cn-infra/logging/logmanager",
     "github.com/ligato/cn-infra/logging/logrus",
     "github.com/ligato/cn-infra/rpc/grpc",
-    "github.com/ligato/cn-infra/rpc/rest",
-    "google.golang.org/grpc",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
