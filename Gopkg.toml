@@ -23,24 +23,28 @@
 #   non-go = false
 #   go-tests = true
 #   unused-packages = true
-
-
-[[constraint]]
-  name = "github.com/ligato/cn-infra"
-  version = "1.7.0"
-
-[prune]
-  go-tests = true
-  unused-packages = true
+required = ["github.com/golang/protobuf/proto"]
 
 [[constraint]]
   name = "github.com/golang/protobuf"
   version = "1.2.0"
 
 [[constraint]]
+  name = "github.com/ligato/cn-infra"
+  version = "1.7.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/unrolled/render"
+
+[[constraint]]
   branch = "master"
   name = "google.golang.org/genproto"
 
 [[constraint]]
-  name = "github.com/grpc-ecosystem/grpc-gateway"
-  version = "1.4.1"
+  name = "google.golang.org/grpc"
+  version = "1.18.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true
