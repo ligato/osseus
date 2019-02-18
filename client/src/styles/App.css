@@ -1,32 +1,18 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:400,900); 
 
 .body {
-  font-size:20px;
   font-family: 'Lato',verdana, sans-serif;
 }
 
 .split {
-  height: 100%;
-  width: 20%;
+  width: 17.5%;
   position: fixed;
   z-index: 1;
   top: 0;
   overflow-x: hidden;
-  padding-top: 20px;
-}
-
-.left {
-  left: 0;
-  background-color: #232323;
-}
-
-.right {
-  right: 0;
-  background-color: #2E2E2E;
-  width: 80%;
-  display: flex;
-  justify-content: center;
-  
+  overflow-y: hidden;
+  padding-top: 10px;
+  background-color: #4AC68E;
 }
 
 .centered {
@@ -37,57 +23,16 @@
   text-align: center;
 }
 
-.centered img {
-  width: 150px;
-  border-radius: 50%;
-}
-
 .whitetext {
   color: white;
   text-align: center;
   display: flex;
   flex-direction: column;          
   justify-content: space-between; 
+  opacity: 1.0;
 }
 
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-  transition: 0.3s;
-  width: 100%;
-  border-radius: 5px;
-  background-color: gray;
-}
 
-.card:hover {
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-}
-
-img {
-  border-radius: 5px 5px 0 0;
-  width: 100%;
-}
-
-.container {
-  padding: 2px 16px;
-}
-
-.grid-container {
-  display: grid;
-  grid-gap: 10px 10px;
-  grid-template-columns: auto auto auto;
-  background-color: #232323;
-  padding: 10px;
-}
-
-.rectangle{
-  width:80%;
-  height:10%;
-  background:#3C3C3C;
-  padding: 2px 16px;
-  align-self: flex-end;
-  border-radius: 15px;
-  text-align: center;
-}
 
 
 
