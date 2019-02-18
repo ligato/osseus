@@ -28,7 +28,7 @@ import (
 type OsseusAgent struct {
 	LogManager *logmanager.Plugin
 	Rest       *restapi.Plugin
-	Grpc			 *grpc-server.Plugin
+	Grpc			 *grpcserver.Plugin
 }
 
 // New creates new OsseusAgent instance.
@@ -37,7 +37,7 @@ func New() *OsseusAgent {
 	return &OsseusAgent{
 		LogManager: &logmanager.DefaultPlugin,
 		Rest:       &restapi.DefaultPlugin,
-		Grpc:				&grpc-server.DefaultPlugin
+		Grpc:				&grpcserver.DefaultPlugin
 	}
 
 }

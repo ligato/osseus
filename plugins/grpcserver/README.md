@@ -19,9 +19,10 @@ _REST API (CLIENT)_ --> _GRPC SERVER_ --> _DEFINE LINK TO ETCD W/ BROKER_ --> _E
 
 ## TODO
 
+- [ ] Create go tests (optional right now)
 - [x] Compile proto file to useable go class
   - (command): protoc -I=. service.proto --go_out=plugins=grpc:.
-- [ ] Create go tests (optional right now)
-- [ ] Allow server to register pb service & fire up server
+- [x] Create CRUD endpoints
+- [x] Allow server to register pb service & fire up server
+- [ ] Create Dockerfile for **only** backend  
 - [ ] Connect to etcd using Broker API
-- [ ] Create CRUD endpoints

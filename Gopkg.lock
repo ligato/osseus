@@ -291,11 +291,11 @@
     "github.com/golang/protobuf/proto",
     "github.com/golang/protobuf/ptypes/empty",
     "github.com/ligato/cn-infra/agent",
+    "github.com/ligato/cn-infra/infra",
     "github.com/ligato/cn-infra/logging",
     "github.com/ligato/cn-infra/logging/logmanager",
     "github.com/ligato/cn-infra/logging/logrus",
     "github.com/ligato/cn-infra/rpc/grpc",
-    "github.com/unrolled/render",
     "google.golang.org/genproto/googleapis/api/annotations",
     "google.golang.org/grpc",
   ]

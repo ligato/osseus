@@ -15,48 +15,67 @@
 package grpcserver
 
 import (
-	"context"
-	"errors"
+	"flag"
 
+	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
-	"github.com/ligato/cn-infra/logging/logrus"
 	"github.com/ligato/cn-infra/rpc/grpc"
 )
 
-// KVServer presents main plugin.
-type KVServer struct {
-	Log  logging.PluginLogger
+const (
+	defaultAddress    = "localhost:9111"
+	defaultSocketType = "tcp"
+)
+
+var address = defaultAddress
+var socketType = defaultSocketType
+
+// RegisterFlags registers command line flags.
+func RegisterFlags() {
+	flag.StringVar("address", address, "address of GRPC server")
+	flag.StringVar("socket-type", socketType, "socket type [tcp, tcp4, tcp6, unix, unixpacket]")
+	flag.Parse()
+}
+
+func init() {
+	RegisterFlags()
+}
+
+// Plugin holds the internal data structures of the Grpc Plugin
+type Plugin struct {
+	Deps
+}
+
+// Deps represent Plugin dependencies.
+type Deps struct {
+	infra.PluginDeps
 	GRPC grpc.Server
 }
 
-// PluginRoutesService is used to implement pb.PluginRoutesServer.
-type PluginRoutesService struct{}
+// GrpcService implements GRPC ServerServer interface
+type GrpcService struct{}
 
-// String return name of the plugin.
-func (plugin *KVServer) String() string {
-	return PluginName
-}
+// Init initializes the Grpc Plugin
+func (p *Plugin) Init() error {
+	p.Log.SetLevel(logging.DebugLevel)
 
-// Init demonstrates the usage of PluginLogger API.
-func (plugin *KVServer) Init() error {
-	plugin.Log.Info("Registering server")
-
-	pb.RegisterPluginRoutesServer(plugin.GRPC.GetServer(), &PluginRoutesService{})
+	// Register server for use
+	pb.RegisterGrpcServer(p.GRPC.GetServer(), &ServerService{})
 
 	return nil
 }
 
-// Close closes the plugin.
-func (plugin *KVServer) Close() error {
+// AfterInit can be used to register HTTP handlers
+func (p *Plugin) AfterInit() (err error) {
+	p.Log.Debug("GRPC server should be up and running!")
+	// you would want to register your handlers here
+	p.registerHandlersHere()
+
 	return nil
 }
 
-// GetPlugin to illustrate a possible call
-func (*PluginRoutesService) GetPlugin(ctx context.Context, request *pb.Plugin) (*pb.PluginData, error) {
-	if request.Id == "" {
-		return nil, errors.New("not filled id in the request")
-	}
-	logrus.DefaultLogger().Infof("greeting client: %v", request.Id)
-
-	return &pb.PluginData{Id: "plugin1", CdnLink: "https://example.com", Code: nil}, nil
+// Close is NOOP.
+func (p *Plugin) Close() error {
+	return nil
 }

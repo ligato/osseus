@@ -1,12 +1,12 @@
 syntax = "proto3";
 
-package server;
+package grpc;
 
 import "google/protobuf/empty.proto";
 import "google/api/annotations.proto";
 
 // The API handles incoming plugin data
-service Server {
+service Grpc {
 
   // Creates a new plugin
   rpc CreatePlugin(CreatePluginRequest) returns (Plugin) {
