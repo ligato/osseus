@@ -15,9 +15,11 @@
 package grpcserver
 
 import (
+	"context"
 	"flag"
 
 	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/grpc"
@@ -31,17 +33,6 @@ const (
 var address = defaultAddress
 var socketType = defaultSocketType
 
-// RegisterFlags registers command line flags.
-func RegisterFlags() {
-	flag.StringVar("address", address, "address of GRPC server")
-	flag.StringVar("socket-type", socketType, "socket type [tcp, tcp4, tcp6, unix, unixpacket]")
-	flag.Parse()
-}
-
-func init() {
-	RegisterFlags()
-}
-
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
 	Deps
@@ -53,15 +44,27 @@ type Deps struct {
 	GRPC grpc.Server
 }
 
-// GrpcService implements GRPC ServerServer interface
+// GrpcService implements GRPC GrpcServer interface
 type GrpcService struct{}
+
+// RegisterFlags registers command line flags.
+func RegisterFlags() {
+	flag.StringVar(&address, "address", defaultAddress, "address of GRPC server")
+	flag.StringVar(&socketType, "socket-type", defaultSocketType, "socket type [tcp, tcp4, tcp6, unix, unixpacket]")
+	flag.Parse()
+}
+
+// Simple command line flags call
+func init() {
+	RegisterFlags()
+}
 
 // Init initializes the Grpc Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
 	// Register server for use
-	pb.RegisterGrpcServer(p.GRPC.GetServer(), &ServerService{})
+	pb.RegisterGrpcServer(p.GRPC.GetServer(), &GrpcService{})
 
 	return nil
 }
@@ -69,8 +72,6 @@ func (p *Plugin) Init() error {
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
 	p.Log.Debug("GRPC server should be up and running!")
-	// you would want to register your handlers here
-	p.registerHandlersHere()
 
 	return nil
 }
@@ -78,4 +79,28 @@ func (p *Plugin) AfterInit() (err error) {
 // Close is NOOP.
 func (p *Plugin) Close() error {
 	return nil
+}
+
+// ***************************************
+// Grpc Server Handlers
+// ***************************************
+
+// CreatePlugin inserts a new plugin into the kv
+func (s *GrpcService) CreatePlugin(ctx context.Context, in *pb.CreatePluginRequest) (*pb.PluginData, error) {
+	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
+}
+
+// GetPlugin retrieves a given plugin
+func (s *GrpcService) GetPlugin(ctx context.Context, in *pb.GetPluginRequest) (*pb.PluginData, error) {
+	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
+}
+
+// ListPlugins lists all currently stored plugins
+func (s *GrpcService) ListPlugins(ctx context.Context, in *empty.Empty) (*pb.ListPluginsResponse, error) {
+	// Use a loop to send back repeated data
+}
+
+// DeletePlugin deletes a currently stored plugin
+func (s *GrpcService) DeletePlugin(ctx context.Context, in *pb.DeletePluginRequest) (*empty.Empty, error) {
+	return nil, nil
 }

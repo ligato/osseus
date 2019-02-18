@@ -23,11 +23,11 @@
 #   non-go = false
 #   go-tests = true
 #   unused-packages = true
-required = ["github.com/golang/protobuf/proto"]
+required = ["github.com/golang/protobuf/protoc-gen-go"]
 
 [[constraint]]
   name = "github.com/golang/protobuf"
-  version = "1.2.0"
+  version = "1.1.1"
 
 [[constraint]]
   name = "github.com/ligato/cn-infra"

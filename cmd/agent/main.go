@@ -21,6 +21,10 @@ import (
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/logging/logmanager"
 	log "github.com/ligato/cn-infra/logging/logrus"
+	"github.com/ligato/cn-infra/config"
+	"github.com/ligato/cn-infra/db/keyval"
+	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/cn-infra/db/keyval/kvproto"
 
 )
 
@@ -71,6 +75,18 @@ func main() {
 	if err := a.Run(); err != nil {
 		log.DefaultLogger().Fatal(err)
 	}
+
+	// Create connection to etcd
+	db, err := etcd.NewEtcdConnectionWithBytes(*cfg, logrus.DefaultLogger())
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Initialize proto decorator.
+	protoDb := kvproto.NewProtoWrapper(db)
+
+	// Define operations below for client ...
 }
 
 func init() {

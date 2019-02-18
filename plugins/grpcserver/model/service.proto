@@ -9,7 +9,7 @@ import "google/api/annotations.proto";
 service Grpc {
 
   // Creates a new plugin
-  rpc CreatePlugin(CreatePluginRequest) returns (Plugin) {
+  rpc CreatePlugin(CreatePluginRequest) returns (PluginData) {
     option (google.api.http) = {
       post: "/v1/plugins"
       body: "plugin"
@@ -17,7 +17,7 @@ service Grpc {
   }
 
   // Get plugin with specific id
-  rpc GetPlugin(GetPluginRequest) returns (Plugin) {
+  rpc GetPlugin(GetPluginRequest) returns (PluginData) {
     option (google.api.http) = { get: "/v1/plugins/{id}"};
   }
 
@@ -33,7 +33,7 @@ service Grpc {
 }
 
 // A plugin resource
-message Plugin {
+message PluginData {
   string id = 1;
   string cdn_link = 2;
   string status = 3;
@@ -41,7 +41,7 @@ message Plugin {
 
 // Request message for CreatePlugin method
 message CreatePluginRequest {
-  Plugin plugin = 1;
+  PluginData plugin = 1;
 }
 
 // Request message for GetPlugin method
@@ -49,12 +49,13 @@ message GetPluginRequest {
   string id = 1;
 }
 
-// Response message for ListPlugins method
-message ListPluginsResponse {
-  repeated Plugin plugin = 1;
-}
-
 // Request message for DeletePlugin method
 message DeletePluginRequest {
   string id = 1;
 }
+
+// Response message for ListPlugins method
+message ListPluginsResponse {
+  repeated PluginData plugin = 1;
+}
+
