@@ -35,14 +35,14 @@ RUN apt-get install -y golang-gogoprotobuf-dev
 COPY build-agent.sh .
 RUN  ./build-agent.sh ${AGENT_COMMIT}
 
-COPY ./config/etcd.conf .
-COPY ./config/grpc.conf .
-COPY ./config/http.conf .
+# COPY ./config/etcd.conf .
+# COPY ./config/grpc.conf .
+# COPY ./config/http.conf .
 
 WORKDIR /root/
 
 # add supervisor conf file
-COPY ./config/supervisord.conf /etc/supervisord.conf
+COPY ../config/supervisord.conf /etc/supervisord.conf
 
 # run supervisor as the default executable
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

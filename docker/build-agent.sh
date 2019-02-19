@@ -15,7 +15,7 @@ mkdir -p $GOPATH/{bin,pkg,src}
 #go get -u github.com/golang/lint/golint
 #go get -u github.com/FiloSottile/gvt
 #curl https://glide.sh/get | sh
-go get -u github.com/ligato/cn-infra
+# go get -u github.com/ligato/cn-infra
 
 # checkout agent code
 mkdir -p $GOPATH/src/github.com/dev
@@ -25,8 +25,8 @@ git clone https://github.com/anthonydevelops/osseus.git
 # build the agent
 cd $GOPATH/src/github.com/dev/osseus
 git checkout grpc-server
-cd plugins/grpc-server
+# cd plugins/grpc-server
 # go build
-protoc -I=. --go_out=. ./service.proto
+# protoc -I=. --go_out=. ./service.proto
 
-cp agent.go $GOPATH/bin/
+cp cmd/agent/main.go $GOPATH/bin/
