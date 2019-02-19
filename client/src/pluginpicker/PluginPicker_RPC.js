@@ -1,5 +1,6 @@
 import React from 'react';
-import "./styles/App.css";
+import "../styles/App.css";
+import "../styles/Splitleft.css";
 
 /*This component represents the left webpage division where the
 * plugins will reside initially. The plugins are being represented
@@ -7,23 +8,20 @@ import "./styles/App.css";
 * prop children can be stored in an array instead of initializing
 * one-by-one.
 */
-const PluginPicker = (props) => {
+const PluginPickerRPC = (props) => {
     return (
         <div className="body">
-            <div className="split left">
+            <div className="split leftRPC">
+                <p className="pluginheadingtext">RPC</p>
                 <div className="grid-container">
                     {props.children}
-                    {props.children}
-                    {props.children}
-                    {props.children}
-                </div>
-                <div className="centered">
-                    <h2 class="whitetext">Plugin Picker</h2>
-                    <p class="whitetext">Initial Placement of Plugin Tiles</p>
                 </div>
             </div>
         </div>
     );
 };
 
-export default PluginPicker;
+export default PluginPickerRPC;
+
+//<h2 class="whitetext">Plugin Picker</h2>
+//<p class="whitetext">Initial Placement of Plugin Tiles</p>

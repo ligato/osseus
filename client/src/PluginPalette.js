@@ -1,5 +1,6 @@
 import React from 'react';
 import "./styles/App.css";
+import "./styles/Splitright.css";
 
 /*This component represents the main workspace. Users will be able to 
 * Drag and Drop into the area that this component represents.
