@@ -25,13 +25,18 @@ import (
 	"github.com/ligato/cn-infra/rpc/grpc"
 )
 
-const (
-	defaultAddress    = "localhost:9111"
-	defaultSocketType = "tcp"
-)
+// RegisterFlags registers command line flags.
+func RegisterFlags() {
+	address := flag.String("address", "localhost:9111", "address of GRPC server")
+	socketType := flag.String("socket-type", "tcp", "[tcp, tcp4, tcp6, unix, unixpacket]")
+	reqPer := flag.Int("request-period", 3, "notification request period in seconds")
+	flag.Parse()
+}
 
-var address = defaultAddress
-var socketType = defaultSocketType
+// Simple command line flags call
+func init() {
+	RegisterFlags()
+}
 
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
@@ -46,18 +51,6 @@ type Deps struct {
 
 // GrpcService implements GRPC GrpcServer interface
 type GrpcService struct{}
-
-// RegisterFlags registers command line flags.
-func RegisterFlags() {
-	flag.StringVar(&address, "address", defaultAddress, "address of GRPC server")
-	flag.StringVar(&socketType, "socket-type", defaultSocketType, "socket type [tcp, tcp4, tcp6, unix, unixpacket]")
-	flag.Parse()
-}
-
-// Simple command line flags call
-func init() {
-	RegisterFlags()
-}
 
 // Init initializes the Grpc Plugin
 func (p *Plugin) Init() error {
