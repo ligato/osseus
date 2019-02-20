@@ -29,20 +29,22 @@ RUN git clone https://github.com/google/protobuf.git && \
   ldconfig && \
   cd .. && rm -rf protobuf
 
-RUN apt-get install -y golang-gogoprotobuf-dev
-
 # copy and execute agent build script
-COPY build-agent.sh .
+COPY docker/server/build-agent.sh .
 RUN  ./build-agent.sh ${AGENT_COMMIT}
 
-# COPY ./config/etcd.conf .
-# COPY ./config/grpc.conf .
-# COPY ./config/http.conf .
+WORKDIR /root/go/src/github.com/dev
 
-WORKDIR /root/
+COPY cmd ./cmd 
+COPY config ./config
+COPY plugins ./plugins
+COPY vendor ./vendor
+COPY Gopkg.lock .
+COPY Gopkg.toml .
+COPY LICENSE .
 
 # add supervisor conf file
-COPY ../config/supervisord.conf /etc/supervisord.conf
+# COPY supervisord.conf /etc/supervisord.conf
 
 # run supervisor as the default executable
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
