@@ -15,8 +15,9 @@ mkdir -p $GOPATH/{bin,pkg,src}
 #go get -u github.com/golang/lint/golint
 #go get -u github.com/FiloSottile/gvt
 #curl https://glide.sh/get | sh
-# go get -u github.com/ligato/cn-infra
+
 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+go get -u github.com/golang/protobuf/protoc-gen-go
 
 # checkout agent code
 mkdir -p $GOPATH/src/github.com/dev

@@ -15,21 +15,28 @@
 package grpcserver
 
 import (
-	"context"
 	"flag"
+	"fmt"
 
 	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/grpc"
 )
 
+// Flag variables
+var (
+	address    string
+	socketType string
+	reqPer     int64
+)
+
 // RegisterFlags registers command line flags.
 func RegisterFlags() {
-	address := flag.String("address", "localhost:9111", "address of GRPC server")
-	socketType := flag.String("socket-type", "tcp", "[tcp, tcp4, tcp6, unix, unixpacket]")
-	reqPer := flag.Int("request-period", 3, "notification request period in seconds")
+	fmt.Println("Registering cmd line flags...")
+	flag.StringVar(&address, "address", "localhost:9111", "address of GRPC server")
+	flag.StringVar(&socketType, "socket-type", "tcp", "[tcp, tcp4, tcp6, unix, unixpacket]")
+	flag.Int64Var(&reqPer, "request-period", 3, "notification request period in seconds")
 	flag.Parse()
 }
 
@@ -56,8 +63,14 @@ type GrpcService struct{}
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
+	// Get grpc Config
+	grpcConfig := &grpc.Config{}
+
 	// Register server for use
 	pb.RegisterGrpcServer(p.GRPC.GetServer(), &GrpcService{})
+
+	// Create server/client conn
+	grpc.ListenAndServe(grpcConfig, p.Deps.GRPC.GetServer())
 
 	return nil
 }
@@ -72,28 +85,4 @@ func (p *Plugin) AfterInit() (err error) {
 // Close is NOOP.
 func (p *Plugin) Close() error {
 	return nil
-}
-
-// ***************************************
-// Grpc Server Handlers
-// ***************************************
-
-// CreatePlugin inserts a new plugin into the kv
-func (s *GrpcService) CreatePlugin(ctx context.Context, in *pb.CreatePluginRequest) (*pb.PluginData, error) {
-	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
-}
-
-// GetPlugin retrieves a given plugin
-func (s *GrpcService) GetPlugin(ctx context.Context, in *pb.GetPluginRequest) (*pb.PluginData, error) {
-	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
-}
-
-// ListPlugins lists all currently stored plugins
-func (s *GrpcService) ListPlugins(ctx context.Context, in *empty.Empty) (*pb.ListPluginsResponse, error) {
-	// Use a loop to send back repeated data
-}
-
-// DeletePlugin deletes a currently stored plugin
-func (s *GrpcService) DeletePlugin(ctx context.Context, in *pb.DeletePluginRequest) (*empty.Empty, error) {
-	return nil, nil
 }

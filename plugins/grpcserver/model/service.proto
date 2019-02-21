@@ -21,11 +21,6 @@ service Grpc {
     option (google.api.http) = { get: "/v1/plugins/{id}"};
   }
 
-  // List all stored plugins
-  rpc ListPlugins(google.protobuf.Empty) returns (ListPluginsResponse) {
-    option (google.api.http) = { get: "/v1/plugins" };
-  }
-
   // Delete stored plugin
   rpc DeletePlugin(DeletePluginRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = { delete: "/v1/plugins/{plugin}"};
@@ -52,10 +47,5 @@ message GetPluginRequest {
 // Request message for DeletePlugin method
 message DeletePluginRequest {
   string id = 1;
-}
-
-// Response message for ListPlugins method
-message ListPluginsResponse {
-  repeated PluginData plugin = 1;
 }
 
