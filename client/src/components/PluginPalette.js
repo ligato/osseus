@@ -1,18 +1,21 @@
 import React from 'react';
-import "./styles/App.css";
-import "./styles/Splitright.css";
+import "../styles/App.css";
+import "../styles/Splitright.css";
 
 /*This component represents the main workspace. Users will be able to 
 * Drag and Drop into the area that this component represents.
 */
-const PluginPalette = () => {
+const PluginPalette = (props) => {
+    var pluginArray = React.Children.toArray(props.children);
+    for(let i = props.sentInArray.length; i >= 0; i--) {
+        if(props.sentInArray[i] === 0) { pluginArray.splice(i,1); }
+    }
+
     return (
         <div className="body">
             <div className="split right">
                 <div className="centered">
-                    <h2 className="whitetext">Plugin Palette</h2>
-                    <p className="whitetext">Drag and Drop Plugins into the Plugin Palette</p>
-                    <p className="whitetext">(Not Implemented)</p>
+                    {pluginArray}
                 </div>
                 <div className="rectangle">
                     <p className="whitetext">Base Plugin</p>
