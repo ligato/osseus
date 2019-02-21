@@ -38,6 +38,8 @@ func NewPlugin(opts ...Option) *Plugin {
 		p.Deps.Log = logging.ForPlugin(p.String())
 	}
 
+	p.PluginDeps.Setup()
+
 	return p
 }
 

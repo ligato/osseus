@@ -15,16 +15,15 @@
 package main
 
 import (
-	"os"
-
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/logging"
-	log "github.com/ligato/cn-infra/logging/logrus"
 	"github.com/ligato/cn-infra/logging/logmanager"
-	"github.com/ligato/osseus/plugins/restapi"
+	log "github.com/ligato/cn-infra/logging/logrus"
+	"os"
+	"osseus/plugins/restapi"
 )
 
-// OsseusAgent is a struct holding internal data for the StrongSwan VPP Agent
+// OsseusAgent is a struct holding internal data for the Ligato-Gen Agent
 type OsseusAgent struct {
 	LogManager *logmanager.Plugin
 	Rest       *restapi.Plugin
@@ -36,7 +35,6 @@ func New() *OsseusAgent {
 	return &OsseusAgent{
 		LogManager:       &logmanager.DefaultPlugin,
 		Rest:       &restapi.DefaultPlugin,
-
 	}
 
 }

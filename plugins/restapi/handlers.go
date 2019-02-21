@@ -16,21 +16,24 @@ package restapi
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/unrolled/render"
-
+	"net/http"
 )
+
+type Response struct {
+	r string
+}
 
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
-	p.registerHTTPHandler("/path/to/url", GET, func() (interface{}, error) {
+	p.registerHTTPHandler("/example", GET, func() (interface{}, error) {
 		return p.DoSomething()
 	})
 
 }
 // registerHTTPHandler is common register method for all handlers
-func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, error)) {
+func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interface{}, error)) {
 	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
 
@@ -45,13 +48,13 @@ func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, 
 			p.logError(formatter.JSON(w, http.StatusOK, res))
 		}
 	}
-	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
+	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
 
 // this is the function that does whatever your http handler should do after the GET call
-func (p *Plugin) DoSomething() (interface{}, error){
-	return nil, nil
+func (p *Plugin) DoSomething() (string, error){
+	return "hello", nil
 }
 
 // logError logs non-nil errors from JSON formatter
