@@ -298,6 +298,7 @@
     "github.com/golang/protobuf/protoc-gen-go",
     "github.com/golang/protobuf/ptypes/empty",
     "github.com/ligato/cn-infra/agent",
+    "github.com/ligato/cn-infra/config",
     "github.com/ligato/cn-infra/infra",
     "github.com/ligato/cn-infra/logging",
     "github.com/ligato/cn-infra/logging/logmanager",

@@ -19,13 +19,24 @@ import (
 	"fmt"
 
 	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/ligato/cn-infra/config"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/grpc"
 )
 
+const (
+	// DefaultHost is a host used by default
+	DefaultHost = "0.0.0.0"
+	// DefaultHTTPPort is a port used by default
+	DefaultHTTPPort = "9191"
+	// DefaultEndpoint 0.0.0.0:9191
+	DefaultEndpoint = DefaultHost + ":" + DefaultHTTPPort
+)
+
 // Flag variables
 var (
+	cfg        string
 	address    string
 	socketType string
 	reqPer     int64
@@ -34,6 +45,7 @@ var (
 // RegisterFlags registers command line flags.
 func RegisterFlags() {
 	fmt.Println("Registering cmd line flags...")
+	flag.StringVar(&cfg, "grpcserver-config", "grpc.conf", "config file for GRPC")
 	flag.StringVar(&address, "address", "localhost:9111", "address of GRPC server")
 	flag.StringVar(&socketType, "socket-type", "tcp", "[tcp, tcp4, tcp6, unix, unixpacket]")
 	flag.Int64Var(&reqPer, "request-period", 3, "notification request period in seconds")
@@ -48,12 +60,14 @@ func init() {
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
 	Deps
+	grpcConf grpc.Config
 }
 
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
-	GRPC grpc.Server
+	GRPC         grpc.Server
+	PluginConfig config.PluginConfig
 }
 
 // GrpcService implements GRPC GrpcServer interface
@@ -62,27 +76,48 @@ type GrpcService struct{}
 // Init initializes the Grpc Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
+	p.Log.Info("Loading plugin config ", p.PluginConfig.GetConfigName())
 
-	// Get grpc Config
-	grpcConfig := &grpc.Config{}
+	found, err := p.PluginConfig.LoadValue(p.grpcConf)
+	if err != nil {
+		p.Log.Error("Error loading config", err)
+	} else if found {
+		p.Log.Info("Loaded plugin config - found external configuration ", p.PluginConfig.GetConfigName())
+	} else {
+		p.Log.Info("Could not load config ... default taken")
+	}
 
 	// Register server for use
-	pb.RegisterGrpcServer(p.GRPC.GetServer(), &GrpcService{})
-
-	// Create server/client conn
-	grpc.ListenAndServe(grpcConfig, p.Deps.GRPC.GetServer())
+	pb.RegisterGrpcServer(p.Deps.GRPC.GetServer(), &GrpcService{})
 
 	return nil
 }
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
-	p.Log.Debug("GRPC server should be up and running!")
+	// Create server/client conn
+	grpc.ListenAndServe(&p.grpcConf, p.Deps.GRPC.GetServer())
 
 	return nil
 }
 
 // Close is NOOP.
 func (p *Plugin) Close() error {
+	p.Close()
 	return nil
 }
+
+// func (p *Plugin) getGrpcConfig() (*Config, error) {
+// 	var grpcCfg p.grpcConf
+// 	found, err := p.Deps.Cfg.LoadValueCfg(&grpcCfg)
+// 	if err != nil {
+// 		return &grpcCfg, err
+// 	}
+
+// 	if !found {
+// 		p.Log.Info("GRPC config not found, skip loading this plugin")
+// 		p.disabled = true
+// 	}
+
+// 	return &grpcCfg, nil
+// }

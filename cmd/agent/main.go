@@ -17,7 +17,7 @@ package main
 import (
 	"os"
 
-	"github.com/anthonydevelops/osseus/plugins/restapi"
+	"github.com/anthonydevelops/osseus/plugins/grpcserver"
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/logging/logmanager"
@@ -27,8 +27,7 @@ import (
 // OsseusAgent is a struct holding internal data for the StrongSwan VPP Agent
 type OsseusAgent struct {
 	LogManager *logmanager.Plugin
-	// Rest       *restapi.Plugin
-	Grpc			 *grpcserver.Plugin
+	Grpc       *grpcserver.Plugin
 }
 
 // New creates new OsseusAgent instance.
@@ -36,8 +35,7 @@ func New() *OsseusAgent {
 
 	return &OsseusAgent{
 		LogManager: &logmanager.DefaultPlugin,
-		// Rest:       &restapi.DefaultPlugin,
-		Grpc:				&grpcserver.DefaultPlugin
+		Grpc:       &grpcserver.DefaultPlugin,
 	}
 
 }
@@ -71,18 +69,6 @@ func main() {
 	if err := a.Run(); err != nil {
 		log.DefaultLogger().Fatal(err)
 	}
-
-	// Create connection to etcd
-	// db, err := etcd.NewEtcdConnectionWithBytes(*cfg, logrus.DefaultLogger())
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	os.Exit(1)
-	// }
-
-	// // Initialize proto decorator.
-	// protoDb := kvproto.NewProtoWrapper(db)
-
-	// Define operations below for client ...
 }
 
 func init() {
