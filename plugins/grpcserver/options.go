@@ -16,6 +16,7 @@ package grpcserver
 
 import (
 	"github.com/ligato/cn-infra/rpc/grpc"
+	"github.com/ligato/cn-infra/rpc/rest"
 )
 
 // DefaultPlugin is a default instance of Plugin.
@@ -26,7 +27,9 @@ func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
 	p.PluginName = "grpcserver"
-	p.GRPC = &grpc.DefaultPlugin
+	p.GRPC = grpc.NewPlugin(
+		grpc.UseHTTP(&rest.DefaultPlugin),
+	)
 
 	for _, o := range opts {
 		o(p)
