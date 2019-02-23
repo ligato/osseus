@@ -29,14 +29,17 @@ RUN git clone https://github.com/google/protobuf.git && \
   ldconfig && \
   cd .. && rm -rf protobuf
 
-COPY plugins/grpcserver/grpc.conf .
+COPY config/grpc.conf .
+COPY config/etcd.conf .
 
 # copy and execute agent build script
 COPY docker/server/build-agent.sh .
 RUN  ./build-agent.sh ${AGENT_COMMIT}
 
+WORKDIR /root/
+
 # add supervisor conf file
-COPY docker/server/supervisord.conf /etc/supervisord.conf
+COPY config/supervisord.conf /etc/supervisord.conf
 
 # run supervisor as the default executable
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

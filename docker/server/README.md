@@ -9,10 +9,9 @@ git checkout grpc-server
 # Build the backend docker image
 docker build --force-rm=true -t dev/osseus --build-arg AGENT_COMMIT=2c2b0df32201c9bc814a167e0318329c78165b5c --no-cache -f docker/server/Dockerfile .
 
-# After the build, run docker image and ssh into it
-docker run -it --name agent --privileged dev/osseus bash
+# After the build, run the docker container
+docker run --name server --privileged --rm dev/osseus
 
-# If you make changes & exit out, you can restart it
-docker start agent
-docker exec -it agent
+# or SSH into the container
+docker run -it --name server --privileged --rm dev/osseus bash
 ```

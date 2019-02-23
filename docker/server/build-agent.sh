@@ -23,6 +23,8 @@ git clone https://github.com/anthonydevelops/osseus.git
 # build the agent
 cd $GOPATH/src/github.com/dev/osseus
 git checkout grpc-server
+
+# install dependencies
 dep ensure -vendor-only
 
 # install grpcserver package
@@ -31,7 +33,8 @@ go install
 
 # build agent executable
 cd $GOPATH/src/github.com/dev/osseus/cmd/agent
-go build -i -v
+go build
 
-# copy agent to bin
-cp cmd/agent/main $GOPATH/bin/
+# copy agent executable to bin
+cd $GOPATH/src/github.com/dev/osseus
+cp cmd/agent/agent $GOPATH/bin/
