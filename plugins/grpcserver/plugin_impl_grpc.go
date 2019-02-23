@@ -17,8 +17,14 @@ package grpcserver
 import (
 	"flag"
 	"fmt"
+	"os"
+
+	"github.com/ligato/cn-infra/db/keyval/kvproto"
+
+	"github.com/ligato/cn-infra/config"
 
 	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/ligato/cn-infra/db/keyval/etcd"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/grpc"
@@ -27,21 +33,20 @@ import (
 // PluginName represents name of plugin
 const PluginName = "grpcserver"
 
+// DB connects to ETCD with proto wrapper
+var DB *kvproto.ProtoWrapper
+
 // Flag variables
 var (
-	cfg        string
-	address    string
-	socketType string
-	reqPer     int64
+	grpcCfg string
+	dbCfg   string
 )
 
 // RegisterFlags registers command line flags.
 func RegisterFlags() {
 	fmt.Println("Registering cmd line flags...")
-	flag.StringVar(&cfg, "grpc-config", "grpc.conf", "config file for GRPC")
-	flag.StringVar(&address, "address", "localhost:9111", "address of GRPC server")
-	flag.StringVar(&socketType, "socket-type", "tcp", "[tcp, tcp4, tcp6, unix, unixpacket]")
-	flag.Int64Var(&reqPer, "request-period", 3, "notification request period in seconds")
+	flag.StringVar(&grpcCfg, "grpc-config", "grpc.conf", "config file for GRPC")
+	flag.StringVar(&dbCfg, "etcd-config", "etcd.conf", "config file for ETCD")
 	flag.Parse()
 }
 
@@ -53,12 +58,13 @@ func init() {
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
 	Deps
-	GRPC grpc.Server
 }
 
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
+	GRPC grpc.Server
+	ETCD *etcd.Plugin
 }
 
 // GrpcService implements GRPC GrpcServer interface
@@ -70,16 +76,56 @@ func (p *Plugin) Init() error {
 
 	// Register server for use
 	pb.RegisterGrpcServer(p.GRPC.GetServer(), &GrpcService{})
+	p.Log.Info("Registered pb service")
 
 	return nil
 }
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
+	// Get config files
+	cfg, err := parseConfig()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	// Setup db connection
+	db, err := etcd.NewEtcdConnectionWithBytes(*cfg, logging.DefaultLogger)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	p.Log.Info("Establishing connection to etcd ...")
+
+	// Initialize proto decorator
+	DB = kvproto.NewProtoWrapper(db)
+
 	return nil
 }
 
 // Close is NOOP.
 func (p *Plugin) Close() error {
 	return nil
+}
+
+// Parse etcd config file
+func parseConfig() (cfg *etcd.ClientConfig, err error) {
+	conf := &etcd.Config{}
+
+	// Get config information and store it
+	err = config.ParseConfigFromYamlFile(dbCfg, conf)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Parse config into a usable client config conn
+	cfg, err = etcd.ConfigToClient(conf)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	return cfg, nil
 }

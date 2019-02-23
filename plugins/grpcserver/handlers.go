@@ -16,22 +16,45 @@ package grpcserver
 
 import (
 	"context"
+	"fmt"
+	"os"
 
 	pb "github.com/anthonydevelops/osseus/plugins/grpcserver/model"
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
 // CreatePlugin inserts a new plugin into the kv
-func (s *GrpcService) CreatePlugin(ctx context.Context, in *pb.CreatePluginRequest) (*pb.PluginData, error) {
-	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
+func (s *GrpcService) CreatePlugin(ctx context.Context, req *pb.CreatePluginRequest) (*pb.PluginData, error) {
+	err := DB.Put(req.Plugin.Id, req)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	return &pb.PluginData{Id: req.Plugin.Id, CdnLink: req.Plugin.CdnLink, Status: req.Plugin.Status}, nil
 }
 
 // GetPlugin retrieves a given plugin
-func (s *GrpcService) GetPlugin(ctx context.Context, in *pb.GetPluginRequest) (*pb.PluginData, error) {
-	return &pb.PluginData{Id: "example", CdnLink: "example.com", Status: "OK"}, nil
+func (s *GrpcService) GetPlugin(ctx context.Context, req *pb.GetPluginRequest) (*pb.PluginData, error) {
+	val := &pb.PluginData{}
+	found, rev, err := DB.GetValue(req.Id, val)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Printf("Plugin was found: %t, with revision %v", found, rev)
+
+	return val, nil
 }
 
 // DeletePlugin deletes a currently stored plugin
-func (s *GrpcService) DeletePlugin(ctx context.Context, in *pb.DeletePluginRequest) (*empty.Empty, error) {
+func (s *GrpcService) DeletePlugin(ctx context.Context, req *pb.DeletePluginRequest) (*empty.Empty, error) {
+	existed, err := DB.Delete(req.Id)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Printf("Plugin was deleted: %t", existed)
+
 	return nil, nil
 }

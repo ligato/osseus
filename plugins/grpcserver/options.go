@@ -15,6 +15,7 @@
 package grpcserver
 
 import (
+	"github.com/ligato/cn-infra/db/keyval/etcd"
 	"github.com/ligato/cn-infra/rpc/grpc"
 	"github.com/ligato/cn-infra/rpc/rest"
 )
@@ -30,6 +31,7 @@ func NewPlugin(opts ...Option) *Plugin {
 	p.GRPC = grpc.NewPlugin(
 		grpc.UseHTTP(&rest.DefaultPlugin),
 	)
+	p.ETCD = &etcd.DefaultPlugin
 
 	for _, o := range opts {
 		o(p)

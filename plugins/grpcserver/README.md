@@ -8,7 +8,8 @@
   - (command): protoc -I=. service.proto --go_out=plugins=grpc:.
 - [x] Create Dockerfile for **only** backend  
 - [x] Allow server to register pb service & fire up server
+- [x] Define CRUD handlers
 
 ### In-Progress
 - [ ] Create go tests (optional right now)
-- [ ] Define CRUD handlers
+- [ ] Create grpc client to test functionality
