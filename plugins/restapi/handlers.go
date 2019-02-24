@@ -22,8 +22,6 @@ import (
 	"net/http"
 )
 
-var pluginIdNum = "pluginIdNum"
-
 type Response struct {
 	PluginId   string
 }
@@ -34,9 +32,7 @@ func (p *Plugin) registerHandlersHere() {
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.HomeDisplay()
 	})
-	p.registerHTTPBodyHandler("/pluginId", POST, func() (interface{}, error){
-		return p.RequestPluginId()
-	})
+	p.Deps.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler ,POST)
 }
 // registerHTTPHandler is common register method for all handlers
 func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interface{}, error)) {
@@ -57,8 +53,7 @@ func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interf
 	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
-func (p *Plugin) registerHTTPBodyHandler(key string, method string, f func() (interface{}, error)) {
-	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
+func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
 
 			body, err := ioutil.ReadAll(req.Body)
@@ -85,14 +80,11 @@ func (p *Plugin) registerHTTPBodyHandler(key string, method string, f func() (in
 				p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
 				return
 			}
-			pluginIdNum = pluginId
+			p.RequestPluginId()
 			p.Log.Debugf("PluginId: %v", pluginId)
+			p.logError(formatter.JSON(w, http.StatusOK, pluginId))
 		}
 	}
-	p.RequestPluginId()
-	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
-}
-
 
 
 // handler for default path, displays default ping to verify if server is up
@@ -101,11 +93,8 @@ func (p *Plugin) HomeDisplay() (interface{}, error) {
 }
 
 // handler for /pluginId, posts specified plugin Id
+// call grpc /v1/plugins
 func (p *Plugin) RequestPluginId() (interface{}, error){
-	/*response := Response{pluginIdNum}
-	res, err := json.Marshal(response)
-	fmt.Printf("%s",res)
-	return res, err*/
 	p.Log.Debug("reached requestpluginId")
 	return "plugin", nil
 }
