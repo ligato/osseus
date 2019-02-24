@@ -18,11 +18,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unrolled/render"
+	"io/ioutil"
 	"net/http"
 )
 
+var pluginIdNum = "pluginIdNum"
+
 type Response struct {
-	PluginId   int
+	PluginId   string
 }
 
 // Registers REST handlers
@@ -31,7 +34,9 @@ func (p *Plugin) registerHandlersHere() {
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.HomeDisplay()
 	})
-
+	p.registerHTTPBodyHandler("/pluginId", POST, func() (interface{}, error){
+		return p.RequestPluginId()
+	})
 }
 // registerHTTPHandler is common register method for all handlers
 func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interface{}, error)) {
@@ -52,16 +57,57 @@ func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interf
 	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
+func (p *Plugin) registerHTTPBodyHandler(key string, method string, f func() (interface{}, error)) {
+	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
+		return func(w http.ResponseWriter, req *http.Request) {
+
+			body, err := ioutil.ReadAll(req.Body)
+			if err != nil {
+				errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+				p.Log.Error(errMsg)
+				p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+				return
+			}
+
+			var reqParam map[string]string
+			err = json.Unmarshal(body, &reqParam)
+			if err != nil {
+				errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+				p.Log.Error(errMsg)
+				p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+				return
+			}
+
+			pluginId, ok := reqParam["PluginId"]
+			if !ok || pluginId == "" {
+				errMsg := fmt.Sprintf("400 Bad request: pluginId parameter missing or empty\n")
+				p.Log.Error(errMsg)
+				p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+				return
+			}
+			pluginIdNum = pluginId
+			p.Log.Debugf("PluginId: %v", pluginId)
+		}
+	}
+	p.RequestPluginId()
+	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
+}
+
+
+
 // handler for default path, displays default ping to verify if server is up
 func (p *Plugin) HomeDisplay() (interface{}, error) {
 	return "Hello World!", nil
 }
 
-// this is the function that does whatever your http handler should do after the GET call
-func (p *Plugin) DoSomething() (interface{}, error){
-	response := Response{116}
+// handler for /pluginId, posts specified plugin Id
+func (p *Plugin) RequestPluginId() (interface{}, error){
+	/*response := Response{pluginIdNum}
 	res, err := json.Marshal(response)
-	return res, err
+	fmt.Printf("%s",res)
+	return res, err*/
+	p.Log.Debug("reached requestpluginId")
+	return "plugin", nil
 }
 
 // logError logs non-nil errors from JSON formatter
