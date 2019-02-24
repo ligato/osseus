@@ -16,6 +16,7 @@
 package restapi
 
 import (
+	"flag"
 	"github.com/ligato/cn-infra/config"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
@@ -31,14 +32,14 @@ const (
 	POST = http.MethodPost
 )
 
-/*var(
+var(
 	cfg	string
-)*/
+)
 
 // RegisterFlags registers command line flags.
 func RegisterFlags() {
-	//flag.StringVar(&cfg,"restapi-config", "http.conf", "load rest api conf" )
-	//flag.Parse()
+	flag.StringVar(&cfg,"restapi-config", "http.conf", "load rest api conf" )
+	flag.Parse()
 	// TODO: add command line flags here
 }
 
@@ -56,14 +57,18 @@ type Plugin struct {
 type Deps struct {
 	infra.PluginDeps
 	HTTPHandlers rest.HTTPHandlers
-	pluginconf config.PluginConfig
+	pluginconf   config.PluginConfig
+}
+
+func (p* Plugin) String() string{
+	return PluginName
 }
 
 // Init initializes the Rest Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
-	p.pluginconf = config.ForPlugin(PluginName)
+	p.pluginconf = config.ForPlugin(p.String())
 
 	print("configname",p.pluginconf.GetConfigName())
 
