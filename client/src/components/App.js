@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import PluginPicker from './PluginPicker';
 import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
+import GeneratorButton from './GeneratorButton';
 import "../styles/App.css";
+import { BrowserRouter } from 'react-router-dom';
 
 
 //These are temporary arrays, only one array will be used later on.
-let array =  new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
-//let array1 = new Uint8Array([0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0]);
+let pluginArray =  new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
 
 /*
 * The class and its member function are used to recieve data from children; currently it captures 
@@ -31,9 +32,9 @@ class App extends Component {
     
     handleData = (index) => {
         this.setState({
-          clickedIndices: index
+          clickedIndex: index
         });
-        array[index] = !array[index];
+        pluginArray[index] = !pluginArray[index];
     }
     render() {
         /*
@@ -52,33 +53,33 @@ class App extends Component {
         */ 
         return (
             <div> 
-                <PluginPicker sentInStyle = "split leftRPC"  sentInName="RPC"        sentInArray={array.subarray(0,3)}>
+                <PluginPicker sentInStyle = "split leftRPC"  sentInName="RPC"        sentInArray={pluginArray.subarray(0,3)}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "REST API"  grouping = "RPC"  id={0} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "GRPC"      grouping = "RPC"  id={1} />    
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "PROMETHEUS"grouping = "RPC"  id={2} />          
                 </PluginPicker>
-                <PluginPicker sentInStyle = "split leftDS"   sentInName="Data Store" sentInArray={array.subarray(3,7)}>
+                <PluginPicker sentInStyle = "split leftDS"   sentInName="Data Store" sentInArray={pluginArray.subarray(3,7)}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "ETCD"      grouping = "DS"   id={3} /> 
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "REDIS"     grouping = "DS"   id={4} /> 
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "CASSANDRA" grouping = "DS"   id={5} /> 
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "CONSUL"    grouping = "DS"   id={6} />          
                 </PluginPicker>
-                <PluginPicker sentInStyle = "split leftLOG"  sentInName="Logging"    sentInArray={array.subarray(7,9)}>
+                <PluginPicker sentInStyle = "split leftLOG"  sentInName="Logging"    sentInArray={pluginArray.subarray(7,9)}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "LOGRUS"    grouping = "LOG"  id={7} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "LOG MNGR"  grouping = "LOG"  id={8} />           
                 </PluginPicker>
-                <PluginPicker sentInStyle = "split leftHTH"  sentInName="Health"     sentInArray={array.subarray(9,11)}>
+                <PluginPicker sentInStyle = "split leftHTH"  sentInName="Health"     sentInArray={pluginArray.subarray(9,11)}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "STTS CHECK"grouping = "HTH"  id={9} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "PROBE"     grouping = "HTH"  id={10} />             
                 </PluginPicker>
-                <PluginPicker sentInStyle = "split leftMISC" sentInName="Misc."      sentInArray={array.subarray(11,17)}>
+                <PluginPicker sentInStyle = "split leftMISC" sentInName="Misc."      sentInArray={pluginArray.subarray(11,17)}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "KAFKA"     grouping = "MISC" id={11} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "DATASYNC"  grouping = "MISC" id={12} />     
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "IDX MAP"   grouping = "MISC" id={13} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "SRVC LABEL"grouping = "MISC" id={14} />    
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "CONFIG"    grouping = "MISC" id={15} />        
                 </PluginPicker>
-                <PluginPalette sentInArray={array}>
+                <PluginPalette                                                       sentInArray={pluginArray}>
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "REST API"  grouping = "RPC"  id={0} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "GRPC"      grouping = "RPC"  id={1} />    
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "PROMETHEUS"grouping = "RPC"  id={2} />
@@ -95,10 +96,15 @@ class App extends Component {
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "IDX MAP"   grouping = "MISC" id={13} />   
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "SRVC LABEL"grouping = "MISC" id={14} />    
                     <DraggablePlugins  handlerFromParent={this.handleData}  pluginName = "CONFIG"    grouping = "MISC" id={15} />  
+                    <BrowserRouter>
+                        <GeneratorButton />
+                    </BrowserRouter>  
                 </PluginPalette>
             </div>
         );
     }
 }
+
+
 
 export default App;
