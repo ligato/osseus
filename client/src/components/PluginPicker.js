@@ -8,7 +8,7 @@ import "../styles/Splitleft.css";
 * prop children can be stored in an array instead of initializing
 * one-by-one.
 */
-const PluginPickerRPC = (props) => {
+const PluginPicker = (props) => {
     var pluginArray = React.Children.toArray(props.children);
     for(let i = props.sentInArray.length; i >= 0; i--) {
         if(props.sentInArray[i] === 1) { pluginArray.splice(i,1); }
@@ -26,4 +26,4 @@ const PluginPickerRPC = (props) => {
     );
 };
 
-export default PluginPickerRPC;
+export default PluginPicker;
