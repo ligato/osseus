@@ -38,13 +38,6 @@ class PluginApp extends React.Component {
         *
         * This block of code outlines the structure of whats a child of what, what props are being passed where
         * etc.
-        *
-        * Structure:  
-        *                   App.js     ..................... (parent)
-        *                 /       \
-        *        PPicker.js        PPalette.js    .......... (child)
-        *            /                 \
-        *   DPlugins.js                DPlugins.js     ..... (sub-child)
         */ 
         return (
             <div>

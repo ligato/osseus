@@ -5,20 +5,27 @@ import "../styles/Header.css";
 
 let arrows = "<--->";
 
+/*
+* This header contains two buttons in the form of links that each represent a route 
+* their own webpage. PluginApp page is the default (/) route and GeneratorApp is the 
+* route (/GeneratorApp).
+* Because of how this header is rendered in App.js, this compenent is rendered on both
+* pages.
+*/
 const Header = () => {
     return (
         <div>
             <Segment>
-                    <Grid columns={2} relaxed='very'>
-                        <Grid.Column>
-                            <Link className="header-link" to="/">Plugin App</Link>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Link className="header-link" to="/GeneratorApp">Generator App</Link>
-                        </Grid.Column>
-                    </Grid>
-                    <Divider vertical>{arrows}</Divider>
-                </Segment>
+                <Grid columns={2} relaxed='very'>
+                    <Grid.Column className="header-column">
+                        <Link className="plugin-link" to="/">Plugin App</Link>
+                    </Grid.Column>
+                    <Grid.Column className="header-column">
+                        <Link className="generator-link" to="/GeneratorApp">Generator App</Link>
+                    </Grid.Column>
+                </Grid>
+                <Divider vertical>{arrows}</Divider>
+            </Segment>
         </div>
     );
 };
