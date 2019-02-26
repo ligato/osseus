@@ -9,12 +9,17 @@ import "../styles/Splitleft.css";
 * one-by-one.
 */
 const PluginPickerRPC = (props) => {
+    var pluginArray = React.Children.toArray(props.children);
+    for(let i = props.sentInArray.length; i >= 0; i--) {
+        if(props.sentInArray[i] === 1) { pluginArray.splice(i,1); }
+    }
+    
     return (
         <div className="body">
-            <div className="split leftRPC">
-                <p className="pluginheadingtext">RPC</p>
+            <div className={props.sentInStyle}>
+                <p className="pluginheadingtext">{props.sentInName}</p>
                 <div className="grid-container">
-                    {props.children}
+                    {pluginArray}
                 </div>
             </div>
         </div>
@@ -22,6 +27,3 @@ const PluginPickerRPC = (props) => {
 };
 
 export default PluginPickerRPC;
-
-//<h2 class="whitetext">Plugin Picker</h2>
-//<p class="whitetext">Initial Placement of Plugin Tiles</p>

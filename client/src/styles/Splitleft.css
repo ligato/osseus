@@ -47,7 +47,7 @@
 .grid-container {
   display: inline-grid;
   grid-gap: 4% 10%;
-  grid-template-columns: repeat(3, 24%);
+  grid-template-columns: repeat(auto-fill, 24%);
   background-color: #232323;
   padding: 5px;
 }
