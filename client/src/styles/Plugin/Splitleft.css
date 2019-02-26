@@ -13,7 +13,7 @@
 
 .leftDS {
   height: 23%;
-  top: 16.7%;
+  top: 16.5%;
   left: 0;
   background: linear-gradient(
     to bottom, 
@@ -26,7 +26,7 @@
 
 .leftLOG {
   height: 14.3%;
-  top: 37.05%;
+  top: 36.8%;
   left: 0;
   background: linear-gradient(
     to bottom, 
@@ -39,7 +39,7 @@
 
 .leftHTH {
   height: 14.3%;
-  top: 49.79%;
+  top: 49.4%;
   left: 0;
   background: linear-gradient(
     to bottom, 
@@ -52,7 +52,7 @@
 
 .leftMISC {
   height: 60%;
-  top: 62.6%;
+  top: 62.0%;
   left: 0;
   background-color: #232323;
 }
