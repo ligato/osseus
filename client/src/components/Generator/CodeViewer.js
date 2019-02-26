@@ -2,8 +2,9 @@ import React from 'react';
 import "../../styles/App.css";
 import "../../styles/Generator/GeneratorApp.css";
 
-/*This component represents the main workspace. Users will be able to 
-* Drag and Drop into the area that this component represents.
+/*
+* This component represents the right webpage division. This will
+* contain the generated code.
 */
 const CodeViewer = (props) => {
     return (
