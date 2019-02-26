@@ -1,0 +1,74 @@
+.leftRPC {
+  height: 14.3%;
+  top:50px;
+  left: 0;
+  background: linear-gradient(
+    to bottom, 
+    #232323 0%, 
+    #232323 88%, 
+    #4AC68E 88%, 
+    #4AC68E 100%
+  );
+}
+
+.leftDS {
+  height: 23%;
+  top: 16.6%;
+  left: 0;
+  background: linear-gradient(
+    to bottom, 
+    #232323 0%, 
+    #232323 88%, 
+    #4AC68E 88%, 
+    #4AC68E 100%
+  );
+}
+
+.leftLOG {
+  height: 14.3%;
+  top: 37.1%;
+  left: 0;
+  background: linear-gradient(
+    to bottom, 
+    #232323 0%, 
+    #232323 88%, 
+    #4AC68E 88%, 
+    #4AC68E 100%
+  );
+}
+
+.leftHTH {
+  height: 14.3%;
+  top: 49.85%;
+  left: 0;
+  background: linear-gradient(
+    to bottom, 
+    #232323 0%, 
+    #232323 88%, 
+    #4AC68E 88%, 
+    #4AC68E 100%
+  );
+}
+
+.leftMISC {
+  height: 60%;
+  top: 62.6%;
+  left: 0;
+  background-color: #232323;
+}
+
+.grid-container {
+  display: inline-grid;
+  grid-gap: 4% 10%;
+  grid-template-columns: repeat(auto-fill, 24%);
+  background-color: #232323;
+  padding: 5px;
+}
+
+.pluginheadingtext {
+  margin-top: -5px;
+  margin-bottom: 10px;
+  color: white;       
+  font-size: 14px;
+  padding: 2px;
+}
