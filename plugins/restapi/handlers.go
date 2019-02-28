@@ -32,7 +32,7 @@ func (p *Plugin) registerHandlersHere() {
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	p.Deps.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler ,POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler, POST)
 }
 // registerHTTPHandler is common register method for all handlers
 func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interface{}, error)) {
@@ -46,11 +46,11 @@ func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interf
 				p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
 				return
 			}
-			p.Deps.Log.Debugf("Rest uri: %s, data: %v", key, res)
+			p.Log.Debugf("Rest uri: %s, data: %v", key, res)
 			p.logError(formatter.JSON(w, http.StatusOK, res))
 		}
 	}
-	p.Deps.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
+	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
 func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerFunc {
