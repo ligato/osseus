@@ -16,8 +16,6 @@
 package restapi
 
 import (
-	"flag"
-	"github.com/ligato/cn-infra/config"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/rest"
@@ -38,9 +36,7 @@ var(
 
 // RegisterFlags registers command line flags.
 func RegisterFlags() {
-	flag.StringVar(&cfg,"restapi-config", "http.conf", "load rest api conf" )
-	flag.Parse()
-	// TODO: add command line flags here
+	// no command line flags implemented presently
 }
 
 func init() {
@@ -57,7 +53,6 @@ type Plugin struct {
 type Deps struct {
 	infra.PluginDeps
 	HTTPHandlers rest.HTTPHandlers
-	pluginconf   config.PluginConfig
 }
 
 func (p* Plugin) String() string{
@@ -67,21 +62,6 @@ func (p* Plugin) String() string{
 // Init initializes the Rest Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
-
-	p.pluginconf = config.ForPlugin(p.String())
-
-	print("configname",p.pluginconf.GetConfigName())
-
-	p.Log.Info("loading plugin config", p.pluginconf.GetConfigName())
-
-	found, err := p.pluginconf.LoadValue(p.conf)
-	if err != nil {
-		p.Log.Error("Error loading config", err)
-	} else if found {
-		p.Log.Info("Loaded plugin config - found external configuration ", p.pluginconf.GetConfigName())
-	} else {
-		p.Log.Info("Could not load config ... default taken")
-	}
 	return nil
 }
 
