@@ -183,7 +183,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/ligato/cn-infra/agent",
-    "github.com/ligato/cn-infra/config",
     "github.com/ligato/cn-infra/infra",
     "github.com/ligato/cn-infra/logging",
     "github.com/ligato/cn-infra/logging/logmanager",
