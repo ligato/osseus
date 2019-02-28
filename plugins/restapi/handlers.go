@@ -30,7 +30,7 @@ type Response struct {
 func (p *Plugin) registerHandlersHere() {
 
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
-		return p.HomeDisplay()
+		return p.GetServerStatus()
 	})
 	p.Deps.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler ,POST)
 }
@@ -80,23 +80,25 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 				p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
 				return
 			}
-			p.RequestPluginId()
+			p.SavePlugin()
 			p.Log.Debugf("PluginId: %v", pluginId)
 			p.logError(formatter.JSON(w, http.StatusOK, pluginId))
 		}
 	}
 
 
-// handler for default path, displays default ping to verify if server is up
-func (p *Plugin) HomeDisplay() (interface{}, error) {
-	return "Hello World!", nil
+// handler for default path, displays message to verify if server endpoint is up
+func (p *Plugin) GetServerStatus() (interface{}, error) {
+	p.Log.Debug("REST API default home endpoint is up")
+	return "Ligato-gen server is up", nil
 }
 
-// handler for /pluginId, posts specified plugin Id
-// call grpc /v1/plugins
-func (p *Plugin) RequestPluginId() (interface{}, error){
-	p.Log.Debug("reached requestpluginId")
-	return "plugin", nil
+// handler for v1/pluginId, posts specified plugin Id
+// API endpoint frontend container should call to pass in pluginId information
+// TODO save pluginId information
+func (p *Plugin) SavePlugin() (interface{}, error){
+	p.Log.Debug("REST API post pluginId reached")
+	return "pluginID", nil
 }
 
 // logError logs non-nil errors from JSON formatter
