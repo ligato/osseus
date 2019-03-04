@@ -18,7 +18,8 @@ const Header = () => {
             <Segment>
                 <Grid columns={2} relaxed='very'>
                     <Grid.Column className="header-column">
-                        <Link className="plugin-link" to="/">Plugin App</Link>
+                        <Link className="project-selection-link" to="/">Project</Link>
+                        <Link className="plugin-link" to="/PluginApp">Plugin App</Link>
                     </Grid.Column>
                     <Grid.Column className="header-column">
                         <Link className="generator-link" to="/GeneratorApp">Generator App</Link>
