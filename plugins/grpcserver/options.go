@@ -15,9 +15,14 @@
 package grpcserver
 
 import (
+	"github.com/ligato/cn-infra/datasync"
+	"github.com/ligato/cn-infra/datasync/kvdbsync"
+	"github.com/ligato/cn-infra/datasync/kvdbsync/local"
 	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/cn-infra/health/statuscheck"
 	"github.com/ligato/cn-infra/rpc/grpc"
-	"github.com/ligato/cn-infra/rpc/rest"
+	"github.com/ligato/vpp-agent/plugins/kvscheduler"
+	"github.com/ligato/vpp-agent/plugins/orchestrator"
 )
 
 // DefaultPlugin is a default instance of Plugin.
@@ -27,17 +32,26 @@ var DefaultPlugin = *NewPlugin()
 func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
-	p.PluginName = "grpcserver"
-	p.GRPC = grpc.NewPlugin(
-		grpc.UseHTTP(&rest.DefaultPlugin),
-	)
-	p.ETCD = &etcd.DefaultPlugin
+	p.SetName("grpcserver")
+	p.Grpc = &grpc.DefaultPlugin
+	p.Scheduler = &kvscheduler.DefaultPlugin
+	p.ETCDDataSync = kvdbsync.NewPlugin(kvdbsync.UseKV(&etcd.DefaultPlugin))
+
+	writers := datasync.KVProtoWriters{
+		p.ETCDDataSync,
+	}
+	statuscheck.DefaultPlugin.Transport = writers
+	watchers := datasync.KVProtoWatchers{
+		local.DefaultRegistry,
+		p.ETCDDataSync,
+	}
+	orchestrator.DefaultPlugin.Watcher = watchers
 
 	for _, o := range opts {
 		o(p)
 	}
 
-	p.Deps.Setup()
+	p.Setup()
 
 	return p
 }
