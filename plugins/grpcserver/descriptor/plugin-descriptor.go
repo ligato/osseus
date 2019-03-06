@@ -15,6 +15,7 @@
 package descriptor
 
 import (
+	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/logging"
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
@@ -23,50 +24,50 @@ import (
 )
 
 const (
-	// PluginDescriptorName is the name of the descriptor skeleton.
+	// PluginDescriptorName is the name of the descriptor plugin
 	PluginDescriptorName = "plugin"
 )
 
-// PluginDescriptor is only a skeleton of a descriptor, which can be used
-// as a starting point to build a new descriptor from.
+// PluginDescriptor is our descriptor
 type PluginDescriptor struct {
-	log logging.Logger
+	log    logging.Logger
+	broker keyval.ProtoBroker
 }
 
 // NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(log logging.PluginLogger) *kvs.KVDescriptor {
-	// descriptors are supposed to be stateless, so use the structure only
-	// as a context for things that do not change once the descriptor is
-	// constructed - e.g. a reference to the logger to use within the descriptor
-	descrCtx := &PluginDescriptor{
-		log: log.NewLogger("plugin-descriptor"),
+func NewPluginDescriptor(broker keyval.ProtoBroker, log logging.PluginLogger) *PluginDescriptor {
+	// Set plugin descriptor init values
+	return &PluginDescriptor{
+		log:    log.NewLogger("plugin-descriptor"),
+		broker: broker,
 	}
+}
 
-	// use adapter to convert typed descriptor into generic descriptor API
-	typedDescr := &adapter.PluginDescriptor{
+// GetDescriptor returns descriptor suitable for registration (via adapter) with the KVScheduler.
+func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
+	return &adapter.PluginDescriptor{
 		Name:                 PluginDescriptorName,
-		NBKeyPrefix:          model.ValueModel.KeyPrefix(),
-		ValueTypeName:        model.ValueModel.ProtoName(),
-		KeySelector:          model.ValueModel.IsKeyValid,
-		KeyLabel:             model.ValueModel.StripKeyPrefix,
-		ValueComparator:      descrCtx.EquivalentValues,
-		Validate:             descrCtx.Validate,
-		Create:               descrCtx.Create,
-		Delete:               descrCtx.Delete,
-		Update:               descrCtx.Update,
-		UpdateWithRecreate:   descrCtx.UpdateWithRecreate,
-		Retrieve:             descrCtx.Retrieve,
-		IsRetriableFailure:   descrCtx.IsRetriableFailure,
-		DerivedValues:        descrCtx.DerivedValues,
-		Dependencies:         descrCtx.Dependencies,
-		RetrieveDependencies: []string{}, // list the names of the descriptors to Retrieve first
+		NBKeyPrefix:          model.ModelPlugin.KeyPrefix(),
+		ValueTypeName:        model.ModelPlugin.ProtoName(),
+		KeySelector:          model.ModelPlugin.IsKeyValid,
+		KeyLabel:             model.ModelPlugin.StripKeyPrefix,
+		ValueComparator:      d.EquivalentValues,
+		Validate:             d.Validate,
+		Create:               d.Create,
+		Delete:               d.Delete,
+		Update:               d.Update,
+		UpdateWithRecreate:   d.UpdateWithRecreate,
+		Retrieve:             d.Retrieve,
+		IsRetriableFailure:   d.IsRetriableFailure,
+		DerivedValues:        d.DerivedValues,
+		Dependencies:         d.Dependencies,
+		RetrieveDependencies: []string{},
 	}
-	return adapter.NewPluginDescriptor(typedDescr)
 }
 
 // EquivalentValues compares two revisions of the same value for equality.
 func (d *PluginDescriptor) EquivalentValues(key string, old, new *model.Plugin) bool {
-	// compare **non-primary** attributes here (none in the ValueSkeleton)
+	// compare **non-primary** attributes here (none in the Plugin)
 	return true
 }
 
@@ -77,12 +78,23 @@ func (d *PluginDescriptor) Validate(key string, value *model.Plugin) error {
 
 // Create creates new value.
 func (d *PluginDescriptor) Create(key string, value *model.Plugin) (metadata interface{}, err error) {
-	return nil, nil
+	err = d.broker.Put(key, value)
+	if err != nil {
+		d.log.Errorf("Error in create")
+		return key, err
+	}
+	return "Created: " + key, nil
 }
 
 // Delete removes an existing value.
 func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata interface{}) error {
-	return nil
+	existed, err := d.broker.Delete(key)
+	if err != nil {
+		d.log.Errorf("Error in deletion")
+		return err
+	}
+	d.log.Infof("Plugin existed: %v", existed)
+	return err
 }
 
 // Update updates existing value.

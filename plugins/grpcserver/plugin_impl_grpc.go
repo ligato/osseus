@@ -18,21 +18,25 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/datasync/kvdbsync"
+
+	"github.com/ligato/cn-infra/datasync"
+
+	"github.com/ligato/cn-infra/db/keyval"
+
 	"github.com/ligato/cn-infra/rpc/grpc"
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor"
+	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
-	"github.com/ligato/vpp-agent/plugins/orchestrator"
 )
 
 // (*) Generate Models:
-//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/model.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/plugin.proto
 
-// (**) Generate Descriptors:
+// (*) Generate Descriptors:
 //go:generate descriptor-adapter --descriptor-name Plugin --value-type *model.Plugin --import "model" --output-dir "descriptor"
 
 // prefix for db conn
@@ -64,27 +68,66 @@ func init() {
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
 	Deps
+	pluginDescriptor *descriptor.PluginDescriptor
+	changeChannel    chan datasync.ChangeEvent
+	resyncChannel    chan datasync.ResyncEvent
+	watchDataReg     datasync.WatchRegistration
 }
 
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
 	Grpc         grpc.Server
-	Orchestrator *orchestrator.Plugin
 	Scheduler    *kvscheduler.Scheduler
+	KVStore      keyval.KvProtoPlugin
 	ETCDDataSync *kvdbsync.Plugin
 	Watcher      datasync.KeyValProtoWatcher
-	Publisher    datasync.KeyProtoValWriter
 }
 
 // Init initializes the Grpc Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
-	pluginDescriptor := descriptor.NewPluginDescriptor(p.Log)
-	err := p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
+
+	// Check KVStore status
+	if p.KVStore.Disabled() {
+		return fmt.Errorf("KV store is disabled")
+	}
+
+	// Setup plugin fields.
+	p.resyncChannel = make(chan datasync.ResyncEvent)
+	p.changeChannel = make(chan datasync.ChangeEvent)
+
+	// Setup watcher
+	err := p.initWatcher()
+	if err != nil {
+		return fmt.Errorf("Watcher is not configured")
+	}
+
+	// Setup broker
+	broker := p.KVStore.NewBroker(keyPrefix)
+
+	// Setup descriptor
+	p.pluginDescriptor = descriptor.NewPluginDescriptor(broker, p.Log)
+	pluginDescriptor := adapter.NewPluginDescriptor(p.pluginDescriptor.GetDescriptor())
+	err = p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
+	p.Log.Info("Descriptor registered")
+
+	return nil
+}
+
+// initWatcher subscribes for data change and data resync events.
+func (p *Plugin) initWatcher() (err error) {
+	p.Log.Infof("Prefix: %v", keyPrefix)
+	p.watchDataReg, err = p.Watcher.Watch("Grpcserver plugin", p.changeChannel, p.resyncChannel, keyPrefix)
+	if err != nil {
+		p.Log.Infof("Error: %v", err)
+		return err
+	}
+
+	p.Log.Info("KeyValProtoWatcher initialized to etcd")
 
 	return nil
 }

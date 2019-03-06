@@ -11,7 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
+// Package grpccalls contains api wrappers & handlers to be used within the
+// descriptor package.
 
-// Package grpcserver implements the GRPC server through an agent, which can
-// interact with ETCD & perform CRUD operations using protocol buffers.
-package grpcserver
+package grpccalls
