@@ -19,6 +19,7 @@ import (
 	"github.com/ligato/cn-infra/logging"
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
+	"github.com/anthonydevelops/osseus/plugins/grpcserver/grpccalls"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
 	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
@@ -30,16 +31,18 @@ const (
 
 // PluginDescriptor is our descriptor
 type PluginDescriptor struct {
-	log    logging.Logger
-	broker keyval.ProtoBroker
+	log      logging.Logger
+	broker   keyval.ProtoBroker
+	handlers grpccalls.PluginAPI
 }
 
 // NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(broker keyval.ProtoBroker, log logging.PluginLogger) *PluginDescriptor {
+func NewPluginDescriptor(broker keyval.ProtoBroker, log logging.PluginLogger, handlers grpccalls.PluginAPI) *PluginDescriptor {
 	// Set plugin descriptor init values
 	return &PluginDescriptor{
-		log:    log.NewLogger("plugin-descriptor"),
-		broker: broker,
+		log:      log.NewLogger("plugin-descriptor"),
+		broker:   broker,
+		handlers: handlers,
 	}
 }
 
@@ -51,77 +54,43 @@ func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
 		ValueTypeName:        model.ModelPlugin.ProtoName(),
 		KeySelector:          model.ModelPlugin.IsKeyValid,
 		KeyLabel:             model.ModelPlugin.StripKeyPrefix,
-		ValueComparator:      d.EquivalentValues,
-		Validate:             d.Validate,
 		Create:               d.Create,
 		Delete:               d.Delete,
-		Update:               d.Update,
 		UpdateWithRecreate:   d.UpdateWithRecreate,
 		Retrieve:             d.Retrieve,
-		IsRetriableFailure:   d.IsRetriableFailure,
-		DerivedValues:        d.DerivedValues,
 		Dependencies:         d.Dependencies,
 		RetrieveDependencies: []string{},
 	}
 }
 
-// EquivalentValues compares two revisions of the same value for equality.
-func (d *PluginDescriptor) EquivalentValues(key string, old, new *model.Plugin) bool {
-	// compare **non-primary** attributes here (none in the Plugin)
-	return true
-}
-
-// Validate validates value before it is applied.
-func (d *PluginDescriptor) Validate(key string, value *model.Plugin) error {
-	return nil
-}
-
 // Create creates new value.
 func (d *PluginDescriptor) Create(key string, value *model.Plugin) (metadata interface{}, err error) {
-	err = d.broker.Put(key, value)
+	err = d.handlers.CreatePlugin(value)
 	if err != nil {
-		d.log.Errorf("Error in create")
-		return key, err
+		return nil, err
 	}
-	return "Created: " + key, nil
+
+	return nil, nil
 }
 
 // Delete removes an existing value.
 func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata interface{}) error {
-	existed, err := d.broker.Delete(key)
+	err := d.handlers.DeletePlugin(value.GetName())
 	if err != nil {
-		d.log.Errorf("Error in deletion")
 		return err
 	}
-	d.log.Infof("Plugin existed: %v", existed)
-	return err
-}
 
-// Update updates existing value.
-func (d *PluginDescriptor) Update(key string, old, new *model.Plugin, oldMetadata interface{}) (newMetadata interface{}, err error) {
-	return nil, nil
+	return nil
 }
 
 // UpdateWithRecreate returns true if value update requires full re-creation.
 func (d *PluginDescriptor) UpdateWithRecreate(key string, old, new *model.Plugin, metadata interface{}) bool {
-	return false
+	return true
 }
 
 // Retrieve retrieves values from SB.
 func (d *PluginDescriptor) Retrieve(correlate []adapter.PluginKVWithMetadata) (retrieved []adapter.PluginKVWithMetadata, err error) {
 	return retrieved, nil
-}
-
-// IsRetriableFailure returns true if the given error, returned by one of the CRUD
-// operations, can be theoretically fixed by merely repeating the operation.
-func (d *PluginDescriptor) IsRetriableFailure(err error) bool {
-	return true
-}
-
-// DerivedValues breaks the value into multiple part handled/referenced
-// separately.
-func (d *PluginDescriptor) DerivedValues(key string, value *model.Plugin) (derived []kvs.KeyValuePair) {
-	return derived
 }
 
 // Dependencies lists dependencies of the given value.

@@ -26,6 +26,7 @@ git checkout grpc-server
 
 # install dependencies
 dep ensure -vendor-only
+dep ensure
 
 # install grpcserver package
 cd plugins/grpcserver

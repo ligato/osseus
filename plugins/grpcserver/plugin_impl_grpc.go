@@ -28,6 +28,7 @@ import (
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
+	"github.com/anthonydevelops/osseus/plugins/grpcserver/grpccalls"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
@@ -68,10 +69,17 @@ func init() {
 // Plugin holds the internal data structures of the Grpc Plugin
 type Plugin struct {
 	Deps
+
+	// channels & watcher
+	changeChannel chan datasync.ChangeEvent
+	resyncChannel chan datasync.ResyncEvent
+	watchDataReg  datasync.WatchRegistration
+
+	// plugin handlers
+	pluginHandler grpccalls.PluginAPI
+
+	// descriptors
 	pluginDescriptor *descriptor.PluginDescriptor
-	changeChannel    chan datasync.ChangeEvent
-	resyncChannel    chan datasync.ResyncEvent
-	watchDataReg     datasync.WatchRegistration
 }
 
 // Deps represent Plugin dependencies.
@@ -103,11 +111,14 @@ func (p *Plugin) Init() error {
 		return fmt.Errorf("Watcher is not configured")
 	}
 
-	// Setup broker
+	// Declare broker
 	broker := p.KVStore.NewBroker(keyPrefix)
 
-	// Setup descriptor
-	p.pluginDescriptor = descriptor.NewPluginDescriptor(broker, p.Log)
+	// init handlers
+	p.pluginHandler = grpccalls.NewPluginHandler(p.Log, broker)
+
+	// init & register descriptor
+	p.pluginDescriptor = descriptor.NewPluginDescriptor(broker, p.Log, p.pluginHandler)
 	pluginDescriptor := adapter.NewPluginDescriptor(p.pluginDescriptor.GetDescriptor())
 	err = p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
@@ -121,13 +132,14 @@ func (p *Plugin) Init() error {
 // initWatcher subscribes for data change and data resync events.
 func (p *Plugin) initWatcher() (err error) {
 	p.Log.Infof("Prefix: %v", keyPrefix)
+
+	// Start etcd watcher
 	p.watchDataReg, err = p.Watcher.Watch("Grpcserver plugin", p.changeChannel, p.resyncChannel, keyPrefix)
 	if err != nil {
 		p.Log.Infof("Error: %v", err)
 		return err
 	}
-
-	p.Log.Info("KeyValProtoWatcher initialized to etcd")
+	p.Log.Info("Watcher working on etcd")
 
 	return nil
 }
