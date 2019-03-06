@@ -44,6 +44,13 @@
      color:white;
      box-shadow: 0 5px 0 #3D9970;
      text-transform: uppercase;
+     cursor: pointer;
+     -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
 }
  .button:before{
      content:"";

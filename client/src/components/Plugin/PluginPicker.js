@@ -25,7 +25,7 @@ const PluginPicker = (props) => {
     
     return (
         <div className="body">
-            <div className={props.sentInStyle}>
+            <div>
                 <p className="pluginheadingtext">{props.sentInName}</p>
                 <div className="grid-container">
                     {pluginArray}
