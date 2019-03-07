@@ -1,0 +1,23 @@
+.main {
+    padding: 0;
+    height: 100vh; /*add this to fill the screen*/
+    background: #2E2E2E; /*set the background color here*/
+}
+
+.whitetextgen {
+    color: white;
+    text-align: center;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;          
+    justify-content: space-between; 
+    opacity: 1.0;
+    font-size: 30px;
+  }
+
+  .left {
+    height: 100%;
+    top:50px;
+    left: 0;
+    background-color: #232323;
+  }
