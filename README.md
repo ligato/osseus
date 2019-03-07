@@ -39,10 +39,6 @@ The architecture of the Osseus web application is shown below:
 
 ![OsseusArchitecture](docs/img/Architecture.png)
 
-For a visual element, this is our frontend currently in development:
-
-![Mockup](docs/img/Mockup.png)
-
 ## Contributing
 
 Contributions to Osseus are welcome. We use the standard pull request model. You can 
