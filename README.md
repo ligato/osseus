@@ -1,10 +1,8 @@
 # Osseus
 
-_Objective, TravisCI build status, Coverage, License_
+[![Github license](https://img.shields.io/badge/license-Apache%20license%202.0-blue.svg)](https://github.com/ligato/osseus/blob/master/LICENSE.md)
 
-## Architecture
-
-_Architecture info goes here_
+Osseus is full-stack web application for generating configurable plugin templates to be used in a wide variety of cloud-based applications. The user is able to select from available plugins provided by [CN-Infra](https://github.com/ligato/cn-infra) and generate working Go code to be immediately usable in an application.
 
 ## Prerequisites
 
@@ -12,40 +10,44 @@ _Architecture info goes here_
 
 ## Installation
 
-_This is only the web server skeleton installation, will be updated later_
-
 ```bash
 # clone and go into directory
 git clone https://github.com/ligato/osseus
 cd /osseus
 
-# run dockerfile to build image
-docker build --force-rm=true -t osseus --build-arg AGENT_COMMIT=2c2b0df32201c9bc814a167e0318329c78165b5c --build-arg --no-cache .
+# build frontend image
+docker build --force-rm=true -t frontend --no-cache -f docker/frontend/Dockerfile .
 
-# run etcd
+# build backend image
+docker build --force-rm=true -t backend --build-arg AGENT_COMMIT=2c2b0df32201c9bc814a167e0318329c78165b5c --no-cache -f docker/backend/Dockerfile .
+
+# pull db image & run
 docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:v3.1.0 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
 
-# run and go into image with bash
-docker run -it --name agent --privileged --rm osseus bash
+# run frontend
+docker run --name frontend --privileged --rm frontend
 
-# run agent, which will show it is connected to ETCD
-$: cd go/src/github.com/dev/osseus
-$: go run agent.go -etcd-config /config/etcd.conf
+# run backend
+docker run --name backend --privileged --rm backend
 ```
 
-## Common Errors
+## Architecture
 
-_Will be moved/removed later on_
+Osseus is built with ReactJS & SASS for the frontend, Go for the backend, and ETCD as our KV store. We utilize the CN-Infra framework, which provides access to pre-built plugins and packages needed for the backend, as well as an Agent which handles plugin lifecycle management. 
 
-**Windows**
+The architecture of the Osseus web application is shown below:
 
-- Proxy error: Restart docker & run again.
-- Build-agent or build error: Check line endings in build-agent or build are LF.
+![OsseusArchitecture](docs/img/Architecture.png)
 
-## Testing
+For a visual element, this is our frontend currently in development:
 
-_Testing info goes here_
+![Mockup](docs/img/Mockup.png)
 
 ## Contributing
 
-_Contributing info goes here_
+Contributions to Osseus are welcome. We use the standard pull request model. You can 
+either pick an open issue and assign it to yourself or open a new issue and discuss your feature.
+
+The tool used for managing third-party dependencies is [dep](https://github.com/golang/dep).
+After adding or updating a dependency in `Gopkg.toml` run `dep ensure` to download
+specified dependencies into the vendor folder.
