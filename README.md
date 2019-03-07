@@ -4,11 +4,7 @@
 
 Osseus is full-stack web application for generating configurable plugin templates to be used in a wide variety of cloud-based applications. The user is able to select from available plugins provided by [CN-Infra](https://github.com/ligato/cn-infra) and generate working Go code to be immediately usable in an application.
 
-## Prerequisites
-
-- [Docker](https://docs.docker.com/install/)
-
-## Installation
+## Development Installation
 
 ```bash
 # clone and go into directory
@@ -31,13 +27,21 @@ docker run --name frontend --privileged --rm frontend
 docker run --name backend --privileged --rm backend
 ```
 
+## Documentation
+
+Detailed documentation can be found [here](https://github.com/ligato/osseus/tree/master/docs).
+
 ## Architecture
 
-Osseus is built with ReactJS & SASS for the frontend, Go for the backend, and ETCD as our KV store. We utilize the CN-Infra framework, which provides access to pre-built plugins and packages needed for the backend, as well as an Agent which handles plugin lifecycle management. 
+Osseus is built utilizing the CN-Infra framework, which provides plugin/library support and a plugin lifecycle management platform. We have each part of our application broken up into a microservice of it's own: frontend, backend, and kv. By taking advantage of containerization with Docker, we are able to improve scalability, resiliency from failing components, maintainability, and many more aspects as opposed to monolithic design.
 
 The architecture of the Osseus web application is shown below:
 
-![OsseusArchitecture](docs/img/Architecture.png)
+<p align="center">
+    <img src="docs/img/Architecture.png" alt="Osseus Architecture">
+</p>
+
+Osseus uses React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with the CN-Infra platform, as well as utilizing gRPC to handle transport on the HTTP/2.0 layer, serialization, etc. between our REST API and KV. Lastly, ETCD allows for multiversion persistent key-value storage & is commonly used for data that is not frequently updated; there is also many plugins/libraries that support ETCD through the CN-Infra framework.
 
 ## Contributing
 
