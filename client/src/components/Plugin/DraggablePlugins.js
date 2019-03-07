@@ -1,6 +1,6 @@
 import React from 'react';
-import "../styles/App.css";
-import "../styles/Plugincard.css";
+import "../../styles/App.css";
+import "../../styles/Plugin/Plugincard.css";
 
 /*
 * This component represents the plugin cards. This compenent is
@@ -17,8 +17,11 @@ class DraggablePlugins extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    //This function is called onClick and it captures the event and 
-    //determines the id of the clicked plugin. 
+    /*
+    * This function captures the event and determines the id of the clicked plugin.
+    * This id is in turn sent up to PluginApp.js in order to tick the element at 
+    * the index of the id.
+    */
     handleClick = (e) => {
         e.preventDefault();
         this.props.handlerFromParent(e.currentTarget.dataset.id);
