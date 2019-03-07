@@ -7,7 +7,7 @@
   right: 0;
   left: 0;
   top: 50px;
-  opacity: 1.0;
+  opacity: 1;
 }
 
 .project-button-container {
@@ -20,14 +20,9 @@
   box-shadow: 0 5px 0 #3D9970;
   color: white;
   padding: 1em 4em;
-
-  
-  
   cursor: pointer;
   text-decoration: none;
   text-transform: uppercase;
-  
-  
 }
 
 a:hover {

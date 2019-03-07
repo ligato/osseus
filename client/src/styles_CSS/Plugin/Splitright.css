@@ -1,0 +1,20 @@
+.right {
+  height: 100%;
+  top: 50px;
+  right: 0;
+  background-color: #2E2E2E;
+  width: 82.5%;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+}
+
+.rectangle {
+  width: 80%;
+  height: 10%;
+  background: #3C3C3C;
+  padding: 2px 16px;
+  align-self: flex-end;
+  border-radius: 15px;
+  text-align: center;
+}
