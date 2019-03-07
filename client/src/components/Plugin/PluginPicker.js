@@ -1,6 +1,7 @@
 import React from 'react';
-import "../../styles/App.css";
-import "../../styles/Plugin/Splitleft.css";
+import PropTypes from 'prop-types'
+import "../../styles_CSS/App.css";
+import "../../styles_CSS/Plugin/Splitleft.css";
 
 /*
 * This component represents the left webpage division where the
@@ -10,29 +11,23 @@ import "../../styles/Plugin/Splitleft.css";
 * one-by-one.
 */
 const PluginPicker = (props) => {
-    /*
-    * The following code block will initlize an array of prop objects that are sent in from 
-    * PluginApp.js in order to manipulate which prop objects are rendered. In the case of 
-    * PluginPicker.js a sent in DraggablePlugin object is only rendered if the boolean
-    * element at the index of the ID of said object within sentInArray is equal to 0.
-    * 
-    * ie. sentInArray = {0, 1, 0, 1}  --> objects with id: 0, 2 will render in the PluginPicker.
-    */
-    var pluginArray = React.Children.toArray(props.children);
-    for(let i = props.sentInArray.length; i >= 0; i--) {
-        if(props.sentInArray[i] === 1) { pluginArray.splice(i,1); }
-    }
-    
-    return (
-        <div className="body">
-            <div>
-                <p className="pluginheadingtext">{props.sentInName}</p>
-                <div className="grid-container">
-                    {pluginArray}
-                </div>
-            </div>
-        </div>
-    );
+  var pluginArray = React.Children.toArray(props.children);
+  for(let i = props.sentInArrayObject.length; i >= 0; i--) {
+    if(props.sentInArrayObject[i] === 1) { pluginArray.splice(i,1); }
+  }
+ 
+  return (
+    <div className="body">
+      <p className="pluginheadingtext">{props.sentInCategory}</p>
+      <div className="grid-container">
+        {pluginArray}
+      </div>
+    </div>
+  );
 };
-
 export default PluginPicker;
+
+PluginPicker.propTypes = {
+  sentInCategory:      PropTypes.string.isRequired,
+  sentInArrayObject:   PropTypes.object.isRequired,
+}
