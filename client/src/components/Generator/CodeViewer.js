@@ -10,7 +10,7 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 const CodeViewer = (props) => {
   return (
     <div className="body">
-      <div className="split right">
+      <div className="split right-viewer">
         <p className="whitetextgen">Code Viewer</p>
       </div>
     </div>

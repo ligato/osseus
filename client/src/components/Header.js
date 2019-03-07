@@ -7,10 +7,9 @@ const arrows = "<--->";
 
 /*
 * This header contains two buttons in the form of links that each represent a route 
-* their own webpage. PluginApp page is the default (/) route and GeneratorApp is the 
-* route (/GeneratorApp).
-* Because of how this header is rendered in App.js, this compenent is rendered on both
-* pages.
+* their own webpage. Project selection is the default (/) route.
+* Because of how this header is rendered in App.js, this compenent is rendered on all
+* pages for site navigation.
 */
 const Header = () => {
   return (

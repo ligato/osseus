@@ -9,18 +9,27 @@ import "../../styles_CSS/Plugin/Splitright.css";
 */
 const PluginPalette = (props) => {
   var pluginArray = React.Children.toArray(props.children);
+  //This will loop through pluginArray splicing out elements based
+  //on if the element of sentInArrayObject at the index of the 
+  //current counter (i) is === 0. The net result is that if for example 
+  //sentInArrayObject = [0,1,1,0], plugins with the id attribute 1 and 2
+  //are rendered within PluginPalette and not PluginPicker.
   for(let i = props.sentInArrayObject.length; i >= 0; i--) {
     if(props.sentInArrayObject[i] === 0) { pluginArray.splice(i,1); }
   }
 
   return (
-    <div className="body">
-      <div className="split right">
-        <div className="centered">
-          {pluginArray}
+    <div>
+      <div className="body">
+        <div className="split right">
+          <div className="grid-container-right">
+            {pluginArray}
+          </div>
         </div>
+      </div>
+      <div className="split right-bottom">
         <div className="rectangle">
-          <p className="whitetext">Base Plugin</p>
+          <p className="whitetext">CN-infra</p>
         </div>
       </div>
     </div>

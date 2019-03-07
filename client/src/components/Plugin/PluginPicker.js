@@ -12,6 +12,11 @@ import "../../styles_CSS/Plugin/Splitleft.css";
 */
 const PluginPicker = (props) => {
   var pluginArray = React.Children.toArray(props.children);
+  //This will loop through pluginArray splicing out elements based
+  //on if the element of sentInArrayObject at the index of the 
+  //current counter (i) is === 1. The net result is that if for example 
+  //sentInArrayObject = [0,1,1,0], plugins with the id attribute 0 and 3
+  //are rendered within PluginPicker and not PluginPalette.
   for(let i = props.sentInArrayObject.length; i >= 0; i--) {
     if(props.sentInArrayObject[i] === 1) { pluginArray.splice(i,1); }
   }

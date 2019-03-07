@@ -21,15 +21,18 @@ class Dropdown extends React.Component {
 
   setFlip() { flip = true; }
 
+  //The logic of how this dropdown works is that the list is
+  //shown and hidden based on the click of the dropdown button.
+  //  
   render() {
     return (
       <div  className="dropdown" onLoad={this.setFlip} style = {{background:"red",width:"200px"}} >
 	      <div className="button" onClick={this.showDropdownMenu}> Saved Projects </div>
           { this.state.displayMenu ? (
             <ul>
-    		      <li><Link onClick={this.tellMe1} to="/PluginApp">Project 1</Link></li>
-    		      <li><Link onClick={this.tellMe2} to="/PluginApp">Project 2</Link></li>
-    		      <li><Link onClick={this.tellMe3} to="/PluginApp">Project 3</Link></li>
+    		      <li><Link to="/PluginApp">Project 1</Link></li>
+    		      <li><Link to="/PluginApp">Project 2</Link></li>
+    		      <li><Link to="/PluginApp">Project 3</Link></li>
             </ul>
             ) : ( null )
           }

@@ -4,6 +4,11 @@ import Dropdown from './Dropdown';
 import "../../styles_CSS/Project-Selection/ProjectSelection.css";
 import '../../styles_CSS/Project-Selection/Dropdown.css';
 
+/*
+* This defines the format of the project selection page. It
+* consists of a button for a new project and a dropdown displaying
+* all the projects that were saved by the user.
+*/
 class ProjectSelection extends React.Component {
   render() {
     return (
