@@ -1,10 +1,12 @@
 .right {
   height: 100%;
+  top: 50px;
   right: 0;
   background-color: #2E2E2E;
   width: 82.5%;
   display: flex;
   justify-content: center; 
+  opacity: 1.0;
 }
 
 .rectangle{
