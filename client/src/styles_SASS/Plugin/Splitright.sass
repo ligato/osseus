@@ -1,7 +1,7 @@
 @import ../_colors.sass
   
 .right 
-  height: 100%
+  height: 85%
   top: 50px
   right: 0
   background-color: $gray
@@ -10,13 +10,32 @@
   justify-content: center 
   opacity: 1.0
 
+.right-bottom 
+  display: flex
+  height: 15%
+  width: 82.5%
+  top: 85%
+  right: 0
+  background: $gray
+  justify-content: center 
+  display: flex
+  
+
 .rectangle
   width: 80%
-  height: 10%
+  height: 50%
   background: $light_gray_plugin
   padding: 2px 16px
   align-self: flex-end
   border-radius: 15px
   text-align: center
+
+.grid-container-right 
+  display: inline-grid
+  grid-gap: 5% 10%
+  grid-template-columns: repeat(auto-fill, 24%)
+  flex-wrap: wrap
+  background-color: $gray
+  padding: 20px
   
   

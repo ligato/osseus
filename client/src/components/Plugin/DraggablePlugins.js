@@ -16,6 +16,7 @@ class DraggablePlugins extends React.Component {
       index: null
     };
     this.handleClick = this.handleClick.bind(this);
+    console.log(this.props.image);
   }
 
   /*
@@ -27,12 +28,14 @@ class DraggablePlugins extends React.Component {
     e.preventDefault();
     this.props.handlerFromParent(e.currentTarget.dataset.id);
   }
-    
+  
   render() {
     return ( 
       <div className="cardbody" key={this.props.id} data-id={this.props.id} onClick={(this.handleClick)}>
-        <div className="card">
-          <img src="https://i.ibb.co/r6VkQ19/Wordpress-Movie-Theme-Free.png" alt="Avatar"></img>
+        <div>
+          <img 
+            src={window.location.origin + this.props.image}
+            alt="Avatar"></img>
           <div>
             <p className="cardtext">{this.props.pluginName}</p>
           </div>
@@ -45,6 +48,7 @@ export default DraggablePlugins;
 
 DraggablePlugins.propTypes = {
   pluginName:         PropTypes.string.isRequired,
+  image:              PropTypes.string.isRequired,
   handlerFromParent:  PropTypes.func.isRequired,
   id:                 PropTypes.number.isRequired,
 }
