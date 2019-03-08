@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../../styles/Project-Selection/Dropdown.css';
+import '../../styles_CSS/Project-Selection/Dropdown.css';
 
-var flip = true;
+let flip = true;
 
 class Dropdown extends React.Component {
   constructor(){
@@ -19,49 +19,25 @@ class Dropdown extends React.Component {
     this.setState({ displayMenu: !flip });
   }
 
-  setFlip() {
-    flip = true;
-  }
+  setFlip() { flip = true; }
 
-  tellMe1() {
-    console.log("project 1");
-    flip = true;
-  }
-
-  tellMe2() {
-    console.log("project 2");
-    flip = true;
-  }
-
-  tellMe3() {
-    console.log("project 3");
-    flip = true;
-  }
-  
+  //The logic of how this dropdown works is that the list is
+  //shown and hidden based on the click of the dropdown button.
+  //  
   render() {
     return (
-        <div  className="dropdown" onLoad={this.setFlip} style = {{background:"red",width:"200px"}} >
-	        <div className="button" onClick={this.showDropdownMenu}> Saved Projects </div>
-
+      <div  className="dropdown" onLoad={this.setFlip} style = {{background:"red",width:"200px"}} >
+	      <div className="button" onClick={this.showDropdownMenu}> Saved Projects </div>
           { this.state.displayMenu ? (
-          <ul>
-    		   <li><Link onClick={this.tellMe1} to="/PluginApp">Project 1</Link></li>
-    		   <li><Link onClick={this.tellMe2} to="/PluginApp">Project 2</Link></li>
-    		   <li><Link onClick={this.tellMe3} to="/PluginApp">Project 3</Link></li>
-          </ul>
-        ):
-        (
-          null
-        )
-        }
-
-	      </div>
-
+            <ul>
+    		      <li><Link to="/PluginApp">Project 1</Link></li>
+    		      <li><Link to="/PluginApp">Project 2</Link></li>
+    		      <li><Link to="/PluginApp">Project 3</Link></li>
+            </ul>
+            ) : ( null )
+          }
+      </div>
     );
   }
-
-
 }
-
-
 export default Dropdown;

@@ -1,6 +1,7 @@
 import React from 'react';
-import "../../styles/App.css";
-import "../../styles/Plugin/Plugincard.css";
+import PropTypes from 'prop-types'
+import "../../styles_CSS/App.css";
+import "../../styles_CSS/Plugin/Plugincard.css";
 
 /*
 * This component represents the plugin cards. This compenent is
@@ -9,36 +10,45 @@ import "../../styles/Plugin/Plugincard.css";
 * App.js
 */ 
 class DraggablePlugins extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          index: null
-        };
-        this.handleClick = this.handleClick.bind(this);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      index: null
+    };
+    this.handleClick = this.handleClick.bind(this);
+    console.log(this.props.image);
+  }
 
-    /*
-    * This function captures the event and determines the id of the clicked plugin.
-    * This id is in turn sent up to PluginApp.js in order to tick the element at 
-    * the index of the id.
-    */
-    handleClick = (e) => {
-        e.preventDefault();
-        this.props.handlerFromParent(e.currentTarget.dataset.id);
-    }
-    
-    render() {
-        return ( 
-            <div className="cardbody" key={this.props.id} data-id={this.props.id} onClick={(this.handleClick)}>
-                <div className="card">
-                    <img src="https://i.ibb.co/r6VkQ19/Wordpress-Movie-Theme-Free.png" alt="Avatar"></img>
-                    <div>
-                        <p className="cardtext">{this.props.pluginName}</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+  /*
+  * This function captures the event and determines the id of the clicked plugin.
+  * This id is in turn sent up to PluginApp.js in order to tick the element at 
+  * the index of the id.
+  */
+  handleClick = (e) => {
+    e.preventDefault();
+    this.props.handlerFromParent(e.currentTarget.dataset.id);
+  }
+  
+  render() {
+    return ( 
+      <div className="cardbody" key={this.props.id} data-id={this.props.id} onClick={(this.handleClick)}>
+        <div>
+          <img 
+            src={window.location.origin + this.props.image}
+            alt="Avatar"></img>
+          <div>
+            <p className="cardtext">{this.props.pluginName}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
-
 export default DraggablePlugins;
+
+DraggablePlugins.propTypes = {
+  pluginName:         PropTypes.string.isRequired,
+  image:              PropTypes.string.isRequired,
+  handlerFromParent:  PropTypes.func.isRequired,
+  id:                 PropTypes.number.isRequired,
+}

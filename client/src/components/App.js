@@ -6,38 +6,25 @@ import ProjectSelection from './Project-Selection/ProjectSelection';
 import { BrowserRouter, Route} from 'react-router-dom';
 
 /*
-* Structure:  
-*                                  App.js                ..................... (parent)
-*                             /               \
-*                          /                     \
-*                       /             |             \
-*              PlugApp.js         Header.js          GenApp.js      .......... (children)
-*                /   \                                 /   \
-*              /       \                             /       \
-*            /           \                         /           \
-*     PPicker.js       PPalette.js        CStructure.js    CViewer.js    ..... (sub-child)
-*         |                 |                                     
-*         |                 |
-*         |                 |
-*     DPlugins.js      DPlugins.js                                          .. (sub-sub-child)
-*/   
-
+* This defines the three routes from the web app, currently there
+* is the default page (project selection), the plugin app and
+* the generator app.
+*/
 class App extends React.Component { 
-
-    render() {
-        return (
-            <div>
-                <BrowserRouter>
-                    <div>
-                        <Header />
-                        <Route path="/" exact component={ProjectSelection} />
-                        <Route path="/PluginApp" exact component={PluginApp} />
-                        <Route path="/GeneratorApp" exact component={GeneratorApp} />
-                    </div>
-                </BrowserRouter>  
-            </div>
-        );
-    }
+  render() {
+    return (
+      <div>
+        <BrowserRouter>
+          <div>
+            <Header/>
+            <Route path="/" exact component={ProjectSelection} />
+            <Route path="/PluginApp" exact component={PluginApp} />
+            <Route path="/GeneratorApp" exact component={GeneratorApp} />
+          </div>
+        </BrowserRouter>  
+      </div>
+    );
+  }
 }
 export default App;
 
