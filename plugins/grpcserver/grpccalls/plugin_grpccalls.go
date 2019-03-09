@@ -20,22 +20,12 @@ import (
 
 // CreatePlugin creates a new plugin in etcd
 func (b *PluginHandler) CreatePlugin(val *model.Plugin) error {
-	err := b.broker.Put(val.GetName(), val)
-	if err != nil {
-		b.log.Errorf("Could not create plugin")
-		return err
-	}
-
+	b.log.Info("Create plugin needs to be implemented")
 	return nil
 }
 
 // DeletePlugin deletes a plugin in etcd
 func (b *PluginHandler) DeletePlugin(key string) error {
-	existed, err := b.broker.Delete(key)
-	if err != nil {
-		b.log.Errorf("Could not delete plugin")
-	}
-	b.log.Infof("Plugin existed: %v", existed)
-
+	b.log.Info("Delete plugin needs to be implemented")
 	return nil
 }

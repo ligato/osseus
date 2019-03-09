@@ -15,22 +15,21 @@
 package grpcserver
 
 import (
+	"context"
 	"flag"
 	"fmt"
-
-	"github.com/ligato/cn-infra/datasync/kvdbsync"
-
-	"github.com/ligato/cn-infra/datasync"
-
-	"github.com/ligato/cn-infra/db/keyval"
-
-	"github.com/ligato/cn-infra/rpc/grpc"
+	"strings"
+	"sync"
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/grpccalls"
+	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/ligato/cn-infra/datasync"
+	"github.com/ligato/cn-infra/datasync/kvdbsync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/cn-infra/rpc/grpc"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
@@ -73,7 +72,12 @@ type Plugin struct {
 	// channels & watcher
 	changeChannel chan datasync.ChangeEvent
 	resyncChannel chan datasync.ResyncEvent
-	watchDataReg  datasync.WatchRegistration
+	ctx           context.Context
+	cancel        context.CancelFunc
+	wg            sync.WaitGroup
+
+	// watcher registration
+	watchDataReg datasync.WatchRegistration
 
 	// plugin handlers
 	pluginHandler grpccalls.PluginAPI
@@ -87,59 +91,106 @@ type Deps struct {
 	infra.PluginDeps
 	Grpc         grpc.Server
 	Scheduler    *kvscheduler.Scheduler
-	KVStore      keyval.KvProtoPlugin
 	ETCDDataSync *kvdbsync.Plugin
 	Watcher      datasync.KeyValProtoWatcher
+	Publisher    datasync.KeyProtoValWriter
 }
 
 // Init initializes the Grpc Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
-	// Check KVStore status
-	if p.KVStore.Disabled() {
-		return fmt.Errorf("KV store is disabled")
-	}
-
 	// Setup plugin fields.
 	p.resyncChannel = make(chan datasync.ResyncEvent)
 	p.changeChannel = make(chan datasync.ChangeEvent)
+	p.ctx, p.cancel = context.WithCancel(context.Background())
 
-	// Setup watcher
-	err := p.initWatcher()
-	if err != nil {
-		return fmt.Errorf("Watcher is not configured")
-	}
+	// Init plugin handler
+	p.pluginHandler = grpccalls.NewPluginHandler(p.Log)
 
-	// Declare broker
-	broker := p.KVStore.NewBroker(keyPrefix)
-
-	// init handlers
-	p.pluginHandler = grpccalls.NewPluginHandler(p.Log, broker)
-
-	// init & register descriptor
-	p.pluginDescriptor = descriptor.NewPluginDescriptor(broker, p.Log, p.pluginHandler)
+	// Init & register plugin descriptor
+	p.pluginDescriptor = descriptor.NewPluginDescriptor(p.Log, p.pluginHandler)
 	pluginDescriptor := adapter.NewPluginDescriptor(p.pluginDescriptor.GetDescriptor())
-	err = p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
+	err := p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
 	p.Log.Info("Descriptor registered")
 
+	// Start watching for incoming requests
+	err = p.startWatcher()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-// initWatcher subscribes for data change and data resync events.
-func (p *Plugin) initWatcher() (err error) {
-	p.Log.Infof("Prefix: %v", keyPrefix)
+// Handle asynchronous requests coming through and call respective
+// CRUD operation upon parsing the message
+func (p *Plugin) consumer() {
+	p.Log.Info("Watcher started")
+	for {
+		select {
+		case req := <-p.changeChannel:
+			// Parse data change
+			chng := req.GetChanges()
+			for _, val := range chng {
+				// Check key matches our prefix
+				key := val.GetKey()
+				if strings.HasPrefix(key, keyPrefix) {
+					txn := p.Scheduler.StartNBTransaction()
 
-	// Start etcd watcher
-	p.watchDataReg, err = p.Watcher.Watch("Grpcserver plugin", p.changeChannel, p.resyncChannel, keyPrefix)
+					switch val.GetChangeType() {
+					// Handle put op to etcd
+					case datasync.Put:
+						plugin := &model.Plugin{}
+						p.Log.Infof("Creating/Updating ", key)
+						// Get value & stage txn
+						err := val.GetValue(plugin)
+						if err != nil {
+							p.Log.Error("Could not retrieve value")
+							return
+						}
+						txn.SetValue(key, plugin)
+					// Handle delete op to etcd
+					case datasync.Delete:
+						p.Log.Infof("Deleting ", key)
+						// Stage deletion in txn
+						txn.SetValue(key, nil)
+					}
+
+					// Commit transaction
+					seq, err := txn.Commit(p.ctx)
+					if err != nil {
+						p.Log.Errorf("Transaction commit invalid: %v", err)
+						return
+					}
+					p.Log.Infof("Sequence #: %v", seq)
+				}
+			}
+			// Done signal found, stop consumer
+		case <-p.ctx.Done():
+			p.Log.Debugf("Stopped watching for incoming events")
+			return
+		}
+	}
+}
+
+// Starts watcher on a given channel to monitor for incoming requests
+func (p *Plugin) startWatcher() error {
+	// Subscribe etcd watcher
+	p.Log.Info("Starting ETCD Watcher")
+	reg, err := p.Watcher.Watch("Grpcserver plugin", p.changeChannel, p.resyncChannel, keyPrefix)
 	if err != nil {
 		p.Log.Infof("Error: %v", err)
 		return err
 	}
-	p.Log.Info("Watcher working on etcd")
+	p.watchDataReg = reg
+	p.Log.Info("Watcher subscribed to etcd")
+
+	p.wg.Add(1)
+	go p.consumer()
 
 	return nil
 }
@@ -149,7 +200,10 @@ func (p *Plugin) AfterInit() (err error) {
 	return nil
 }
 
-// Close is NOOP.
+// Close stops all associated go routines & channels
 func (p *Plugin) Close() error {
+	p.cancel()
+	close(p.changeChannel)
+	close(p.resyncChannel)
 	return nil
 }

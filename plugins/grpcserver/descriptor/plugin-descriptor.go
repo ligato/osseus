@@ -15,13 +15,11 @@
 package descriptor
 
 import (
-	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/logging"
 
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/grpccalls"
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
-	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 const (
@@ -32,16 +30,14 @@ const (
 // PluginDescriptor is our descriptor
 type PluginDescriptor struct {
 	log      logging.Logger
-	broker   keyval.ProtoBroker
 	handlers grpccalls.PluginAPI
 }
 
 // NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(broker keyval.ProtoBroker, log logging.PluginLogger, handlers grpccalls.PluginAPI) *PluginDescriptor {
+func NewPluginDescriptor(log logging.PluginLogger, handlers grpccalls.PluginAPI) *PluginDescriptor {
 	// Set plugin descriptor init values
 	return &PluginDescriptor{
 		log:      log.NewLogger("plugin-descriptor"),
-		broker:   broker,
 		handlers: handlers,
 	}
 }
@@ -49,17 +45,14 @@ func NewPluginDescriptor(broker keyval.ProtoBroker, log logging.PluginLogger, ha
 // GetDescriptor returns descriptor suitable for registration (via adapter) with the KVScheduler.
 func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
 	return &adapter.PluginDescriptor{
-		Name:                 PluginDescriptorName,
-		NBKeyPrefix:          model.ModelPlugin.KeyPrefix(),
-		ValueTypeName:        model.ModelPlugin.ProtoName(),
-		KeySelector:          model.ModelPlugin.IsKeyValid,
-		KeyLabel:             model.ModelPlugin.StripKeyPrefix,
-		Create:               d.Create,
-		Delete:               d.Delete,
-		UpdateWithRecreate:   d.UpdateWithRecreate,
-		Retrieve:             d.Retrieve,
-		Dependencies:         d.Dependencies,
-		RetrieveDependencies: []string{},
+		Name:               PluginDescriptorName,
+		NBKeyPrefix:        model.ModelPlugin.KeyPrefix(),
+		ValueTypeName:      model.ModelPlugin.ProtoName(),
+		KeySelector:        model.ModelPlugin.IsKeyValid,
+		KeyLabel:           model.ModelPlugin.StripKeyPrefix,
+		Create:             d.Create,
+		Delete:             d.Delete,
+		UpdateWithRecreate: d.UpdateWithRecreate,
 	}
 }
 
@@ -86,14 +79,4 @@ func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata inte
 // UpdateWithRecreate returns true if value update requires full re-creation.
 func (d *PluginDescriptor) UpdateWithRecreate(key string, old, new *model.Plugin, metadata interface{}) bool {
 	return true
-}
-
-// Retrieve retrieves values from SB.
-func (d *PluginDescriptor) Retrieve(correlate []adapter.PluginKVWithMetadata) (retrieved []adapter.PluginKVWithMetadata, err error) {
-	return retrieved, nil
-}
-
-// Dependencies lists dependencies of the given value.
-func (d *PluginDescriptor) Dependencies(key string, value *model.Plugin) (deps []kvs.Dependency) {
-	return deps
 }

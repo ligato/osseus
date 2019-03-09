@@ -2,9 +2,7 @@ package grpccalls
 
 import (
 	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
-	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/logging"
-	"github.com/ligato/cn-infra/logging/logrus"
 )
 
 // PluginAPI provides methods for CRUD operations on etcd
@@ -22,17 +20,12 @@ type PluginWrite interface {
 
 // PluginHandler is accessor to etcd related grpccall methods
 type PluginHandler struct {
-	log    logging.Logger
-	broker keyval.ProtoBroker
+	log logging.Logger
 }
 
 // NewPluginHandler creates new instance of PluginHandler
-func NewPluginHandler(log logging.Logger, broker keyval.ProtoBroker) *PluginHandler {
-	if log == nil {
-		log = logrus.NewLogger("plugin-handler")
-	}
+func NewPluginHandler(log logging.Logger) *PluginHandler {
 	return &PluginHandler{
-		log:    log,
-		broker: broker,
+		log: log,
 	}
 }
