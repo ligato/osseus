@@ -34,7 +34,8 @@ func (p *Plugin) registerHandlersHere() {
 	})
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler, POST)
 }
-// registerHTTPHandler is common register method for all handlers
+// registerHTTPHandler is common register method for all handlers without JSON body input
+
 func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interface{}, error)) {
 	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
@@ -52,6 +53,8 @@ func (p *Plugin) registerHTTPHandler(key string, method string, f func() (interf
 	}
 	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
+
+// registerHTTPBodyHandler is a common method that registers Http handlers that include a JSON body as input
 
 func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
