@@ -1,8 +1,6 @@
-@import url(http://fonts.googleapis.com/css?family=Lato:400,900); 
-
+@import url(http://fonts.googleapis.com/css?family=Lato:400,900);
 .body {
-  font-family: 'Lato',verdana, sans-serif;
-}
+  font-family: "Lato", verdana, sans-serif; }
 
 .split {
   width: 17.5%;
@@ -12,29 +10,20 @@
   overflow-x: hidden;
   overflow-y: hidden;
   padding-top: 10px;
-  background-color: #4AC68E;
-}
+  background-color: #4AC68E; }
 
 .centered {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
-}
+  text-align: center; }
 
 .whitetext {
   color: white;
   text-align: center;
   display: flex;
-  flex-direction: column;          
-  justify-content: space-between; 
-  opacity: 1.0;
-  font-size: 30px;
-}
-
-
-
-
-
-
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 1;
+  font-size: 30px; }
