@@ -15,9 +15,14 @@
 package restapi
 
 import (
+	"osseus/plugins/restapi"
 	"testing"
 )
 
 func TestGetServer(t *testing.T){
-
+	api := restapi.NewPlugin()//instantiate a rest plugin
+	resp, err := api.GetServerStatus() //call getserverstatus
+	if err != nil || resp == nil{
+		t.Errorf("Expected response from server, got error %s instead", err)
+	}
 }
