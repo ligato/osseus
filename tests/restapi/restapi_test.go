@@ -19,10 +19,24 @@ import (
 	"testing"
 )
 
+// tests if server start endpoint returns a message response
 func TestGetServer(t *testing.T){
-	api := restapi.NewPlugin()//instantiate a rest plugin
-	resp, err := api.GetServerStatus() //call getserverstatus
+	api := restapi.NewPlugin()
+	resp, err := api.GetServerStatus()
 	if err != nil || resp == nil{
 		t.Errorf("Expected response from server, got error %s instead", err)
 	}
+	t.Log("Response from server:", resp)
 }
+
+// tests if server post plugin endpoint is reached
+// todo: pass in ID in http body once endpoint can store data
+func TestPostPluginInfo(t *testing.T){
+	api := restapi.NewPlugin()
+	resp, err := api.SavePlugin()
+	if err != nil || resp == nil{
+		t.Errorf("Expected response from server, got error %s instead", err)
+	}
+	t.Log("Response from server:", resp)
+}
+
