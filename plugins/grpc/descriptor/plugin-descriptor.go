@@ -17,9 +17,9 @@ package descriptor
 import (
 	"github.com/ligato/cn-infra/logging"
 
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/grpccalls"
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/anthonydevelops/osseus/plugins/grpc/descriptor/adapter"
+	"github.com/anthonydevelops/osseus/plugins/grpc/grpccalls"
+	"github.com/anthonydevelops/osseus/plugins/grpc/model"
 )
 
 const (

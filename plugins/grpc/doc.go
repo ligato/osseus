@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package grpcserver implements the GRPC server through an agent, which can
+// Package grpc implements the GRPC server through an agent, which can
 // interact with ETCD & perform CRUD operations using protocol buffers.
-package grpcserver
+package grpc

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grpcserver
+package grpc
 
 import (
 	"github.com/ligato/cn-infra/datasync"
@@ -31,9 +31,10 @@ var DefaultPlugin = *NewPlugin()
 func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
-	p.SetName("grpcserver")
-	p.Grpc = &grpc.DefaultPlugin
+	p.SetName("grpc-plugin")
+	p.KeyPrefix = "grpc"
 	p.Scheduler = &kvscheduler.DefaultPlugin
+	p.Grpc = &grpc.DefaultPlugin
 	p.ETCDDataSync = kvdbsync.NewPlugin(kvdbsync.UseKV(&etcd.DefaultPlugin))
 	writers := datasync.KVProtoWriters{
 		p.ETCDDataSync,

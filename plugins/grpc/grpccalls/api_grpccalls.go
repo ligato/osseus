@@ -1,7 +1,8 @@
 package grpccalls
 
 import (
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/anthonydevelops/osseus/plugins/grpc/model"
+	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/logging"
 )
 
@@ -20,12 +21,14 @@ type PluginWrite interface {
 
 // PluginHandler is accessor to etcd related grpccall methods
 type PluginHandler struct {
-	log logging.Logger
+	Log  logging.Logger
+	resp chan datasync.ChangeEvent
 }
 
 // NewPluginHandler creates new instance of PluginHandler
-func NewPluginHandler(log logging.Logger) *PluginHandler {
+func NewPluginHandler(Log logging.Logger, resp chan datasync.ChangeEvent) *PluginHandler {
 	return &PluginHandler{
-		log: log,
+		Log:  Log,
+		resp: resp,
 	}
 }

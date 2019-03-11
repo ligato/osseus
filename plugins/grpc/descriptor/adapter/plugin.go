@@ -3,9 +3,9 @@
 package adapter
 
 import (
+	"github.com/anthonydevelops/osseus/plugins/grpc/model"
 	"github.com/gogo/protobuf/proto"
 	. "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
 )
 
 ////////// type-safe key-value pair with metadata //////////

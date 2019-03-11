@@ -17,7 +17,7 @@ package main
 import (
 	"os"
 
-	"github.com/anthonydevelops/osseus/plugins/grpcserver"
+	"github.com/anthonydevelops/osseus/plugins/grpc"
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/logging/logmanager"
@@ -27,7 +27,7 @@ import (
 // OsseusAgent is a struct holding internal data for the StrongSwan VPP Agent
 type OsseusAgent struct {
 	LogManager *logmanager.Plugin
-	Grpc       *grpcserver.Plugin
+	Grpc       *grpc.Plugin
 }
 
 // New creates new OsseusAgent instance.
@@ -35,7 +35,7 @@ func New() *OsseusAgent {
 
 	return &OsseusAgent{
 		LogManager: &logmanager.DefaultPlugin,
-		Grpc:       &grpcserver.DefaultPlugin,
+		Grpc:       &grpc.DefaultPlugin,
 	}
 
 }
@@ -74,4 +74,5 @@ func main() {
 func init() {
 	log.DefaultLogger().SetOutput(os.Stdout)
 	log.DefaultLogger().SetLevel(logging.DebugLevel)
+
 }

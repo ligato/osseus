@@ -15,17 +15,15 @@
 package grpccalls
 
 import (
-	"github.com/anthonydevelops/osseus/plugins/grpcserver/model"
+	"github.com/anthonydevelops/osseus/plugins/grpc/model"
 )
 
 // CreatePlugin creates a new plugin in etcd
 func (b *PluginHandler) CreatePlugin(val *model.Plugin) error {
-	b.log.Info("Create plugin needs to be implemented")
 	return nil
 }
 
 // DeletePlugin deletes a plugin in etcd
 func (b *PluginHandler) DeletePlugin(key string) error {
-	b.log.Info("Delete plugin needs to be implemented")
 	return nil
 }
