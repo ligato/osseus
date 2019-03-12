@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Cisco and/or its affiliates.
+// Copyright (c) 2017 Cisco and/or its affiliates.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package grpccalls
-
-import (
-	"github.com/anthonydevelops/osseus/plugins/grpc/model"
-)
-
-// CreatePlugin creates a new plugin in etcd
-func (b *PluginHandler) CreatePlugin(val *model.Plugin) error {
-	return nil
-}
-
-// DeletePlugin deletes a plugin in etcd
-func (b *PluginHandler) DeletePlugin(key string) error {
-	return nil
-}
+// Package generator implements a KVScheduler, along with a watcher and publisher
+// to generate template code upon kv store key change.
+package generator

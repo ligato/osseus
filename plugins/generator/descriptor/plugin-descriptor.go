@@ -17,9 +17,9 @@ package descriptor
 import (
 	"github.com/ligato/cn-infra/logging"
 
-	"github.com/anthonydevelops/osseus/plugins/grpc/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/grpc/grpccalls"
-	"github.com/anthonydevelops/osseus/plugins/grpc/model"
+	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
+	"github.com/anthonydevelops/osseus/plugins/generator/gencalls"
+	"github.com/anthonydevelops/osseus/plugins/generator/model"
 )
 
 const (
@@ -30,11 +30,11 @@ const (
 // PluginDescriptor is our descriptor
 type PluginDescriptor struct {
 	log      logging.Logger
-	handlers grpccalls.PluginAPI
+	handlers gencalls.PluginAPI
 }
 
 // NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(log logging.PluginLogger, handlers grpccalls.PluginAPI) *PluginDescriptor {
+func NewPluginDescriptor(log logging.PluginLogger, handlers gencalls.PluginAPI) *PluginDescriptor {
 	// Set plugin descriptor init values
 	return &PluginDescriptor{
 		log:      log.NewLogger("plugin-descriptor"),
@@ -58,20 +58,20 @@ func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
 
 // Create creates new value.
 func (d *PluginDescriptor) Create(key string, value *model.Plugin) (metadata interface{}, err error) {
-	err = d.handlers.CreatePlugin(value)
-	if err != nil {
-		return nil, err
-	}
+	// err = d.handlers.CreatePlugin(value)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return nil, nil
 }
 
 // Delete removes an existing value.
 func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata interface{}) error {
-	err := d.handlers.DeletePlugin(value.GetName())
-	if err != nil {
-		return err
-	}
+	// err := d.handlers.DeletePlugin(value.GetName())
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

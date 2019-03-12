@@ -1,7 +1,7 @@
-package grpccalls
+package gencalls
 
 import (
-	"github.com/anthonydevelops/osseus/plugins/grpc/model"
+	"github.com/anthonydevelops/osseus/plugins/generator/model"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/logging"
 )
@@ -19,7 +19,7 @@ type PluginWrite interface {
 	DeletePlugin(key string) error
 }
 
-// PluginHandler is accessor to etcd related grpccall methods
+// PluginHandler is accessor to etcd related gencalls methods
 type PluginHandler struct {
 	Log  logging.Logger
 	resp chan datasync.ChangeEvent

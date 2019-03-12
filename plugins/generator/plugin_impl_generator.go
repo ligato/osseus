@@ -15,29 +15,27 @@
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/plugin.proto
 //go:generate descriptor-adapter --descriptor-name Plugin --value-type *model.Plugin --import "model" --output-dir "descriptor"
 
-package grpc
+package generator
 
 import (
 	"context"
 	"strings"
 	"sync"
 
-	"github.com/anthonydevelops/osseus/plugins/grpc/descriptor"
-	"github.com/anthonydevelops/osseus/plugins/grpc/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/grpc/grpccalls"
-	"github.com/anthonydevelops/osseus/plugins/grpc/model"
+	"github.com/anthonydevelops/osseus/plugins/generator/descriptor"
+	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
+	"github.com/anthonydevelops/osseus/plugins/generator/gencalls"
+	"github.com/anthonydevelops/osseus/plugins/generator/model"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/datasync/kvdbsync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
-	"github.com/ligato/cn-infra/rpc/grpc"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
-// Plugin holds the internal data structures of the Grpc Plugin
+// Plugin holds the internal data structures of the Generator Plugin
 type Plugin struct {
 	Deps
-	KeyPrefix string
 
 	// channels & watcher
 	changeChannel chan datasync.ChangeEvent
@@ -50,7 +48,7 @@ type Plugin struct {
 	watchDataReg datasync.WatchRegistration
 
 	// plugin handlers
-	pluginHandler grpccalls.PluginAPI
+	pluginHandler gencalls.PluginAPI
 
 	// descriptors
 	pluginDescriptor *descriptor.PluginDescriptor
@@ -60,13 +58,12 @@ type Plugin struct {
 type Deps struct {
 	infra.PluginDeps
 	Scheduler    *kvscheduler.Scheduler
-	Grpc         grpc.Server
 	ETCDDataSync *kvdbsync.Plugin
 	Watcher      datasync.KeyValProtoWatcher
 	Publisher    datasync.KeyProtoValWriter
 }
 
-// Init initializes the Grpc Plugin
+// Init initializes the Generator Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
@@ -76,7 +73,7 @@ func (p *Plugin) Init() error {
 	p.ctx, p.cancel = context.WithCancel(context.Background())
 
 	// Init plugin handler
-	p.pluginHandler = grpccalls.NewPluginHandler(p.Log, p.changeChannel)
+	p.pluginHandler = gencalls.NewPluginHandler(p.Log, p.changeChannel)
 
 	// Init & register plugin descriptor
 	p.pluginDescriptor = descriptor.NewPluginDescriptor(p.Log, p.pluginHandler)
@@ -88,7 +85,7 @@ func (p *Plugin) Init() error {
 	p.Log.Info("Descriptor registered")
 
 	// Start watching for incoming requests
-	err = p.startWatcher()
+	err = p.startWatcher(pluginDescriptor.NBKeyPrefix)
 	if err != nil {
 		return err
 	}
@@ -110,10 +107,10 @@ func (p *Plugin) Close() error {
 }
 
 // Starts watcher on a given channel to monitor for incoming requests
-func (p *Plugin) startWatcher() error {
+func (p *Plugin) startWatcher(prefix string) error {
 	// Subscribe etcd watcher
 	p.Log.Info("Starting ETCD Watcher")
-	reg, err := p.Watcher.Watch("Grpcserver plugin", p.changeChannel, p.resyncChannel, p.KeyPrefix)
+	reg, err := p.Watcher.Watch("Generator plugin", p.changeChannel, p.resyncChannel, prefix)
 	if err != nil {
 		p.Log.Infof("Error: %v", err)
 		return err
@@ -122,14 +119,16 @@ func (p *Plugin) startWatcher() error {
 	p.Log.Info("Watcher subscribed to Etcd")
 
 	p.wg.Add(1)
-	go p.consumer()
+	go p.consumer(prefix)
 
 	return nil
 }
 
 // Handle asynchronous requests coming through and call respective
-// CRUD operation upon parsing the message
-func (p *Plugin) consumer() {
+// operation upon parsing the message
+func (p *Plugin) consumer(prefix string) {
+	defer p.wg.Done()
+
 	p.Log.Info("Watcher started")
 	for {
 		select {
@@ -139,43 +138,24 @@ func (p *Plugin) consumer() {
 			for _, val := range chng {
 				// Check key matches our prefix
 				key := val.GetKey()
-				if strings.HasPrefix(key, p.KeyPrefix) {
-					txn := p.Scheduler.StartNBTransaction()
-					// Handle request types
-					switch val.GetChangeType() {
-					// Handle put op to etcd
-					case datasync.Put:
-						plugin := &model.Plugin{}
-						p.Log.Infof("Creating/Updating ", key)
-						// Get value & stage txn
-						err := val.GetValue(plugin)
-						if err != nil {
-							p.Log.Error("Could not retrieve value")
-							return
-						}
-						txn.SetValue(key, plugin)
-					// Handle delete op to etcd
-					case datasync.Delete:
-						p.Log.Infof("Deleting ", key)
-						// Stage deletion in txn
-						txn.SetValue(key, nil)
-					// Handle invalid op to etcd
-					case datasync.InvalidOp:
-						p.Log.Error("Invalid operation")
-						return
-					}
-					// Commit transaction
-					seq, err := txn.Commit(p.ctx)
+				if strings.HasPrefix(key, prefix) {
+					// Log key
+					p.Log.Infof("Key change: ", key)
+					plugin := &model.Plugin{}
+					err := val.GetValue(plugin)
 					if err != nil {
-						p.Log.Errorf("Transaction commit invalid: %v", err)
+						p.Log.Error("Could not retrieve value")
 						return
 					}
-					p.Log.Infof("Sequence #: %v", seq)
+					// Log value
+					p.Log.Infof("Current value: ", plugin.GetTemplate())
+				} else {
+					p.Log.Warnf("Key (%v) does not match Prefix (%v)", key, prefix)
 				}
 			}
 			// Done signal found, stop consumer
 		case <-p.ctx.Done():
-			p.Log.Debugf("Stopped watching for incoming events")
+			p.Log.Debugf("Stopped watching for changes")
 			return
 		}
 	}

@@ -19,14 +19,14 @@ import (
 )
 
 // ModuleName is the module name used for all the models of this plugin.
-const ModuleName = "plugin"
+const ModuleName = "generator"
 
 var (
 	// ModelPlugin defines the registered model
 	ModelPlugin = models.Register(&Plugin{}, models.Spec{
 		Module:  ModuleName,
 		Version: "v1",
-		Type:    "plugin-value",
+		Type:    "plugin",
 	})
 )
 

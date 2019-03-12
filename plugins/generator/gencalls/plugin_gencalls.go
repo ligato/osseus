@@ -1,4 +1,4 @@
-// Copyright (c) 2017 Cisco and/or its affiliates.
+// Copyright (c) 2019 Cisco and/or its affiliates.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,8 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// Package grpccalls contains api wrappers & handlers to be used within the
-// descriptor package.
 
-package grpccalls
+package gencalls
+
+import (
+	"github.com/anthonydevelops/osseus/plugins/generator/model"
+)
+
+// CreatePlugin creates a new plugin in etcd
+func (b *PluginHandler) CreatePlugin(val *model.Plugin) error {
+	return nil
+}
+
+// DeletePlugin deletes a plugin in etcd
+func (b *PluginHandler) DeletePlugin(key string) error {
+	return nil
+}
