@@ -22,34 +22,34 @@ import (
 )
 
 const (
-	// PluginDescriptorName is the name of the descriptor plugin
-	PluginDescriptorName = "plugin"
+	// TemplateDescriptorName is the name of the descriptor plugin
+	TemplateDescriptorName = "template"
 )
 
-// PluginDescriptor is our descriptor
-type PluginDescriptor struct {
+// TemplateDescriptor is our descriptor
+type TemplateDescriptor struct {
 	log logging.Logger
 }
 
-// NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(log logging.PluginLogger) *PluginDescriptor {
+// NewTemplateDescriptor creates a new instance of the descriptor.
+func NewTemplateDescriptor(log logging.PluginLogger) *TemplateDescriptor {
 	// Set plugin descriptor init values
-	return &PluginDescriptor{
-		log: log.NewLogger("plugin-descriptor"),
+	return &TemplateDescriptor{
+		log: log.NewLogger("template-descriptor"),
 	}
 }
 
 // GetDescriptor returns descriptor suitable for registration (via adapter) with the KVScheduler.
-func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
-	return &adapter.PluginDescriptor{
-		Name:          PluginDescriptorName,
-		NBKeyPrefix:   model.ModelPlugin.KeyPrefix(),
-		ValueTypeName: model.ModelPlugin.ProtoName(),
-		KeySelector:   model.ModelPlugin.IsKeyValid,
-		KeyLabel:      model.ModelPlugin.StripKeyPrefix,
+func (d *TemplateDescriptor) GetDescriptor() *adapter.TemplateDescriptor {
+	return &adapter.TemplateDescriptor{
+		Name:          TemplateDescriptorName,
+		NBKeyPrefix:   model.ModelTemplate.KeyPrefix(),
+		ValueTypeName: model.ModelTemplate.ProtoName(),
+		KeySelector:   model.ModelTemplate.IsKeyValid,
+		KeyLabel:      model.ModelTemplate.StripKeyPrefix,
 		Create:        d.Create,
 		Delete:        d.Delete,
-		UpdateWithRecreate: func(key string, oldValue, newValue *model.Plugin, metadata interface{}) bool {
+		UpdateWithRecreate: func(key string, oldValue, newValue *model.Template, metadata interface{}) bool {
 			// Modify always performed via re-creation
 			return true
 		},
@@ -57,11 +57,11 @@ func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
 }
 
 // Create creates new value.
-func (d *PluginDescriptor) Create(key string, value *model.Plugin) (metadata interface{}, err error) {
+func (d *TemplateDescriptor) Create(key string, value *model.Template) (metadata interface{}, err error) {
 	return nil, nil
 }
 
 // Delete removes an existing value.
-func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata interface{}) error {
+func (d *TemplateDescriptor) Delete(key string, value *model.Template, metadata interface{}) error {
 	return nil
 }

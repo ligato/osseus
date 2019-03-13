@@ -4,7 +4,7 @@ The `Generator Plugin` facilitates watching ETCD for new changes/events, capturi
 
 1. Sets a Watcher to monitor ETCD for new changes
 2. Captures new changes if keyprefix is a match and begins code generation
-3. Sends code generation back to etcd
+3. Sends code generation back to etcd under new prefix
 
 <p align="center">
     <img src="../../docs/img/Generator.jpg" alt="Generator state flow">

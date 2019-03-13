@@ -27,13 +27,27 @@ var (
 		Module:  ModuleName,
 		Version: "v1",
 		Type:    "plugin",
-	})
+	}, models.WithNameTemplate("{{.Name}}"))
+	// ModelTemplate defines the registered model
+	ModelTemplate = models.Register(&Template{}, models.Spec{
+		Module:  ModuleName,
+		Version: "v1",
+		Type:    "template",
+	}, models.WithNameTemplate("{{.Name}}"))
 )
 
 // PluginKey returns the key used in NB DB to store the configuration
 // of a skeleton value with the given logical name.
 func PluginKey(name string) string {
 	return models.Key(&Plugin{
+		Name: name,
+	})
+}
+
+// TemplateKey returns the key used in NB DB to store the configuration
+// of a skeleton value with the given logical name.
+func TemplateKey(name string) string {
+	return models.Key(&Template{
 		Name: name,
 	})
 }

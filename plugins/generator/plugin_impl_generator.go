@@ -13,21 +13,21 @@
 // limitations under the License.
 
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/plugin.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/template.proto
 //go:generate descriptor-adapter --descriptor-name Plugin --value-type *model.Plugin --import "model" --output-dir "descriptor"
+//go:generate descriptor-adapter --descriptor-name Template --value-type *model.Template --import "model" --output-dir "descriptor"
 
 package generator
 
 import (
-	"context"
-	"strings"
-	"sync"
+	"time"
+
+	"github.com/ligato/cn-infra/db/keyval"
 
 	"github.com/anthonydevelops/osseus/plugins/generator/descriptor"
 	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/generator/gencalls"
 	"github.com/anthonydevelops/osseus/plugins/generator/model"
 	"github.com/ligato/cn-infra/datasync"
-	"github.com/ligato/cn-infra/datasync/kvdbsync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
@@ -36,56 +36,49 @@ import (
 // Plugin holds the internal data structures of the Generator Plugin
 type Plugin struct {
 	Deps
+	broker keyval.ProtoBroker
 
 	// channels & watcher
-	changeChannel chan datasync.ChangeEvent
-	resyncChannel chan datasync.ResyncEvent
-	ctx           context.Context
-	cancel        context.CancelFunc
-	wg            sync.WaitGroup
-
-	// watcher registration
-	watchDataReg datasync.WatchRegistration
-
-	// plugin handlers
-	pluginHandler gencalls.PluginAPI
+	watchCh chan string
 
 	// descriptors
-	pluginDescriptor *descriptor.PluginDescriptor
+	pluginDescriptor   *descriptor.PluginDescriptor
+	templateDescriptor *descriptor.TemplateDescriptor
 }
 
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
-	Scheduler    *kvscheduler.Scheduler
-	ETCDDataSync *kvdbsync.Plugin
-	Watcher      datasync.KeyValProtoWatcher
-	Publisher    datasync.KeyProtoValWriter
+	Publisher datasync.KeyProtoValWriter
+	Scheduler *kvscheduler.Scheduler
+	KVStore   keyval.KvProtoPlugin
 }
 
 // Init initializes the Generator Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
-	// Setup channels & context fields
-	p.resyncChannel = make(chan datasync.ResyncEvent)
-	p.changeChannel = make(chan datasync.ChangeEvent)
-	p.ctx, p.cancel = context.WithCancel(context.Background())
-
-	// Init plugin handler
-	p.pluginHandler = gencalls.NewPluginHandler(p.Log, p.changeChannel)
-
-	// Init & register plugin descriptor
-	p.pluginDescriptor = descriptor.NewPluginDescriptor(p.Log, p.pluginHandler)
+	// Init & register descriptors
+	p.pluginDescriptor = descriptor.NewPluginDescriptor(p.Log)
 	pluginDescriptor := adapter.NewPluginDescriptor(p.pluginDescriptor.GetDescriptor())
 	err := p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
-	p.Log.Info("Descriptor registered")
+	p.Log.Info("Plugin descriptor registered")
 
-	// Start watching for incoming requests
-	err = p.startWatcher(pluginDescriptor.NBKeyPrefix)
+	p.templateDescriptor = descriptor.NewTemplateDescriptor(p.Log)
+	templateDescriptor := adapter.NewTemplateDescriptor(p.templateDescriptor.GetDescriptor())
+	err = p.Scheduler.RegisterKVDescriptor(templateDescriptor)
+	if err != nil {
+		return err
+	}
+	p.Log.Info("Template descriptor registered")
+
+	// Init plugin watcher & template broker
+	p.broker = p.KVStore.NewBroker(templateDescriptor.NBKeyPrefix)
+	watcher := p.KVStore.NewWatcher(pluginDescriptor.NBKeyPrefix)
+	err = watcher.Watch(p.consumer, p.watchCh, "")
 	if err != nil {
 		return err
 	}
@@ -100,63 +93,33 @@ func (p *Plugin) AfterInit() (err error) {
 
 // Close stops all associated go routines & channels
 func (p *Plugin) Close() error {
-	p.cancel()
-	close(p.changeChannel)
-	close(p.resyncChannel)
+	close(p.watchCh)
 	return nil
 }
 
-// Starts watcher on a given channel to monitor for incoming requests
-func (p *Plugin) startWatcher(prefix string) error {
-	// Subscribe etcd watcher
-	p.Log.Info("Starting ETCD Watcher")
-	reg, err := p.Watcher.Watch("Generator plugin", p.changeChannel, p.resyncChannel, prefix)
-	if err != nil {
-		p.Log.Infof("Error: %v", err)
-		return err
-	}
-	p.watchDataReg = reg
-	p.Log.Info("Watcher subscribed to Etcd")
-
-	p.wg.Add(1)
-	go p.consumer(prefix)
-
-	return nil
-}
-
-// Handle asynchronous requests coming through and call respective
-// operation upon parsing the message
-func (p *Plugin) consumer(prefix string) {
-	defer p.wg.Done()
-
-	p.Log.Info("Watcher started")
-	for {
-		select {
-		case req := <-p.changeChannel:
-			// Parse data change
-			chng := req.GetChanges()
-			for _, val := range chng {
-				// Check key matches our prefix
-				key := val.GetKey()
-				if strings.HasPrefix(key, prefix) {
-					// Log key
-					p.Log.Infof("Key change: ", key)
-					plugin := &model.Plugin{}
-					err := val.GetValue(plugin)
-					if err != nil {
-						p.Log.Error("Could not retrieve value")
-						return
-					}
-					// Log value
-					p.Log.Infof("Current value: ", plugin.GetTemplate())
-				} else {
-					p.Log.Warnf("Key (%v) does not match Prefix (%v)", key, prefix)
-				}
-			}
-			// Done signal found, stop consumer
-		case <-p.ctx.Done():
-			p.Log.Debugf("Stopped watching for changes")
+// Capture changes and perform operations based on change type
+func (p *Plugin) consumer(resp datasync.ProtoWatchResp) {
+	switch resp.GetChangeType() {
+	case datasync.Put:
+		// Recognize the change
+		value := new(model.Plugin)
+		if err := resp.GetValue(value); err != nil {
+			p.Log.Errorf("GetValue for change failed: %v", err)
 			return
 		}
+		p.Log.Infof("Put op, Key: %q Value: %+v", resp.GetKey(), value)
+		time.Sleep(time.Second * 2)
+		// Define new data
+		template := &model.Template{
+			Name:   "test_template",
+			Result: "test_result",
+		}
+		// Send data back to etcd under template prefix
+		if err := p.broker.Put("test", template); err != nil {
+			p.Log.Errorf("Put failed: %v", err)
+		}
+		p.Log.Infof("Return data, Key: 'test' Value: %+v", template)
+	case datasync.Delete:
+		p.Log.Infof("Delete op, Key: %q", resp.GetKey())
 	}
 }

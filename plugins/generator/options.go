@@ -15,12 +15,7 @@
 package generator
 
 import (
-	"github.com/ligato/cn-infra/datasync"
-	"github.com/ligato/cn-infra/datasync/kvdbsync"
-	"github.com/ligato/cn-infra/datasync/kvdbsync/local"
 	"github.com/ligato/cn-infra/db/keyval/etcd"
-	"github.com/ligato/cn-infra/health/statuscheck"
-	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
 // DefaultPlugin is a default instance of Plugin.
@@ -28,22 +23,12 @@ var DefaultPlugin = *NewPlugin()
 
 // NewPlugin creates a new Plugin with the provided Options.
 func NewPlugin(opts ...Option) *Plugin {
-	p := &Plugin{}
+	p := &Plugin{
+		watchCh: make(chan string),
+	}
 
 	p.SetName("generator")
-	p.Scheduler = &kvscheduler.DefaultPlugin
-	p.ETCDDataSync = kvdbsync.NewPlugin(kvdbsync.UseKV(&etcd.DefaultPlugin))
-	writers := datasync.KVProtoWriters{
-		p.ETCDDataSync,
-	}
-	statuscheck.DefaultPlugin.Transport = writers
-	watchers := datasync.KVProtoWatchers{
-		local.DefaultRegistry,
-		p.ETCDDataSync,
-	}
-
-	p.Watcher = watchers
-	p.Publisher = writers
+	p.KVStore = &etcd.DefaultPlugin
 
 	for _, o := range opts {
 		o(p)
