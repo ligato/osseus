@@ -20,17 +20,13 @@
 package generator
 
 import (
-	"time"
-
 	"github.com/ligato/cn-infra/db/keyval"
 
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/osseus/plugins/generator/descriptor"
-	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
-	"github.com/ligato/osseus/plugins/generator/model"
-	"github.com/ligato/vpp-agent/plugins/kvscheduler"
+	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 // Plugin holds the internal data structures of the Generator Plugin
@@ -49,39 +45,28 @@ type Plugin struct {
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
-	Publisher datasync.KeyProtoValWriter
-	Scheduler *kvscheduler.Scheduler
-	KVStore   keyval.KvProtoPlugin
+	Publisher   datasync.KeyProtoValWriter
+	KVStore     keyval.KvProtoPlugin
+	KVScheduler kvs.KVScheduler
 }
 
 // Init initializes the Generator Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
-	// Init & register descriptors
-	p.pluginDescriptor = descriptor.NewPluginDescriptor(p.Log)
-	pluginDescriptor := adapter.NewPluginDescriptor(p.pluginDescriptor.GetDescriptor())
-	err := p.Scheduler.RegisterKVDescriptor(pluginDescriptor)
+	pluginDescriptor := descriptor.NewPluginDescriptor(p.Log, p.KVStore)
+	err := p.KVScheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
 	p.Log.Info("Plugin descriptor registered")
 
-	p.templateDescriptor = descriptor.NewTemplateDescriptor(p.Log)
-	templateDescriptor := adapter.NewTemplateDescriptor(p.templateDescriptor.GetDescriptor())
-	err = p.Scheduler.RegisterKVDescriptor(templateDescriptor)
+	templateDescriptor := descriptor.NewTemplateDescriptor(p.Log)
+	err = p.KVScheduler.RegisterKVDescriptor(templateDescriptor)
 	if err != nil {
 		return err
 	}
 	p.Log.Info("Template descriptor registered")
-
-	// Init plugin watcher & template broker
-	p.broker = p.KVStore.NewBroker(templateDescriptor.NBKeyPrefix)
-	watcher := p.KVStore.NewWatcher(pluginDescriptor.NBKeyPrefix)
-	err = watcher.Watch(p.consumer, p.watchCh, "")
-	if err != nil {
-		return err
-	}
 
 	return nil
 }
@@ -93,33 +78,6 @@ func (p *Plugin) AfterInit() (err error) {
 
 // Close stops all associated go routines & channels
 func (p *Plugin) Close() error {
-	close(p.watchCh)
+	// close(p.watchCh)
 	return nil
-}
-
-// Capture changes and perform operations based on change type
-func (p *Plugin) consumer(resp datasync.ProtoWatchResp) {
-	switch resp.GetChangeType() {
-	case datasync.Put:
-		// Recognize the change
-		value := new(model.Plugin)
-		if err := resp.GetValue(value); err != nil {
-			p.Log.Errorf("GetValue for change failed: %v", err)
-			return
-		}
-		p.Log.Infof("Put op, Key: %q Value: %+v", resp.GetKey(), value)
-		time.Sleep(time.Second * 2)
-		// Define new data
-		template := &model.Template{
-			Name:   "test_template",
-			Result: "test_result",
-		}
-		// Send data back to etcd under template prefix
-		if err := p.broker.Put("test", template); err != nil {
-			p.Log.Errorf("Put failed: %v", err)
-		}
-		p.Log.Infof("Return data, Key: 'test' Value: %+v", template)
-	case datasync.Delete:
-		p.Log.Infof("Delete op, Key: %q", resp.GetKey())
-	}
 }

@@ -16,6 +16,7 @@ package generator
 
 import (
 	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
 // DefaultPlugin is a default instance of Plugin.
@@ -29,6 +30,7 @@ func NewPlugin(opts ...Option) *Plugin {
 
 	p.SetName("generator")
 	p.KVStore = &etcd.DefaultPlugin
+	p.KVScheduler = &kvscheduler.DefaultPlugin
 
 	for _, o := range opts {
 		o(p)

@@ -19,6 +19,7 @@ import (
 
 	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
 	"github.com/ligato/osseus/plugins/generator/model"
+	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 const (
@@ -32,32 +33,31 @@ type TemplateDescriptor struct {
 }
 
 // NewTemplateDescriptor creates a new instance of the descriptor.
-func NewTemplateDescriptor(log logging.PluginLogger) *TemplateDescriptor {
+func NewTemplateDescriptor(log logging.PluginLogger) *kvs.KVDescriptor {
 	// Set plugin descriptor init values
-	return &TemplateDescriptor{
+	descCtx := &TemplateDescriptor{
 		log: log.NewLogger("template-descriptor"),
 	}
-}
 
-// GetDescriptor returns descriptor suitable for registration (via adapter) with the KVScheduler.
-func (d *TemplateDescriptor) GetDescriptor() *adapter.TemplateDescriptor {
-	return &adapter.TemplateDescriptor{
+	typedDescr := &adapter.TemplateDescriptor{
 		Name:          TemplateDescriptorName,
 		NBKeyPrefix:   model.ModelTemplate.KeyPrefix(),
 		ValueTypeName: model.ModelTemplate.ProtoName(),
 		KeySelector:   model.ModelTemplate.IsKeyValid,
 		KeyLabel:      model.ModelTemplate.StripKeyPrefix,
-		Create:        d.Create,
-		Delete:        d.Delete,
+		Create:        descCtx.Create,
+		Delete:        descCtx.Delete,
 		UpdateWithRecreate: func(key string, oldValue, newValue *model.Template, metadata interface{}) bool {
 			// Modify always performed via re-creation
 			return true
 		},
 	}
+	return adapter.NewTemplateDescriptor(typedDescr)
 }
 
 // Create creates new value.
 func (d *TemplateDescriptor) Create(key string, value *model.Template) (metadata interface{}, err error) {
+	d.log.Infof("New Data, Key: %q Value: %+v", key, value)
 	return nil, nil
 }
 
