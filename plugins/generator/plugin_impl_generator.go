@@ -32,14 +32,6 @@ import (
 // Plugin holds the internal data structures of the Generator Plugin
 type Plugin struct {
 	Deps
-	broker keyval.ProtoBroker
-
-	// channels & watcher
-	watchCh chan string
-
-	// descriptors
-	pluginDescriptor   *descriptor.PluginDescriptor
-	templateDescriptor *descriptor.TemplateDescriptor
 }
 
 // Deps represent Plugin dependencies.
@@ -78,6 +70,5 @@ func (p *Plugin) AfterInit() (err error) {
 
 // Close stops all associated go routines & channels
 func (p *Plugin) Close() error {
-	// close(p.watchCh)
 	return nil
 }

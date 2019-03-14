@@ -80,8 +80,3 @@ func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata inte
 	d.log.Infof("Delete op, Key: %q", key)
 	return nil
 }
-
-// Fixes key to have full prefix
-func (d *PluginDescriptor) appendPrefix(key string) string {
-	return "/vnf-agent/vpp1/" + key
-}

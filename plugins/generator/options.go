@@ -24,9 +24,7 @@ var DefaultPlugin = *NewPlugin()
 
 // NewPlugin creates a new Plugin with the provided Options.
 func NewPlugin(opts ...Option) *Plugin {
-	p := &Plugin{
-		watchCh: make(chan string),
-	}
+	p := &Plugin{}
 
 	p.SetName("generator")
 	p.KVStore = &etcd.DefaultPlugin
