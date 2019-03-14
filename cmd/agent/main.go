@@ -21,7 +21,6 @@ import (
 
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 
-	"github.com/anthonydevelops/osseus/plugins/generator"
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/datasync/kvdbsync"
@@ -31,6 +30,7 @@ import (
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/logging/logmanager"
 	log "github.com/ligato/cn-infra/logging/logrus"
+	"github.com/ligato/osseus/plugins/generator"
 )
 
 // OsseusAgent is a struct holding internal data for the StrongSwan VPP Agent

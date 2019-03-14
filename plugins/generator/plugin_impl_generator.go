@@ -24,12 +24,12 @@ import (
 
 	"github.com/ligato/cn-infra/db/keyval"
 
-	"github.com/anthonydevelops/osseus/plugins/generator/descriptor"
-	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/generator/model"
 	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/osseus/plugins/generator/descriptor"
+	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
+	"github.com/ligato/osseus/plugins/generator/model"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 

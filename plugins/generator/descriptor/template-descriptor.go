@@ -17,8 +17,8 @@ package descriptor
 import (
 	"github.com/ligato/cn-infra/logging"
 
-	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/generator/model"
+	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
+	"github.com/ligato/osseus/plugins/generator/model"
 )
 
 const (
