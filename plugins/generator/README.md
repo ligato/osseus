@@ -17,10 +17,10 @@ The `Generator Plugin` facilitates watching ETCD for new changes/events, capturi
 **etcdctl commands**: https://github.com/etcd-io/etcd/tree/master/etcdctl
 ```bash
 # Store a new plugin
-etcdctl put /config/plugin/v1/plugin-value/kafka {name: "kafka", template: "kafka_temp", status: "ok"}
+etcdctl put /vnf-agent/vpp1/config/generator/v1/plugin/grpc '{"name":"grpc", "template":"grpc_temp", "status":"ok"}'
 
 # Delete a plugin
-etcdctl del /config/plugin/v1/plugin-value/kafka
+etcdctl del /vnf-agent/vpp1/config/generator/v1/plugin/grpc
 
 # Return all keys
 etcdctl get --from-key ''
