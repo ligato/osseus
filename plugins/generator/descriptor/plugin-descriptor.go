@@ -15,10 +15,11 @@
 package descriptor
 
 import (
+	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/logging"
-
-	"github.com/anthonydevelops/osseus/plugins/generator/descriptor/adapter"
-	"github.com/anthonydevelops/osseus/plugins/generator/model"
+	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
+	"github.com/ligato/osseus/plugins/generator/model"
+	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 const (
@@ -28,40 +29,54 @@ const (
 
 // PluginDescriptor is our descriptor
 type PluginDescriptor struct {
-	log logging.Logger
+	log    logging.Logger
+	broker keyval.ProtoBroker
 }
 
 // NewPluginDescriptor creates a new instance of the descriptor.
-func NewPluginDescriptor(log logging.PluginLogger) *PluginDescriptor {
+func NewPluginDescriptor(log logging.PluginLogger, KVStore keyval.KvProtoPlugin) *kvs.KVDescriptor {
 	// Set plugin descriptor init values
-	return &PluginDescriptor{
-		log: log.NewLogger("plugin-descriptor"),
+	descCtx := &PluginDescriptor{
+		log:    log,
+		broker: KVStore.NewBroker("/vnf-agent/vpp1/" + model.ModelTemplate.KeyPrefix()),
 	}
-}
 
-// GetDescriptor returns descriptor suitable for registration (via adapter) with the KVScheduler.
-func (d *PluginDescriptor) GetDescriptor() *adapter.PluginDescriptor {
-	return &adapter.PluginDescriptor{
+	typedDescr := &adapter.PluginDescriptor{
 		Name:          PluginDescriptorName,
 		NBKeyPrefix:   model.ModelPlugin.KeyPrefix(),
 		ValueTypeName: model.ModelPlugin.ProtoName(),
 		KeySelector:   model.ModelPlugin.IsKeyValid,
 		KeyLabel:      model.ModelPlugin.StripKeyPrefix,
-		Create:        d.Create,
-		Delete:        d.Delete,
+		Create:        descCtx.Create,
+		Delete:        descCtx.Delete,
 		UpdateWithRecreate: func(key string, oldValue, newValue *model.Plugin, metadata interface{}) bool {
 			// Modify always performed via re-creation
 			return true
 		},
 	}
+
+	return adapter.NewPluginDescriptor(typedDescr)
 }
 
 // Create creates new value.
 func (d *PluginDescriptor) Create(key string, value *model.Plugin) (metadata interface{}, err error) {
+	// Define template model for test
+	template := &model.Template{
+		Name:   "test_template",
+		Result: "test_result",
+	}
+
+	// Store test data into new template keyprefix
+	if err := d.broker.Put("test", template); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+	d.log.Infof("Return data, Key: %q Value: %+v", key, value)
+
 	return nil, nil
 }
 
 // Delete removes an existing value.
 func (d *PluginDescriptor) Delete(key string, value *model.Plugin, metadata interface{}) error {
+	d.log.Infof("Delete op, Key: %q", key)
 	return nil
 }
