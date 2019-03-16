@@ -9,14 +9,14 @@ import "../../styles_CSS/Plugin/Plugincard.css";
 * we capture the id of a clicked plugin and send that id to the parent
 * App.js
 */ 
+
 class DraggablePlugins extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       index: null
     };
-    this.handleClick = this.handleClick.bind(this);
-    console.log(this.props.image);
+    //this.handleClick = this.handleClick.bind(this);
   }
 
   /*
@@ -24,14 +24,14 @@ class DraggablePlugins extends React.Component {
   * This id is in turn sent up to PluginApp.js in order to tick the element at 
   * the index of the id.
   */
-  handleClick = (e) => {
+  handleClick = e => { 
     e.preventDefault();
     this.props.handlerFromParent(e.currentTarget.dataset.id);
   }
   
   render() {
     return ( 
-      <div className="cardbody" key={this.props.id} data-id={this.props.id} onClick={(this.handleClick)}>
+      <div className="cardbody" data-id={this.props.id} onClick={this.handleClick}>
         <div>
           <img 
             src={window.location.origin + this.props.image}

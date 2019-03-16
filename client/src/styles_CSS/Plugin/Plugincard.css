@@ -4,7 +4,8 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray; }
+  background-color: gray;
+}
 
 .card-palette {
   width: 133%;
@@ -12,10 +13,12 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray; }
+  background-color: gray;
+}
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 #2E2E2E; }
+  box-shadow: 0 8px 16px 0 #2E2E2E;
+}
 
 img {
   border-radius: 5px 5px 0 0;
@@ -23,11 +26,13 @@ img {
   height: 80%;
   display: block;
   margin-left: auto;
-  margin-right: auto; }
+  margin-right: auto;
+}
 
 .centered img {
   width: 120px;
-  border-radius: 20%; }
+  border-radius: 20%;
+}
 
 .cardtext {
   margin-top: 0px;
@@ -35,8 +40,11 @@ img {
   color: white;
   background: #2F4454;
   text-align: center;
-  font-size: 14px; }
+  font-size: 10px;
+}
 
 .cardbody {
   font-family: "Lato", verdana, sans-serif;
-  cursor: pointer; }
+  cursor: pointer;
+  z-index: 200;
+}

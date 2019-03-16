@@ -1,12 +1,14 @@
 .right {
   height: 85%;
-  top: 50px;
+  top: 20px;
   right: 0;
+  z-index: 1;
   background-color: #2E2E2E;
   width: 82.5%;
   display: flex;
   justify-content: center;
-  opacity: 1; }
+  opacity: 1;
+}
 
 .right-bottom {
   display: flex;
@@ -16,7 +18,8 @@
   right: 0;
   background: #2E2E2E;
   justify-content: center;
-  display: flex; }
+  display: flex;
+}
 
 .rectangle {
   width: 80%;
@@ -25,7 +28,8 @@
   padding: 2px 16px;
   align-self: flex-end;
   border-radius: 15px;
-  text-align: center; }
+  text-align: center;
+}
 
 .grid-container-right {
   display: inline-grid;
@@ -33,4 +37,5 @@
   grid-template-columns: repeat(auto-fill, 24%);
   flex-wrap: wrap;
   background-color: #2E2E2E;
-  padding: 20px; }
+  padding: 20px;
+}

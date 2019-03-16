@@ -1,7 +1,8 @@
 .main {
   padding: 0;
   height: 100vh;
-  background: #2E2E2E; }
+  background: #2E2E2E;
+}
 
 .whitetextgen {
   color: white;
@@ -11,22 +12,25 @@
   flex-direction: column;
   justify-content: space-between;
   opacity: 1;
-  font-size: 30px; }
+  font-size: 30px;
+}
 
 .left {
   height: 100%;
-  top: 50px;
+  top: 40px;
   left: 0;
   background-color: #232323;
-  width: 17.5%; }
+  width: 17.5%;
+}
 
 .right-viewer {
   height: 100%;
   width: 82.5%;
-  top: 50px;
+  top: 44px;
   right: 0;
   background-color: #2E2E2E;
   width: 82.5%;
   display: flex;
   justify-content: center;
-  opacity: 1; }
+  opacity: 1;
+}
