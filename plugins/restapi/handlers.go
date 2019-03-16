@@ -29,7 +29,7 @@ const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
 
 type Response struct {
 	PluginName   string
-	//Id			 int
+	Id			 int
 }
 
 // Registers REST handlers
@@ -81,20 +81,18 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 			return
 		}
 
-		pluginName := reqParam.PluginName
-		if pluginName == ""{
+		if reqParam.PluginName == "" {
 			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
 			return
 		}
 
-		//id := reqParam.Id
-
 		p.SavePlugin(reqParam)
-		p.Log.Debugf("PluginName: %v", pluginName)
-		//p.Log.Debugf("PluginId: %v", id)
-		p.logError(formatter.JSON(w, http.StatusOK, pluginName))
+
+		p.Log.Debugf("PluginName: %v", reqParam.PluginName)
+		p.Log.Debugf("PluginId: %v", reqParam.Id)
+		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
 
@@ -109,7 +107,7 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 func (p *Plugin) SavePlugin(response Response) (interface{}, error){
 	p.Log.Debug("REST API post /demo/save plugin reached")
 	p.genUpdater(response)
-	return "placeholder", nil
+	return response, nil
 }
 
 //updates the key that the generator watches on
@@ -123,9 +121,9 @@ func (p *Plugin) genUpdater(response Response) {
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
 	} else if !found {
-		p.Log.Info("No greetings found..")
+		p.Log.Info("No plugins found..")
 	} else {
-		p.Log.Infof("Found some greetings: %+v", value)
+		p.Log.Infof("Found some plugins: %+v", value)
 	}
 
 	// Wait few seconds
