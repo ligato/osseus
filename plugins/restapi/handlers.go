@@ -29,6 +29,7 @@ const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
 
 type Response struct {
 	PluginName   string
+	//Id			 int
 }
 
 // Registers REST handlers
@@ -71,7 +72,7 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 			return
 		}
 
-		var reqParam map[string]string
+		reqParam := Response{}
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -80,15 +81,19 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 			return
 		}
 
-		pluginName, ok := reqParam["pluginName"]
-		if !ok || pluginName == "" {
+		pluginName := reqParam.PluginName
+		if pluginName == ""{
 			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
 			return
 		}
-		p.SavePlugin(pluginName)
+
+		//id := reqParam.Id
+
+		p.SavePlugin(reqParam)
 		p.Log.Debugf("PluginName: %v", pluginName)
+		//p.Log.Debugf("PluginId: %v", id)
 		p.logError(formatter.JSON(w, http.StatusOK, pluginName))
 	}
 }
@@ -101,18 +106,20 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 
 // handler for demo/save
 // API endpoint frontend container should call to save plugin info
-func (p *Plugin) SavePlugin(pluginName string) (interface{}, error){
+func (p *Plugin) SavePlugin(response Response) (interface{}, error){
 	p.Log.Debug("REST API post /demo/save plugin reached")
-	p.genUpdater(pluginName)
+	p.genUpdater(response)
 	return "placeholder", nil
 }
 
 //updates the key that the generator watches on
-func (p *Plugin) genUpdater(pluginName string) {
+func (p *Plugin) genUpdater(response Response) {
 	broker := p.KVStore.NewBroker(genPrefix)
 
+	key := response.PluginName
 	value := new(model.Greetings)
-	found, _, err := broker.GetValue(pluginName, value) //todo update
+	found, _, err := broker.GetValue(key, value)
+
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
 	} else if !found {
@@ -128,11 +135,11 @@ func (p *Plugin) genUpdater(pluginName string) {
 
 	// Prepare data
 	value = &model.Greetings{
-		PluginName: pluginName,
+		PluginName: response.PluginName,
 	}
 
 	// Update value in KV store
-	if err := broker.Put(pluginName, value); err != nil {
+	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
 }
