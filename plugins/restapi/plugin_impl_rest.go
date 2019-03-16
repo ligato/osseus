@@ -73,7 +73,7 @@ func (p *Plugin) AfterInit() (err error) {
 	p.Log.Debug("REST API Plugin started ")
 	// you would want to register your handlers here
 	p.registerHandlersHere()
-	p.updater()
+	//p.updater()
 	return nil
 }
 
@@ -98,7 +98,7 @@ func (p *Plugin) updater() {
 
 	// Prepare data
 	value = &model.Greetings{
-		Greeting: "Hello",
+		PluginName: "HardcodedName",
 	}
 
 	// Update value in KV store

@@ -19,9 +19,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"osseus/plugins/restapi/model"
+	"time"
 
 	"github.com/unrolled/render"
 )
+
+const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
 
 type Response struct {
 	PluginId   string
@@ -33,7 +37,7 @@ func (p *Plugin) registerHandlersHere() {
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
 }
 
 // registerHTTPHandler is common register method for all handlers without JSON body input
@@ -95,11 +99,42 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 	return "Ligato-gen server is up", nil
 }
 
-// handler for v1/pluginId, posts specified plugin Id
-// API endpoint frontend container should call to pass in pluginId information
+// handler for demo/save
+// API endpoint frontend container should call to save plugin info
 func (p *Plugin) SavePlugin() (interface{}, error){
 	p.Log.Debug("REST API post pluginId reached")
+	p.genUpdater()
 	return "pluginID", nil
+}
+
+//updates the key that the generator watches on
+func (p *Plugin) genUpdater() {
+	broker := p.KVStore.NewBroker(genPrefix)
+
+	value := new(model.Greetings)
+	found, _, err := broker.GetValue("greetings/hello", value)
+	if err != nil {
+		p.Log.Errorf("GetValue failed: %v", err)
+	} else if !found {
+		p.Log.Info("No greetings found..")
+	} else {
+		p.Log.Infof("Found some greetings: %+v", value)
+	}
+
+	// Wait few seconds
+	time.Sleep(time.Second * 2)
+
+	p.Log.Infof("updating..")
+
+	// Prepare data
+	value = &model.Greetings{
+		PluginName: "HardcodedNameInHandler",
+	}
+
+	// Update value in KV store
+	if err := broker.Put("greetings/hello", value); err != nil {
+		p.Log.Errorf("Put failed: %v", err)
+	}
 }
 
 // logError logs non-nil errors from JSON formatter
