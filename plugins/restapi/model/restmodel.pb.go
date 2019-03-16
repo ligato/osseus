@@ -20,56 +20,92 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
-type Greetings struct {
+type Plugin struct {
 	PluginName           string   `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	Selected             bool     `protobuf:"varint,3,opt,name=selected,proto3" json:"selected,omitempty"`
+	Image                string   `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	Port                 int32    `protobuf:"varint,5,opt,name=port,proto3" json:"port,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Greetings) Reset()         { *m = Greetings{} }
-func (m *Greetings) String() string { return proto.CompactTextString(m) }
-func (*Greetings) ProtoMessage()    {}
-func (*Greetings) Descriptor() ([]byte, []int) {
+func (m *Plugin) Reset()         { *m = Plugin{} }
+func (m *Plugin) String() string { return proto.CompactTextString(m) }
+func (*Plugin) ProtoMessage()    {}
+func (*Plugin) Descriptor() ([]byte, []int) {
 	return fileDescriptor_5308a14fe03634ec, []int{0}
 }
-func (m *Greetings) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Greetings.Unmarshal(m, b)
+func (m *Plugin) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Plugin.Unmarshal(m, b)
 }
-func (m *Greetings) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Greetings.Marshal(b, m, deterministic)
+func (m *Plugin) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Plugin.Marshal(b, m, deterministic)
 }
-func (m *Greetings) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Greetings.Merge(m, src)
+func (m *Plugin) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Plugin.Merge(m, src)
 }
-func (m *Greetings) XXX_Size() int {
-	return xxx_messageInfo_Greetings.Size(m)
+func (m *Plugin) XXX_Size() int {
+	return xxx_messageInfo_Plugin.Size(m)
 }
-func (m *Greetings) XXX_DiscardUnknown() {
-	xxx_messageInfo_Greetings.DiscardUnknown(m)
+func (m *Plugin) XXX_DiscardUnknown() {
+	xxx_messageInfo_Plugin.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Greetings proto.InternalMessageInfo
+var xxx_messageInfo_Plugin proto.InternalMessageInfo
 
-func (m *Greetings) GetPluginName() string {
+func (m *Plugin) GetPluginName() string {
 	if m != nil {
 		return m.PluginName
 	}
 	return ""
 }
 
+func (m *Plugin) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *Plugin) GetSelected() bool {
+	if m != nil {
+		return m.Selected
+	}
+	return false
+}
+
+func (m *Plugin) GetImage() string {
+	if m != nil {
+		return m.Image
+	}
+	return ""
+}
+
+func (m *Plugin) GetPort() int32 {
+	if m != nil {
+		return m.Port
+	}
+	return 0
+}
+
 func init() {
-	proto.RegisterType((*Greetings)(nil), "model.Greetings")
+	proto.RegisterType((*Plugin)(nil), "model.Plugin")
 }
 
 func init() { proto.RegisterFile("restmodel.proto", fileDescriptor_5308a14fe03634ec) }
 
 var fileDescriptor_5308a14fe03634ec = []byte{
-	// 86 bytes of a gzipped FileDescriptorProto
+	// 145 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0x4a, 0x2d, 0x2e,
 	0xc9, 0xcd, 0x4f, 0x49, 0xcd, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x73, 0x94,
-	0xb4, 0xb9, 0x38, 0xdd, 0x8b, 0x52, 0x53, 0x4b, 0x32, 0xf3, 0xd2, 0x8b, 0x85, 0xe4, 0xb8, 0xb8,
-	0x0a, 0x72, 0x4a, 0xd3, 0x33, 0xf3, 0xfc, 0x12, 0x73, 0x53, 0x25, 0x18, 0x15, 0x18, 0x35, 0x38,
-	0x83, 0x90, 0x44, 0x92, 0xd8, 0xc0, 0x5a, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xe9, 0x05,
-	0xf7, 0xe3, 0x4d, 0x00, 0x00, 0x00,
+	0xea, 0xb8, 0xd8, 0x02, 0x72, 0x4a, 0xd3, 0x33, 0xf3, 0x84, 0xe4, 0xb8, 0xb8, 0x0a, 0xc0, 0x2c,
+	0xbf, 0xc4, 0xdc, 0x54, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x24, 0x11, 0x21, 0x3e, 0x2e,
+	0xa6, 0xcc, 0x14, 0x09, 0x26, 0x05, 0x46, 0x0d, 0xd6, 0x20, 0xa6, 0xcc, 0x14, 0x21, 0x29, 0x2e,
+	0x8e, 0xe2, 0xd4, 0x9c, 0xd4, 0xe4, 0x92, 0xd4, 0x14, 0x09, 0x66, 0x05, 0x46, 0x0d, 0x8e, 0x20,
+	0x38, 0x5f, 0x48, 0x84, 0x8b, 0x35, 0x33, 0x37, 0x31, 0x3d, 0x55, 0x82, 0x05, 0x6c, 0x0c, 0x84,
+	0x23, 0x24, 0xc4, 0xc5, 0x52, 0x90, 0x5f, 0x54, 0x22, 0xc1, 0x0a, 0x36, 0x03, 0xcc, 0x4e, 0x62,
+	0x03, 0xbb, 0xc6, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xa2, 0x47, 0x8f, 0x6e, 0xa0, 0x00, 0x00,
+	0x00,
 }

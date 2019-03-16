@@ -29,7 +29,10 @@ const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
 
 type Response struct {
 	PluginName   string
-	Id			 int
+	Id			 int32
+	Selected	 bool
+	Image 		 string
+	Port 		 int32
 }
 
 // Registers REST handlers
@@ -88,10 +91,20 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 			return
 		}
 
+		if reqParam.Image == "" {
+			errMsg := fmt.Sprintf("400 Bad request: pluginImage parameter missing or empty\n")
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
 		p.SavePlugin(reqParam)
 
 		p.Log.Debugf("PluginName: %v", reqParam.PluginName)
 		p.Log.Debugf("PluginId: %v", reqParam.Id)
+		p.Log.Debugf("PluginSelected: %v", reqParam.Selected)
+		p.Log.Debugf("PluginImage: %v", reqParam.Image)
+		p.Log.Debugf("PluginPort: %v", reqParam.Port)
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
@@ -115,7 +128,7 @@ func (p *Plugin) genUpdater(response Response) {
 	broker := p.KVStore.NewBroker(genPrefix)
 
 	key := response.PluginName
-	value := new(model.Greetings)
+	value := new(model.Plugin)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -132,8 +145,12 @@ func (p *Plugin) genUpdater(response Response) {
 	p.Log.Infof("updating..")
 
 	// Prepare data
-	value = &model.Greetings{
+	value = &model.Plugin{
 		PluginName: response.PluginName,
+		Id:	response.Id,
+		Selected: response.Selected,
+		Image: response.Image,
+		Port: response.Port,
 	}
 
 	// Update value in KV store

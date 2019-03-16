@@ -18,13 +18,10 @@ package restapi
 import (
 	"fmt"
 	"github.com/ligato/cn-infra/db/keyval"
-	"net/http"
-	"osseus/plugins/restapi/model"
-	"time"
-
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/rest"
+	"net/http"
 )
 //Generate model:
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/restmodel.proto
@@ -71,40 +68,8 @@ func (p *Plugin) Init() error {
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
 	p.Log.Debug("REST API Plugin started ")
-	// you would want to register your handlers here
 	p.registerHandlersHere()
-	//p.updater()
 	return nil
-}
-
-func (p *Plugin) updater() {
-	broker := p.KVStore.NewBroker(keyPrefix)
-
-	// Retrieve value from KV store
-	value := new(model.Greetings)
-	found, _, err := broker.GetValue("greetings/hello", value)
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No greetings found..")
-	} else {
-		p.Log.Infof("Found some greetings: %+v", value)
-	}
-
-	// Wait few seconds
-	time.Sleep(time.Second * 2)
-
-	p.Log.Infof("updating..")
-
-	// Prepare data
-	value = &model.Greetings{
-		PluginName: "HardcodedName",
-	}
-
-	// Update value in KV store
-	if err := broker.Put("greetings/hello", value); err != nil {
-		p.Log.Errorf("Put failed: %v", err)
-	}
 }
 
 // Close is NOOP.
