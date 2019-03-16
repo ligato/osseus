@@ -28,7 +28,7 @@ import (
 const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
 
 type Response struct {
-	PluginId   string
+	PluginName   string
 }
 
 // Registers REST handlers
@@ -80,16 +80,16 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 			return
 		}
 
-		pluginId, ok := reqParam["PluginId"]
-		if !ok || pluginId == "" {
-			errMsg := fmt.Sprintf("400 Bad request: pluginId parameter missing or empty\n")
+		pluginName, ok := reqParam["pluginName"]
+		if !ok || pluginName == "" {
+			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
 			return
 		}
-		p.SavePlugin()
-		p.Log.Debugf("PluginId: %v", pluginId)
-		p.logError(formatter.JSON(w, http.StatusOK, pluginId))
+		p.SavePlugin(pluginName)
+		p.Log.Debugf("PluginName: %v", pluginName)
+		p.logError(formatter.JSON(w, http.StatusOK, pluginName))
 	}
 }
 
@@ -101,18 +101,18 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 
 // handler for demo/save
 // API endpoint frontend container should call to save plugin info
-func (p *Plugin) SavePlugin() (interface{}, error){
-	p.Log.Debug("REST API post pluginId reached")
-	p.genUpdater()
-	return "pluginID", nil
+func (p *Plugin) SavePlugin(pluginName string) (interface{}, error){
+	p.Log.Debug("REST API post /demo/save plugin reached")
+	p.genUpdater(pluginName)
+	return "placeholder", nil
 }
 
 //updates the key that the generator watches on
-func (p *Plugin) genUpdater() {
+func (p *Plugin) genUpdater(pluginName string) {
 	broker := p.KVStore.NewBroker(genPrefix)
 
 	value := new(model.Greetings)
-	found, _, err := broker.GetValue("greetings/hello", value)
+	found, _, err := broker.GetValue(pluginName, value) //todo update
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
 	} else if !found {
@@ -128,11 +128,11 @@ func (p *Plugin) genUpdater() {
 
 	// Prepare data
 	value = &model.Greetings{
-		PluginName: "HardcodedNameInHandler",
+		PluginName: pluginName,
 	}
 
 	// Update value in KV store
-	if err := broker.Put("greetings/hello", value); err != nil {
+	if err := broker.Put(pluginName, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
 }
