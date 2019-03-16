@@ -15,22 +15,28 @@
 package restapi
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/unrolled/render"
 )
 
+type Response struct {
+	PluginId   string
+}
+
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
-	p.registerHTTPHandler("/example", GET, func() (interface{}, error) {
-		return p.DoSomething()
+	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
+		return p.GetServerStatus()
 	})
-
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/pluginId", p.registerHTTPBodyHandler, POST)
 }
 
-// registerHTTPHandler is common register method for all handlers
+// registerHTTPHandler is common register method for all handlers without JSON body input
 func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, error)) {
 	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
@@ -49,9 +55,51 @@ func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, 
 	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
-// this is the function that does whatever your http handler should do after the GET call
-func (p *Plugin) DoSomething() (interface{}, error) {
-	return nil, nil
+// registerHTTPBodyHandler is a common method that registers Http handlers that include a JSON body as input
+func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		var reqParam map[string]string
+		err = json.Unmarshal(body, &reqParam)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		pluginId, ok := reqParam["PluginId"]
+		if !ok || pluginId == "" {
+			errMsg := fmt.Sprintf("400 Bad request: pluginId parameter missing or empty\n")
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+		p.SavePlugin()
+		p.Log.Debugf("PluginId: %v", pluginId)
+		p.logError(formatter.JSON(w, http.StatusOK, pluginId))
+	}
+}
+
+// handler for default path, displays message to verify if server endpoint is up
+func (p *Plugin) GetServerStatus() (interface{}, error) {
+	p.Log.Debug("REST API default home endpoint is up")
+	return "Ligato-gen server is up", nil
+}
+
+// handler for v1/pluginId, posts specified plugin Id
+// API endpoint frontend container should call to pass in pluginId information
+func (p *Plugin) SavePlugin() (interface{}, error){
+	p.Log.Debug("REST API post pluginId reached")
+	return "pluginID", nil
 }
 
 // logError logs non-nil errors from JSON formatter

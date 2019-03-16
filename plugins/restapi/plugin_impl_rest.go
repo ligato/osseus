@@ -30,6 +30,7 @@ import (
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/restmodel.proto
 
 const keyPrefix = "/myplugin/"
+
 // REST api methods
 const (
 	GET  = http.MethodGet
