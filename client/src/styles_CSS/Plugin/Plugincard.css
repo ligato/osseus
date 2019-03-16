@@ -20,20 +20,6 @@
   box-shadow: 0 8px 16px 0 #2E2E2E;
 }
 
-img {
-  border-radius: 5px 5px 0 0;
-  width: 80%;
-  height: 80%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.centered img {
-  width: 120px;
-  border-radius: 20%;
-}
-
 .cardtext {
   margin-top: 0px;
   margin-bottom: 0px;
@@ -47,4 +33,33 @@ img {
   font-family: "Lato", verdana, sans-serif;
   cursor: pointer;
   z-index: 200;
+}
+
+.img-holder {
+  position: relative;
+}
+
+.main-img {
+  border-radius: 5px 5px 0 0;
+  width: 80%;
+  height: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1;
+}
+
+.close-img {
+  border-radius: 5px 5px 0 0;
+  width: 20%;
+  height: auto;
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: -5px;
+  right: -5px;
+}
+
+.close-img:hover {
+  filter: brightness(130%);
 }

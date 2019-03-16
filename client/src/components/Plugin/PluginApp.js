@@ -13,12 +13,14 @@ import { saveArray, setCurrArray } from "../../redux/actions/index";
 const OFFSET = [[0],[3],[7],[9],[11],[17]];
 let pluginModule = require('../Plugins');
 let pluginPickedArray;
+let visiblityArray;
 store.dispatch( setCurrArray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]));
 
 class PluginApp extends React.Component {
   constructor() {
     super();
     pluginPickedArray = store.getState().currProject;
+    visiblityArray = buildVisiblityArray();
     this.handleData = this.handleData.bind(this);
     this.state = {
       clickedIndex: null,
@@ -34,7 +36,12 @@ class PluginApp extends React.Component {
     });
     pluginPickedArray[index] = !pluginPickedArray[index]*1;
     pluginModule.plugins[index].selected = !pluginModule.plugins[index].selected;
-    store.dispatch( saveArray([pluginPickedArray]));
+    store.dispatch(saveArray(pluginModule.plugins));
+    if(pluginPickedArray[index] === 0) {
+      visiblityArray[index] = 'hidden';
+    } else {
+      visiblityArray[index] = 'visible';
+    }
   }
 
   render() {
@@ -57,6 +64,7 @@ class PluginApp extends React.Component {
                         handlerFromParent={this.handleData}
                         id={Number(OFFSET[outerIndex]) + innerIndex}
                         key={Number(OFFSET[outerIndex]) + innerIndex} 
+                        visibility={visiblityArray[Number(OFFSET[outerIndex]) + innerIndex]}
                       />
                     )
                   })}     
@@ -73,6 +81,7 @@ class PluginApp extends React.Component {
                   handlerFromParent={this.handleData}
                   id={index}
                   key={index}
+                  visibility={visiblityArray[index]}
                 />
               )
             })}   
@@ -82,3 +91,15 @@ class PluginApp extends React.Component {
   }
 }
 export default PluginApp;
+
+function buildVisiblityArray() {
+  var array = [];
+  for(let i = 0; i < pluginPickedArray.length; i++) {
+    if(pluginPickedArray[i] === 0) {
+      array[i] = 'hidden';
+    } else {
+      array[i] = 'visible';
+    }
+  }
+  return array;
+}

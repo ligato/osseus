@@ -2,13 +2,25 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import store from '../../redux/store/index';
 import { setCurrArray } from "../../redux/actions/index";
+import swal from 'sweetalert';
 import '../../styles_CSS/Project-Selection/Dropdown.css';
 
 let flip = true;
+let pluginModule = require('../Plugins');
 
 function handleClick (e) {
-  store.dispatch( setCurrArray(store.getState().projects[e.currentTarget.dataset.id]));
+  console.log([store.getState().projects])
+  store.dispatch( setCurrArray(loadPluginState(e.currentTarget.dataset.id)));
   flip = false;
+}
+
+function loadPluginState(projectID) {
+  let array = [];
+  for(let i = 0; i < store.getState().projects[projectID].length; i++) {
+    array[i] = store.getState().projects[projectID][i].selected*1;
+    pluginModule.plugins[i].port = store.getState().projects[projectID][i].port;
+  }
+  return array;
 }
 
 class Dropdown extends React.Component {
@@ -21,6 +33,9 @@ class Dropdown extends React.Component {
   };
 
   showDropdownMenu(event) {
+    if(store.getState().projects.length === 0) {
+      swal("No saved projects.")
+    }
     flip = !flip;
     event.preventDefault();
     this.setState({ displayMenu: !flip });
@@ -53,5 +68,6 @@ class Dropdown extends React.Component {
     );
   }
 }
-
 export default Dropdown;
+
+

@@ -9,130 +9,130 @@
 
 var REST_API = {
     pluginName: 'REST API',
-    id: 0,
     selected: false,
+    id: 0,
     image: '/images/01-rest-api.png',
-    port: 0
+    port: 'default'
 };
 
 var GRPC = {
     pluginName: 'GRPC',
-    id: 1,
     selected: false,
+    id: 1,
     image: '/images/02-grpc.png',
-    port: 0
+    port: 'default'
 };
 
 var PROMETHEUS = {
     pluginName: 'PROMETHEUS',
-    id: 2,
     selected: false,
+    id: 2,
     image: '/images/03-prometheus.png',
-    port: 0
+    port: 'default'
 };
 
 var ETCD = {
     pluginName: 'ETCD',
-    id: 3,
     selected: false,
+    id: 3,
     image: '/images/04-etcd.png',
-    port: 0
+    port: 'default'
 };
 
 var REDIS = {
     pluginName: 'REDIS',
-    id: 4,
     selected: false,
+    id: 4,
     image: '/images/05-redis.png',
-    port: 0
+    port: 'default'
 };
 
 var CASSANDRA = {
     pluginName: 'CASSANDRA',
-    id: 5,
     selected: false,
+    id: 5,
     image: '/images/06-cassandra.png',
-    port: 0
+    port: 'default'
 };
 
 var CONSUL = {
     pluginName: 'CONSUL',
-    id: 6,
     selected: false,
+    id: 6,
     image: '/images/07-consul.png',
-    port: 0
+    port: 'default'
 };
 
 var LOGRUS = {
     pluginName: 'LOGRUS',
-    id: 7,
     selected: false,
+    id: 7,
     image: '/images/08-logrus.png',
-    port: 0
+    port: 'default'
 };
 
 var LOG_MNGR = {
     pluginName: 'LOG MNGR',
-    id: 8,
     selected: false,
+    id: 8,
     image: '/images/09-log-mngr.png',
-    port: 0
+    port: 'default'
 };
 
 var STTS_CHECK = {
     pluginName: 'STTS CHECK',
-    id: 9,
     selected: false,
+    id: 9,
     image: '/images/10-status-check.png',
-    port: 0
+    port: 'default'
 };
 
 var PROBE = {
     pluginName: 'PROBE',
-    id: 10,
     selected: false,
+    id: 10,
     image: '/images/11-probe.png',
-    port: 0
+    port: 'default'
 };
 
 var KAFKA = {
     pluginName: 'KAFKA',
-    id: 11,
     selected: false,
+    id: 11,
     image: '/images/12-kafka.png',
-    port: 0
+    port: 'default'
 };
 
 var DATASYNC = {
     pluginName: 'DATASYNC',
-    id: 12,
     selected: false,
+    id: 12,
     image: '/images/13-data-sync.png',
-    port: 0
+    port: 'default'
 };
 
 var IDX_MAP = {
     pluginName: 'IDX MAP',
-    id: 13,
     selected: false,
+    id: 13,
     image: '/images/14-idx-map.png',
-    port: 0
+    port: 'default'
 };
 
 var SRVC_LABEL = {
     pluginName: 'SRVC LABEL',
-    id: 14,
     selected: false,
+    id: 14,
     image: '/images/15-srvc-label.png',
-    port: 0
+    port: 'default'
 };
 
 var CONFIG = {
     pluginName: 'CONFIG',
-    id: 15,
     selected: false,
+    id: 15,
     image: '/images/16-config.png',
-    port: 0
+    port: 'default'
 };
 
 var plugins = [REST_API,  GRPC,       PROMETHEUS,   ETCD,      
@@ -140,8 +140,9 @@ var plugins = [REST_API,  GRPC,       PROMETHEUS,   ETCD,
                LOG_MNGR,  STTS_CHECK, PROBE,        KAFKA,     
                DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG];
 
+
 module.exports = {
-    plugins: plugins
+    plugins: plugins,
 }
 
 

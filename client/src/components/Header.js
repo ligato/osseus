@@ -17,7 +17,8 @@ const arrows = "<--->";
 
 class Header extends React.Component {
   tellMeToSave () {
-    store.dispatch( addPluginArray(store.getState().savedPlugins));
+    var duplicateObject = JSON.parse(JSON.stringify( store.getState().savedPlugins ));
+    store.dispatch( addPluginArray([duplicateObject]));
     swal({
       title: "Saved!",
       text: 'Your Project is saved under "Project ' + store.getState().projects.length + '"!',
