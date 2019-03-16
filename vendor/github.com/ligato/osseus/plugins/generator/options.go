@@ -12,41 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package restapi
+package generator
 
 import (
 	"github.com/ligato/cn-infra/db/keyval/etcd"
-	"github.com/ligato/cn-infra/rpc/rest"
-	"log"
-
-	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
-// DefaultPlugin is default instance of Plugin.
+// DefaultPlugin is a default instance of Plugin.
 var DefaultPlugin = *NewPlugin()
 
-// NewPlugin creates a new Plugin with the provides Options
+// NewPlugin creates a new Plugin with the provided Options.
 func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
-	p.PluginName = "restapi"
-	p.HTTPHandlers = &rest.DefaultPlugin
+	p.SetName("generator")
 	p.KVStore = &etcd.DefaultPlugin
-	p.watchCloser =  make(chan string)
+	p.KVScheduler = &kvscheduler.DefaultPlugin
 
 	for _, o := range opts {
 		o(p)
 	}
 
-	if p.Deps.Log == nil {
-		log.Println(p.String())
-		p.Deps.Log = logging.ForPlugin(p.String())
-	}
+	p.Setup()
 
 	return p
 }
 
-// Option is a function that acts on a Plugin to inject Dependencies or configuration
+// Option is a function that can be used in NewPlugin to customize Plugin.
 type Option func(*Plugin)
 
 // UseDeps returns Option that can inject custom dependencies.

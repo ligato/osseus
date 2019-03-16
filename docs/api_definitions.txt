@@ -1,0 +1,47 @@
+save a project (also used to save new project)
+POST
+/osseus/v1/projects/save
+http body {"projectName": name}
+
+get saved projects
+GET
+/osseus/v1/projects/id
+returns {"projectName": name,
+        "projectName": name}
+
+open project
+<loads plugin state from etcd?>
+GET
+/osseus/v1/projects/id/{{}}
+http body returns {"projectName": name}
+return project state json
+{
+    "pluginName" : name
+        "plugin options": option1
+        plugin: [
+            { name: grpc,
+                port: [
+                { }
+                ]
+        ]
+}
+
+generate project
+POST
+/osseus/v1/projects/generate
+<endpoint once project is generated; sending a large json with all plugin attributes>
+    Json definition:
+        -project id
+            -plugin
+               -attr/plugin options
+            -plugin
+            -agent options
+
+delete a project
+DELETE
+/osseus/v1/projects/id/{{}}
+httpbody {"pluginName": plugin}
+
+//might be not necessary if UI using a webhook
+get path for generated code
+GET

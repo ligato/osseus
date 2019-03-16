@@ -175,6 +175,19 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:aba097e73508301638e04a378f77dddb1e13b38f49bcbfaa83c327b404757078"
+  name = "github.com/ligato/osseus"
+  packages = [
+    "plugins/generator",
+    "plugins/generator/descriptor",
+    "plugins/generator/descriptor/adapter",
+    "plugins/generator/model",
+  ]
+  pruneopts = "UT"
+  revision = "f12f34be06d51c0a0dc62f2fec8c32a74ef4e2f5"
+
+[[projects]]
+  branch = "master"
   digest = "1:5915c7bd3809b886d040ee38b23ea05adc76629c302d0f59adb781f739a15569"
   name = "github.com/ligato/vpp-agent"
   packages = [
@@ -379,6 +392,7 @@
     "github.com/ligato/cn-infra/datasync",
     "github.com/ligato/cn-infra/datasync/kvdbsync",
     "github.com/ligato/cn-infra/datasync/kvdbsync/local",
+    "github.com/ligato/cn-infra/datasync/resync",
     "github.com/ligato/cn-infra/db/keyval",
     "github.com/ligato/cn-infra/db/keyval/etcd",
     "github.com/ligato/cn-infra/health/statuscheck",
@@ -387,6 +401,10 @@
     "github.com/ligato/cn-infra/logging/logmanager",
     "github.com/ligato/cn-infra/logging/logrus",
     "github.com/ligato/cn-infra/rpc/rest",
+    "github.com/ligato/osseus/plugins/generator",
+    "github.com/ligato/osseus/plugins/generator/descriptor",
+    "github.com/ligato/osseus/plugins/generator/descriptor/adapter",
+    "github.com/ligato/osseus/plugins/generator/model",
     "github.com/ligato/vpp-agent/pkg/models",
     "github.com/ligato/vpp-agent/plugins/kvscheduler",
     "github.com/ligato/vpp-agent/plugins/kvscheduler/api",
