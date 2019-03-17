@@ -22,11 +22,11 @@ import (
 const ModuleName = "generator"
 
 var (
-	// ModelPlugin defines the registered model
-	ModelPlugin = models.Register(&Plugin{}, models.Spec{
+	// ModelProject defines the registered model
+	ModelProject = models.Register(&Project{}, models.Spec{
 		Module:  ModuleName,
 		Version: "v1",
-		Type:    "plugin",
+		Type:    "project",
 	}, models.WithNameTemplate("{{.Name}}"))
 	// ModelTemplate defines the registered model
 	ModelTemplate = models.Register(&Template{}, models.Spec{
@@ -36,10 +36,10 @@ var (
 	}, models.WithNameTemplate("{{.Name}}"))
 )
 
-// PluginKey returns the key used in NB DB to store the configuration
+// ProjectKey returns the key used in NB DB to store the configuration
 // of a skeleton value with the given logical name.
-func PluginKey(name string) string {
-	return models.Key(&Plugin{
+func ProjectKey(name string) string {
+	return models.Key(&Project{
 		Name: name,
 	})
 }
