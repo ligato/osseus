@@ -35,13 +35,19 @@ type Response struct {
 	Port 		 int32
 }
 
+type ResponseTwo struct{
+	PluginName	string
+	Id			 int32
+}
+
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
+	//p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/demo/saveMultiple", p.registerSaveMultiple, POST)
 }
 
 // registerHTTPHandler is common register method for all handlers without JSON body input
@@ -108,6 +114,51 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
+
+//registers handler for demo/saveMultiple endpoint
+func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
+		var reqParam []ResponseTwo
+		err = json.Unmarshal(body, &reqParam)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		p.Log.Debug("reqparam is, expecting [{unmarshalled stuff(no keys)}]: ", reqParam)
+
+		p.Log.Debug("first plugin json plugin name: %v", reqParam[0].PluginName)
+		p.Log.Debug("first plugin json plugin Id: %v", reqParam[0].Id)
+
+		/*paramFirstPlugin := reqParam[0]
+		p.Log.Debug("first array elem is: %v", paramFirstPlugin)
+		*/
+
+		/*
+		if paramFirstPlugin.PluginName == "" {
+			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+		p.Log.Debug("first plugin json plugin name: %v", paramFirstPlugin.PluginName)*/
+
+		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
+	}
+}
+
 
 // handler for default path, displays message to verify if server endpoint is up
 func (p *Plugin) GetServerStatus() (interface{}, error) {
