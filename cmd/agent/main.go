@@ -42,7 +42,6 @@ type OsseusAgent struct {
 	ETCDDataSync *kvdbsync.Plugin
 
 	Rest	   *restapi.Plugin
-	Keyval	   *etcd.Plugin
 }
 
 // New creates new OsseusAgent instance.
@@ -67,7 +66,6 @@ func New() *OsseusAgent {
 		ETCDDataSync: etcdDataSync,
 		Generator:    &generator.DefaultPlugin,
 		Rest:       &restapi.DefaultPlugin,
-		Keyval:     &etcd.DefaultPlugin,
 	}
 }
 
