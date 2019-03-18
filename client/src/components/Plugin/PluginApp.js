@@ -4,12 +4,14 @@ import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
 import store from '../../redux/store/index';
 import { saveArray, setCurrArray } from "../../redux/actions/index";
+import 'chai/register-expect';
 
 /*
 * OFFSET allows me to differentiate between categories of plugins
 * while looping through the unique components, the first 3 plugins
 * are their own category, the next 4 their own and so on.
-*/ 
+*/
+const { expect } = require('chai');
 const OFFSET = [[0],[3],[7],[9],[11],[17]];
 let pluginModule = require('../Plugins');
 let pluginPickedArray;
@@ -20,7 +22,11 @@ class PluginApp extends React.Component {
   constructor() {
     super();
     pluginPickedArray = store.getState().currProject;
+    expect(pluginPickedArray).to.have.lengthOf(16);
+
     visiblityArray = buildVisiblityArray();
+    expect(visiblityArray).to.have.lengthOf(16);
+
     this.handleData = this.handleData.bind(this);
     this.state = {
       clickedIndex: null,
@@ -103,3 +109,5 @@ function buildVisiblityArray() {
   }
   return array;
 }
+
+

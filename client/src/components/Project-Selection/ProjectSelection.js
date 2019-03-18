@@ -20,7 +20,6 @@ class ProjectSelection extends React.Component {
       pluginModule.plugins[i].selected = false;
       pluginModule.plugins[i].port = 'default';
     }
-    console.log(store.getState().projects)
   }
   render() {
     return (

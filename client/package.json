@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "chai": "^4.2.0",
     "node-webhooks": "^1.4.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
@@ -14,7 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "mocha",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -27,6 +28,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
     "redux": "^4.0.1"
   }
 }
