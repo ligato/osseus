@@ -139,6 +139,8 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 
 		p.Log.Debug("reqparam is, expecting [{unmarshalled stuff(no keys)}]: ", reqParam)
 
+		p.SaveMultiplePlugins(reqParam)
+
 		p.Log.Debug("first plugin json plugin name: %v", reqParam[0].PluginName)
 		p.Log.Debug("first plugin json plugin Id: %v", reqParam[0].Id)
 
@@ -174,6 +176,16 @@ func (p *Plugin) SavePlugin(response Response) (interface{}, error){
 	return response, nil
 }
 
+func (p *Plugin) SaveMultiplePlugins(responses []ResponseTwo) (interface{}, error){
+	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
+	//todo: loop through array to save all things
+	//p.genUpdater(response)
+	for i := 0; i < len(responses); i++{
+		p.genUpdaterTwo(responses[i])
+	}
+	return responses, nil
+}
+
 //updates the key that the generator watches on
 func (p *Plugin) genUpdater(response Response) {
 	broker := p.KVStore.NewBroker(genPrefix)
@@ -202,6 +214,38 @@ func (p *Plugin) genUpdater(response Response) {
 		Selected: response.Selected,
 		Image: response.Image,
 		Port: response.Port,
+	}
+
+	// Update value in KV store
+	if err := broker.Put(key, value); err != nil {
+		p.Log.Errorf("Put failed: %v", err)
+	}
+}
+
+func (p *Plugin) genUpdaterTwo(response ResponseTwo) {
+	broker := p.KVStore.NewBroker(genPrefix)
+
+	key := response.PluginName
+	value := new(model.Plugin)
+	found, _, err := broker.GetValue(key, value)
+
+	if err != nil {
+		p.Log.Errorf("GetValue failed: %v", err)
+	} else if !found {
+		p.Log.Info("No plugins found..")
+	} else {
+		p.Log.Infof("Found some plugins: %+v", value)
+	}
+
+	// Wait few seconds
+	time.Sleep(time.Second * 2)
+
+	p.Log.Infof("updating..")
+
+	// Prepare data
+	value = &model.Plugin{
+		PluginName: response.PluginName,
+		Id:	response.Id,
 	}
 
 	// Update value in KV store
