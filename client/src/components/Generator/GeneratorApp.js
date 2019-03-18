@@ -6,11 +6,11 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 
 //This describes the format of the GeneratorApp
 class GeneratorApp extends React.Component {
-  render () {
+  render() {
     return (
       <div>
-        <CodeStructure/>
-        <CodeViewer/>
+        <CodeStructure />
+        <CodeViewer />
       </div>
     )
   }

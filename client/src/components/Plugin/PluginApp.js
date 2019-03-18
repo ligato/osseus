@@ -2,28 +2,28 @@ import React from 'react'
 import PluginPicker from './PluginPicker';
 import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
+import store from '../../redux/store/index';
+import { saveArray, setCurrArray } from "../../redux/actions/index";
 
 /*
-* Offsets allows me to differentiate between categories of plugins
+* OFFSET allows me to differentiate between categories of plugins
 * while looping through the unique components, the first 3 plugins
 * are their own category, the next 4 their own and so on.
 */ 
-const offsets = [[0],[3],[7],[9],[11],[17]];
-let pluginPickedArray =  new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+const OFFSET = [[0],[3],[7],[9],[11],[17]];
+let pluginModule = require('../Plugins');
+let pluginPickedArray;
+let visiblityArray;
+store.dispatch( setCurrArray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]));
 
 class PluginApp extends React.Component {
   constructor() {
     super();
+    pluginPickedArray = store.getState().currProject;
+    visiblityArray = buildVisiblityArray();
     this.handleData = this.handleData.bind(this);
-
-    //Defining all important plugin data for looping.
     this.state = {
       clickedIndex: null,
-      pluginNames: ['REST API',  'GRPC',       'PROMETHEUS',   'ETCD',      
-                    'REDIS',     'CASSANDRA',  'CONSUL',       'LOGRUS',     
-                    'LOG MNGR',  'STTS CHECK', 'PROBE',        'KAFKA',     
-                    'DATASYNC',  'IDX MAP',    'SRVC LABEL',   'CONFIG'],
-
       sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.']
     };
   }
@@ -34,7 +34,14 @@ class PluginApp extends React.Component {
     this.setState({
       clickedIndex: index
     });
-    pluginPickedArray[index] = !pluginPickedArray[index];
+    pluginPickedArray[index] = !pluginPickedArray[index]*1;
+    pluginModule.plugins[index].selected = !pluginModule.plugins[index].selected;
+    store.dispatch(saveArray(pluginModule.plugins));
+    if(pluginPickedArray[index] === 0) {
+      visiblityArray[index] = 'hidden';
+    } else {
+      visiblityArray[index] = 'visible';
+    }
   }
 
   render() {
@@ -42,37 +49,22 @@ class PluginApp extends React.Component {
       <div>
         <div className="left-column-background"></div>
           <div className="plugin-column">
-            {
-              //Starting here is the outer loop defining each PluginPicker. 
-              //.map will loop for the length of sentInCategories with 
-              //index as the counter. Index is used to reference 
-              //different values within offsets which are themselves used
-              //to define which pluginPickedArray subarray is sent as a prop 
-              //to each PluginPicker  
-            }
-            {this.state.sentInCategories.map((sentInCategory, index) => {
+            {this.state.sentInCategories.map((sentInCategory, outerIndex) => {
               return (
                 <PluginPicker 
-                  key={index} 
+                  key={outerIndex} 
                   sentInCategory={sentInCategory} 
-                  sentInArrayObject={pluginPickedArray.subarray(Number(offsets[index]),Number(offsets[index+1]))}
+                  sentInArrayObject={pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
                 >
-                  {
-                    //Starting here is the inner loop defining each DraggablePlugin
-                    //within each PluginPicker. Which DraggablePlugins are apart
-                    //of which PluginPicker is manipulated again by the different
-                    //values within offsets. In this case, referenced by pluginNameIndex.
-                    //to define which pluginPickedArray subarray is sent as a prop 
-                    //to each PluginPicker  
-                  }
-                  {this.state.pluginNames.slice(Number(offsets[index]), Number(offsets[index+1])).map((pluginName, pluginNameIndex) => {
+                  {pluginModule.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
                     return (
                       <DraggablePlugins
-                        pluginName={pluginName}
-                        image={'/images/walrus.png'}
+                        pluginName={pluginModule.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
+                        image={pluginModule.plugins[Number(OFFSET[outerIndex]) + innerIndex].image}
                         handlerFromParent={this.handleData}
-                        id={pluginNameIndex+Number(offsets[index])}
-                        key={pluginNameIndex+Number(offsets[index])} 
+                        id={Number(OFFSET[outerIndex]) + innerIndex}
+                        key={Number(OFFSET[outerIndex]) + innerIndex} 
+                        visibility={visiblityArray[Number(OFFSET[outerIndex]) + innerIndex]}
                       />
                     )
                   })}     
@@ -81,21 +73,15 @@ class PluginApp extends React.Component {
             })}
           </div>
           <PluginPalette sentInArrayObject={pluginPickedArray}>
-            {
-              //Similiar to the previous PluginPicker definition however,
-              //since theres only one PluginPalette, all DraggablePlugins
-              //are rendered within one component: PluginPalette. Therefore 
-              //the loop isnt broken up into subarrays using offsets. The whole
-              //pluginNames array is sent in.
-            }
-            {this.state.pluginNames.map((pluginName, pluginNameIndex) => {
+            {pluginModule.plugins.map((i, index) => {
               return (
                 <DraggablePlugins
-                  pluginName={pluginName}
-                  image={'/images/walrus.png'}
+                  pluginName={pluginModule.plugins[index].pluginName}
+                  image={pluginModule.plugins[index].image}
                   handlerFromParent={this.handleData}
-                  id={pluginNameIndex}
-                  key={pluginNameIndex}
+                  id={index}
+                  key={index}
+                  visibility={visiblityArray[index]}
                 />
               )
             })}   
@@ -105,3 +91,15 @@ class PluginApp extends React.Component {
   }
 }
 export default PluginApp;
+
+function buildVisiblityArray() {
+  var array = [];
+  for(let i = 0; i < pluginPickedArray.length; i++) {
+    if(pluginPickedArray[i] === 0) {
+      array[i] = 'hidden';
+    } else {
+      array[i] = 'visible';
+    }
+  }
+  return array;
+}

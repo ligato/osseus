@@ -1,6 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Lato:400,900);
 .body {
-  font-family: "Lato", verdana, sans-serif; }
+  font-family: "Lato", verdana, sans-serif;
+}
 
 .split {
   width: 17.5%;
@@ -10,14 +11,16 @@
   overflow-x: hidden;
   overflow-y: hidden;
   padding-top: 10px;
-  background-color: #4AC68E; }
+  background-color: #379683;
+}
 
 .centered {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center; }
+  text-align: center;
+}
 
 .whitetext {
   color: white;
@@ -26,4 +29,5 @@
   flex-direction: column;
   justify-content: space-between;
   opacity: 1;
-  font-size: 30px; }
+  font-size: 30px;
+}

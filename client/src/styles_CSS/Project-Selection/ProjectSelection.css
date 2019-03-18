@@ -6,7 +6,7 @@
   bottom: 0;
   right: 0;
   left: 0;
-  top: 50px;
+  top: 44px;
   opacity: 1;
 }
 
@@ -16,6 +16,7 @@
 }
 
 .new-project-link {
+  font-size: 12px;
   background-color: #4AC68E;
   box-shadow: 0 5px 0 #3D9970;
   color: white;

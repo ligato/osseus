@@ -4,7 +4,8 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray; }
+  background-color: gray;
+}
 
 .card-palette {
   width: 133%;
@@ -12,22 +13,12 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray; }
+  background-color: gray;
+}
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 #2E2E2E; }
-
-img {
-  border-radius: 5px 5px 0 0;
-  width: 80%;
-  height: 80%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto; }
-
-.centered img {
-  width: 120px;
-  border-radius: 20%; }
+  box-shadow: 0 8px 16px 0 #2E2E2E;
+}
 
 .cardtext {
   margin-top: 0px;
@@ -35,8 +26,40 @@ img {
   color: white;
   background: #2F4454;
   text-align: center;
-  font-size: 14px; }
+  font-size: 10px;
+}
 
 .cardbody {
   font-family: "Lato", verdana, sans-serif;
-  cursor: pointer; }
+  cursor: pointer;
+  z-index: 200;
+}
+
+.img-holder {
+  position: relative;
+}
+
+.main-img {
+  border-radius: 5px 5px 0 0;
+  width: 80%;
+  height: 80%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 1;
+}
+
+.close-img {
+  border-radius: 5px 5px 0 0;
+  width: 20%;
+  height: auto;
+  display: block;
+  position: absolute;
+  z-index: 3;
+  top: -5px;
+  right: -5px;
+}
+
+.close-img:hover {
+  filter: brightness(130%);
+}
