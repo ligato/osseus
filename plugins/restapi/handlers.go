@@ -35,18 +35,13 @@ type Response struct {
 	Port 		 int32
 }
 
-type ResponseTwo struct{
-	PluginName	string
-	Id			 int32
-}
-
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	//p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/saveMultiple", p.registerSaveMultiple, POST)
 }
 
@@ -128,7 +123,7 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 		}
 
 		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
-		var reqParam []ResponseTwo
+		var reqParam []Response
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -137,30 +132,11 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 			return
 		}
 
-		p.Log.Debug("reqparam is, expecting [{unmarshalled stuff(no keys)}]: ", reqParam)
-
 		p.SaveMultiplePlugins(reqParam)
-
-		p.Log.Debug("first plugin json plugin name: %v", reqParam[0].PluginName)
-		p.Log.Debug("first plugin json plugin Id: %v", reqParam[0].Id)
-
-		/*paramFirstPlugin := reqParam[0]
-		p.Log.Debug("first array elem is: %v", paramFirstPlugin)
-		*/
-
-		/*
-		if paramFirstPlugin.PluginName == "" {
-			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-		p.Log.Debug("first plugin json plugin name: %v", paramFirstPlugin.PluginName)*/
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
-
 
 // handler for default path, displays message to verify if server endpoint is up
 func (p *Plugin) GetServerStatus() (interface{}, error) {
@@ -176,12 +152,10 @@ func (p *Plugin) SavePlugin(response Response) (interface{}, error){
 	return response, nil
 }
 
-func (p *Plugin) SaveMultiplePlugins(responses []ResponseTwo) (interface{}, error){
+func (p *Plugin) SaveMultiplePlugins(responses []Response) (interface{}, error){
 	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
-	//todo: loop through array to save all things
-	//p.genUpdater(response)
 	for i := 0; i < len(responses); i++{
-		p.genUpdaterTwo(responses[i])
+		p.genUpdater(responses[i])
 	}
 	return responses, nil
 }
@@ -214,38 +188,6 @@ func (p *Plugin) genUpdater(response Response) {
 		Selected: response.Selected,
 		Image: response.Image,
 		Port: response.Port,
-	}
-
-	// Update value in KV store
-	if err := broker.Put(key, value); err != nil {
-		p.Log.Errorf("Put failed: %v", err)
-	}
-}
-
-func (p *Plugin) genUpdaterTwo(response ResponseTwo) {
-	broker := p.KVStore.NewBroker(genPrefix)
-
-	key := response.PluginName
-	value := new(model.Plugin)
-	found, _, err := broker.GetValue(key, value)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No plugins found..")
-	} else {
-		p.Log.Infof("Found some plugins: %+v", value)
-	}
-
-	// Wait few seconds
-	time.Sleep(time.Second * 2)
-
-	p.Log.Infof("updating..")
-
-	// Prepare data
-	value = &model.Plugin{
-		PluginName: response.PluginName,
-		Id:	response.Id,
 	}
 
 	// Update value in KV store
