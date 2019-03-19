@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "chai": "^4.2.0",
     "node-webhooks": "^1.4.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^2.1.5",
     "semantic-ui-react": "^0.85.0",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "typescript": "*"
   },
   "scripts": {
     "start": "react-scripts start",
