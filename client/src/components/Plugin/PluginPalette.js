@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types'
+//import PropTypes from 'prop-types'
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Plugin/Splitright.css";
 
@@ -15,7 +15,7 @@ const PluginPalette = (props) => {
   //sentInArrayObject = [0,1,1,0], plugins with the id attribute 1 and 2
   //are rendered within PluginPalette and not PluginPicker.
   for(let i = props.sentInArrayObject.length; i >= 0; i--) {
-    if(props.sentInArrayObject[i] === 0) { pluginArray.splice(i,1); }
+    if(props.sentInArrayObject[i] === 0 || props.sentInArrayObject[i] === false) { pluginArray.splice(i,1); }
   }
 
   return (
@@ -37,6 +37,6 @@ const PluginPalette = (props) => {
 };
 export default PluginPalette;
 
-PluginPalette.propTypes = {
+/*PluginPalette.propTypes = {
   sentInArrayObject:   PropTypes.object.isRequired,
-}
+}*/

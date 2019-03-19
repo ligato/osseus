@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
+//import index from "./redux/index"
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

@@ -1,7 +1,8 @@
 .right {
   height: 85%;
-  top: 50px;
+  top: 20px;
   right: 0;
+  z-index: 1;
   background-color: #2E2E2E;
   width: 82.5%;
   display: flex;
@@ -20,7 +21,7 @@
 
 .rectangle {
   width: 80%;
-  height: 50%;
+  height: 40%;
   background: #3C3C3C;
   padding: 2px 16px;
   align-self: flex-end;

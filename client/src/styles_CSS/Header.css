@@ -2,8 +2,9 @@
   background-color: #515151;
   margin-top: -2px;
   box-shadow: 0 5px 0 #383838;
-  height: 47px;
+  height: 40px;
   overflow: hidden;
+  z-index: 201;
 }
 
 .header-link {
@@ -13,23 +14,38 @@
 
 .project-selection-link {
   float: left;
+  font-size: 12px;
   background-color: #4AC68E;
   color: white;
-  padding: 0.5em 2em;
+  padding: 0.4em 1.2em;
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -5px;
+  margin-top: -7px;
   border-radius: 6px;
   text-align: center;
 }
 
-.plugin-link {
+.plugin-nav {
   float: right;
+  font-size: 12px;
   background-color: #4AC68E;
   box-shadow: 0 5px 0 #3D9970;
   color: white;
-  padding: 1em 2.526em;
+  padding: 0.9em 2.526em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-top: -13px;
+}
+
+.generator-nav {
+  float: left;
+  font-size: 12px;
+  background-color: #4AC68E;
+  box-shadow: 0 5px 0 #3D9970;
+  color: white;
+  padding: 0.9em 1.5em;
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
@@ -37,22 +53,74 @@
 }
 
 .generator-link {
-  float: left;
-  background-color: #4AC68E;
-  box-shadow: 0 5px 0 #3D9970;
+  float: right;
+  font-size: 12px;
+  background-color: #2F4454;
   color: white;
-  padding: 1em 1.5em;
+  padding: 0.4em 1.2em;
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -13px;
+  margin-top: -7px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.save-button {
+  float: right;
+  font-size: 12px;
+  background-color: #2F4454;
+  color: white;
+  padding: 0.65em 1.5em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-top: -7px;
+  border-radius: 6px;
+  text-align: center;
+  margin-right: 8px;
+  border: #2F4454;
+  letter-spacing: -1px;
+}
+.save-button:hover {
+  background-color: #3D9970;
+  cursor: pointer;
+}
+.save-button:active {
+  box-shadow: none;
+  top: 5px;
+}
+.save-button:focus {
+  outline: none;
 }
 
 a:hover {
-  background-color: #3D9970;
+  background-color: #2F4454;
   cursor: pointer;
+  color: white;
 }
 a:active {
   box-shadow: none;
   top: 5px;
+  colr: white;
+}
+
+.swal-text {
+  background-color: #FEFAE3;
+  font-size: 20px;
+  padding: 17px;
+  border: 1px solid #F0E1A1;
+  display: block;
+  margin: 22px;
+  text-align: center;
+  color: #61534e;
+}
+
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #4AC68E;
+  font-size: 16px;
+  border: 1px solid #3e549a;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
 }
