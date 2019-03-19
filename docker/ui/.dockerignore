@@ -1,0 +1,13 @@
+# Get only files needed for ui
+
+.git
+build
+node_modules
+cmd
+docs
+plugins
+scrum
+vendor
+Gopkg.lock
+Gopkg.toml
+README.md

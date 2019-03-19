@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set +e
-sudo docker rmi -f osseus
+sudo docker rmi -f agent
 set -e
 
 CURRENT_FOLDER=`pwd`
@@ -21,4 +21,4 @@ done
 
 echo "build agent commit number: "$AGENT_COMMIT
 
-sudo docker build --force-rm=true -t osseus --build-arg AGENT_COMMIT=$AGENT_COMMIT --no-cache .
+sudo docker build --force-rm=true -t agent --build-arg AGENT_COMMIT=$AGENT_COMMIT --no-cache .

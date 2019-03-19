@@ -12,32 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/plugin.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/project.proto
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/template.proto
-//go:generate descriptor-adapter --descriptor-name Plugin --value-type *model.Plugin --import "model" --output-dir "descriptor"
+//go:generate descriptor-adapter --descriptor-name Project --value-type *model.Project --import "model" --output-dir "descriptor"
 //go:generate descriptor-adapter --descriptor-name Template --value-type *model.Template --import "model" --output-dir "descriptor"
 
 package generator
 
 import (
 	"github.com/ligato/cn-infra/db/keyval"
-
-	"github.com/ligato/cn-infra/datasync"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/osseus/plugins/generator/descriptor"
+
+	"github.com/ligato/osseus/plugins/generator/gencalls"
 	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 // Plugin holds the internal data structures of the Generator Plugin
 type Plugin struct {
 	Deps
+
+	// Generator handlers
+	genHandler gencalls.ProjectAPI
 }
 
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
-	Publisher   datasync.KeyProtoValWriter
 	KVStore     keyval.KvProtoPlugin
 	KVScheduler kvs.KVScheduler
 }
@@ -46,12 +48,16 @@ type Deps struct {
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
-	pluginDescriptor := descriptor.NewPluginDescriptor(p.Log, p.KVStore)
+	// Init handlers
+	p.genHandler = gencalls.NewProjectHandler(p.Log, p.KVStore)
+
+	// Init & register descriptors
+	pluginDescriptor := descriptor.NewProjectDescriptor(p.Log, p.genHandler)
 	err := p.KVScheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
-	p.Log.Info("Plugin descriptor registered")
+	p.Log.Info("Project descriptor registered")
 
 	templateDescriptor := descriptor.NewTemplateDescriptor(p.Log)
 	err = p.KVScheduler.RegisterKVDescriptor(templateDescriptor)

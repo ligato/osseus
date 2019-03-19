@@ -29,11 +29,13 @@ RUN git clone https://github.com/google/protobuf.git && \
   ldconfig && \
   cd .. && rm -rf protobuf
 
-COPY config/grpc.conf .
-COPY config/etcd.conf .
+RUN apt-get install -y golang-gogoprotobuf-dev
+
+COPY cmd/agent/etcd.conf .
 
 # copy and execute agent build script
-COPY docker/server/build-agent.sh .
+COPY docker/agent/build-agent.sh .
+RUN  chmod u+x build-agent.sh
 RUN  ./build-agent.sh ${AGENT_COMMIT}
 
 WORKDIR /root/

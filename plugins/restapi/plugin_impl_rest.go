@@ -16,12 +16,19 @@
 package restapi
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/rest"
 )
+
+//Generate model:
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/restmodel.proto
+
+const keyPrefix = "/myplugin/"
 
 // REST api methods
 const (
@@ -47,20 +54,23 @@ type Plugin struct {
 type Deps struct {
 	infra.PluginDeps
 	HTTPHandlers rest.HTTPHandlers
+	KVStore      keyval.KvProtoPlugin
+	watchCloser  chan string
 }
 
 // Init initializes the Rest Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
+	if p.KVStore.Disabled() {
+		return fmt.Errorf("KV store is disabled")
+	}
 	return nil
 }
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
-	p.Log.Debug("REST API Plugin should be up and running ;) ")
-	// you would want to register your handlers here
+	p.Log.Debug("REST API Plugin started ")
 	p.registerHandlersHere()
-
 	return nil
 }
 
