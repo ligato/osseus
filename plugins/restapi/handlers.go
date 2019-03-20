@@ -26,7 +26,7 @@ import (
 	"github.com/unrolled/render"
 )
 
-const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
+const genPrefix = "/vnf-agent/vpp1/config/generator/v1/project/"
 const projectsPrefix = "/projects/v1/plugins/"
 
 type Response struct {
