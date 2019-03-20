@@ -46,10 +46,10 @@ class Header extends React.Component {
 
   generate() {
     // Get current plugins in palette
-    const plugins = JSON.parse(JSON.stringify(store.getState().currProject));
-    store.dispatch(setCurrArray([plugins]));
+    var plugins = JSON.parse(JSON.stringify(store.getState().savedPlugins));
+    store.dispatch(addPluginArray([plugins]));
 
-    const project = store.getState().currProject[0];
+    const project = store.getState().projects[0];
     console.log(project)
     // Send plugins to agent
     fetch('http://0.0.0.0:8000/demo/generate', {
