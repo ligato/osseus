@@ -26,12 +26,12 @@ import (
 	"github.com/unrolled/render"
 )
 
-const genPrefix = "/vnf-agent/vpp1/config/generator/v1/project/"
+const genPrefix = "/vnf-agent/vpp1/config/generator/v1/plugin/"
+const projectsPrefix = "/projects/v1/plugins/"
 
-// Response from ui
 type Response struct {
 	PluginName string
-	ID         int32
+	Id         int32
 	Selected   bool
 	Image      string
 	Port       int32
@@ -45,6 +45,8 @@ func (p *Plugin) registerHandlersHere() {
 	})
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/saveMultiple", p.registerSaveMultiple, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
+
 }
 
 // registerHTTPHandler is common register method for all handlers without JSON body input
@@ -104,7 +106,7 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 		p.SavePlugin(reqParam)
 
 		p.Log.Debugf("PluginName: %v", reqParam.PluginName)
-		p.Log.Debugf("PluginId: %v", reqParam.ID)
+		p.Log.Debugf("PluginId: %v", reqParam.Id)
 		p.Log.Debugf("PluginSelected: %v", reqParam.Selected)
 		p.Log.Debugf("PluginImage: %v", reqParam.Image)
 		p.Log.Debugf("PluginPort: %v", reqParam.Port)
@@ -140,32 +142,67 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 	}
 }
 
-// GetServerStatus for default path, displays message to verify if server endpoint is up
+//registers handler for demo/generate endpoint
+func (p *Plugin) registerGenerate(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
+		var reqParam []Response
+		err = json.Unmarshal(body, &reqParam)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		p.SavePluginsToGenerate(reqParam)
+
+		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
+	}
+}
+
+// handler for default path, displays message to verify if server endpoint is up
 func (p *Plugin) GetServerStatus() (interface{}, error) {
 	p.Log.Debug("REST API default home endpoint is up")
 	return "Ligato-gen server is up", nil
 }
 
-// SavePlugin for demo/save
+// handler for demo/save
 // API endpoint frontend container should call to save plugin info
 func (p *Plugin) SavePlugin(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /demo/save plugin reached")
-	p.genUpdater(response)
+	p.genUpdater(response, projectsPrefix)
 	return response, nil
 }
 
-// SaveMultiplePlugins to save an array of incoming plugins
 func (p *Plugin) SaveMultiplePlugins(responses []Response) (interface{}, error) {
 	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
 	for i := 0; i < len(responses); i++ {
-		p.genUpdater(responses[i])
+		p.genUpdater(responses[i], projectsPrefix)
+	}
+	return responses, nil
+}
+
+func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
+	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
+	for i := 0; i < len(responses); i++ {
+		p.genUpdater(responses[i], genPrefix)
 	}
 	return responses, nil
 }
 
 //updates the key that the generator watches on
-func (p *Plugin) genUpdater(response Response) {
-	broker := p.KVStore.NewBroker(genPrefix)
+func (p *Plugin) genUpdater(response Response, prefix string) {
+	broker := p.KVStore.NewBroker(prefix)
 
 	key := response.PluginName
 	value := new(model.Plugin)
@@ -187,7 +224,7 @@ func (p *Plugin) genUpdater(response Response) {
 	// Prepare data
 	value = &model.Plugin{
 		PluginName: response.PluginName,
-		Id:         response.ID,
+		Id:         response.Id,
 		Selected:   response.Selected,
 		Image:      response.Image,
 		Port:       response.Port,

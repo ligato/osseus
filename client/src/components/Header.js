@@ -49,10 +49,10 @@ class Header extends React.Component {
     const plugins = JSON.parse(JSON.stringify(store.getState().currProject));
     store.dispatch(setCurrArray([plugins]));
 
-    const project = store.getState().projects;
+    const project = store.getState().currProject[0];
     console.log(project)
     // Send plugins to agent
-    fetch('http://localhost:9191/demo/generate', {
+    fetch('http://0.0.0.0:8000/demo/generate', {
       method: "POST",
       mode: "no-cors",
       headers: {
