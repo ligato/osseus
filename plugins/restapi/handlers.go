@@ -28,9 +28,10 @@ import (
 
 const genPrefix = "/vnf-agent/vpp1/config/generator/v1/project/"
 
+// Response from ui
 type Response struct {
 	PluginName string
-	Id         int32
+	ID         int32
 	Selected   bool
 	Image      string
 	Port       int32
@@ -103,7 +104,7 @@ func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerF
 		p.SavePlugin(reqParam)
 
 		p.Log.Debugf("PluginName: %v", reqParam.PluginName)
-		p.Log.Debugf("PluginId: %v", reqParam.Id)
+		p.Log.Debugf("PluginId: %v", reqParam.ID)
 		p.Log.Debugf("PluginSelected: %v", reqParam.Selected)
 		p.Log.Debugf("PluginImage: %v", reqParam.Image)
 		p.Log.Debugf("PluginPort: %v", reqParam.Port)
@@ -139,13 +140,13 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 	}
 }
 
-// handler for default path, displays message to verify if server endpoint is up
+// GetServerStatus for default path, displays message to verify if server endpoint is up
 func (p *Plugin) GetServerStatus() (interface{}, error) {
 	p.Log.Debug("REST API default home endpoint is up")
 	return "Ligato-gen server is up", nil
 }
 
-// handler for demo/save
+// SavePlugin for demo/save
 // API endpoint frontend container should call to save plugin info
 func (p *Plugin) SavePlugin(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /demo/save plugin reached")
@@ -153,6 +154,7 @@ func (p *Plugin) SavePlugin(response Response) (interface{}, error) {
 	return response, nil
 }
 
+// SaveMultiplePlugins to save an array of incoming plugins
 func (p *Plugin) SaveMultiplePlugins(responses []Response) (interface{}, error) {
 	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
 	for i := 0; i < len(responses); i++ {
@@ -185,7 +187,7 @@ func (p *Plugin) genUpdater(response Response) {
 	// Prepare data
 	value = &model.Plugin{
 		PluginName: response.PluginName,
-		Id:         response.Id,
+		Id:         response.ID,
 		Selected:   response.Selected,
 		Image:      response.Image,
 		Port:       response.Port,

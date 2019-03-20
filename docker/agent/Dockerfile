@@ -11,7 +11,6 @@ RUN mkdir /opt/agent/dev
 
 WORKDIR /opt/agent/dev
 
-
 # install Go & Glide
 RUN wget https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz && \
   tar -xvf go1.11.5.linux-amd64.tar.gz && \
@@ -35,7 +34,7 @@ COPY cmd/agent/etcd.conf .
 
 # copy and execute agent build script
 COPY docker/agent/build-agent.sh .
-RUN  chmod u+x build-agent.sh
+RUN chmod u+x build-agent.sh
 RUN  ./build-agent.sh ${AGENT_COMMIT}
 
 WORKDIR /root/

@@ -23,7 +23,7 @@ class Header extends React.Component {
     const project = store.getState().projects[0]
     console.log(project)
     // Save current project
-    fetch('http://0.0.0.0:9191/demo/saveMultiple', {
+    fetch('http://0.0.0.0:8000/demo/saveMultiple', {
       method: "POST",
       mode: "no-cors",
       headers: {
