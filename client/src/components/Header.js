@@ -2,7 +2,7 @@ import React from 'react';
 import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import store from '../redux/store/index';
-import { addPluginArray, setCurrArray } from "../redux/actions/index";
+import { addPluginArray } from "../redux/actions/index";
 import swal from 'sweetalert';
 import "../styles_CSS/Header.css";
 

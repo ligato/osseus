@@ -140,11 +140,9 @@ var plugins = [REST_API, GRPC, PROMETHEUS, ETCD,
     LOG_MNGR, STTS_CHECK, PROBE, KAFKA,
     DATASYNC, IDX_MAP, SRVC_LABEL, CONFIG];
 
+var generatedCode = 'Code Viewer'
 
 module.exports = {
     plugins: plugins,
+    generatedCode: generatedCode
 }
-
-
-
-
