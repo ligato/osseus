@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import store from '../redux/store/index';
 import { addPluginArray } from "../redux/actions/index";
 import swal from 'sweetalert';
+import 'chai/register-expect';
 import "../styles_CSS/Header.css";
 
 const arrows = "<--->";
@@ -18,6 +19,8 @@ const arrows = "<--->";
 class Header extends React.Component {
   tellMeToSave () {
     var duplicateObject = JSON.parse(JSON.stringify( store.getState().savedPlugins ));
+    expect(duplicateObject).to.be.an('object');
+
     store.dispatch( addPluginArray([duplicateObject]));
     swal({
       title: "Saved!",
@@ -26,6 +29,7 @@ class Header extends React.Component {
       button: "OK",
     });
   }
+
   render() {
     return (
       <div>
