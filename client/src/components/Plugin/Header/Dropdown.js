@@ -21,15 +21,13 @@ class Dropdown extends React.Component {
 
   handleClick = (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.dataset.id)
     store.dispatch( setCurrProject(this.loadProjectState(e.currentTarget.dataset.id)));
-    console.log(store.getState().currProject)
-    this.props.loadedProjectHandlerFromHeader();
+    this.props.loadedProjectHandlerFromHeader(store.getState().projects[e.currentTarget.dataset.id].projectName);
     flip = false;
   }
   
   loadProjectState(projectID) {
-    let project = store.getState().projects[projectID];
+    let project =  JSON.parse(JSON.stringify(store.getState().projects[projectID]));
     return project;
   }
   

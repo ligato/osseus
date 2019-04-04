@@ -22,6 +22,7 @@ class PluginApp extends React.Component {
     this.handlePluginData = this.handlePluginData.bind(this);
     this.handleNewProject = this.handleNewProject.bind(this);
     this.handleLoadedProject = this.handleLoadedProject.bind(this);
+    this.newProjectName = this.newProjectName.bind(this);
     this.state = {
       clickedIndex: null,
       sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.'], 
@@ -55,16 +56,15 @@ class PluginApp extends React.Component {
       visiblityArray[index] = 'visible';
     }
     store.dispatch( setCurrProject(pluginModule.project));
-    console.log(store.getState().currProject)
   }
 
   handleNewProject = () => {
     (async () => {
       nameCapture = await getName();
       if(!nameCapture) return;
-      if(nameCapture.length > 30){ 
-        nameCapture = nameCapture.substring(0, 29) + '...'
-        Swal.fire("Project names larger than 30 characters will be truncated!")
+      if(nameCapture.length > 20){ 
+        nameCapture = nameCapture.substring(0, 19) + '...'
+        Swal.fire("Project names larger than 20 characters will be truncated!")
       }
       this.setState({
         currentProjectName: nameCapture
@@ -81,16 +81,21 @@ class PluginApp extends React.Component {
       pluginPickedArray: selectedArray
     });
     visiblityArray = buildVisiblityArray(selectedArray)
-    console.log(store.getState().currProject)
   }
 
-  handleLoadedProject() {
-    console.log("imhere")
+  handleLoadedProject(name) {
     var selectedArray = getPluginPickedArray()
     this.setState({
-      pluginPickedArray: selectedArray
+      pluginPickedArray: selectedArray,
+      currentProjectName: name
     });
     visiblityArray = buildVisiblityArray(selectedArray)
+  }
+
+  newProjectName(name) {
+    this.setState({
+      currentProjectName: name
+    });
   }
 
   render() {
@@ -98,6 +103,7 @@ class PluginApp extends React.Component {
       <div>
         <Header
           newProjectHandlerFromParent={this.handleNewProject}
+          newProjectNameHandler={this.newProjectName}
           loadedProjectHandlerFromParent={this.handleLoadedProject}
           currentProjectName={this.state.currentProjectName}
         />

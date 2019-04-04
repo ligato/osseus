@@ -40,7 +40,6 @@ class DraggablePlugins extends React.Component {
           Swal.fire("Ports larger than 4 characters will be truncated!")
         }
         pluginModule.project.plugins[store.getState().currPopupID].port = port;
-        console.log(pluginModule.project.plugins[store.getState().currPopupID].port)
       })()
     }
   }

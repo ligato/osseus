@@ -15,7 +15,6 @@
   text-transform: uppercase;
   border: #4AC68E;
   letter-spacing: -1px;
-  margin-right: 8px;
   margin-left: -10px;
   position: absolute;
   margin-top: -13px; }
@@ -28,10 +27,12 @@
   .new-project-button:focus {
     outline: none; }
 
+.header-text {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
 .current-project {
-  position: absolute;
-  margin-left: 42%;
-  margin-top: -5px;
   color: white;
   font-weight: 700;
   font-size: 16px;
@@ -40,8 +41,10 @@
 .project-name {
   color: #4AC68E;
   font-weight: 700;
-  margin-top: -5px;
-  cursor: text; }
+  margin-top: -17px;
+  margin-left: 10px;
+  cursor: text;
+  font-size: 16px; }
 
 .generator-link {
   float: right;
@@ -52,7 +55,7 @@
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -7px;
+  margin-top: -45px;
   border-radius: 6px;
   text-align: center; }
 
@@ -65,10 +68,10 @@
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -7px;
+  margin-top: -45px;
   border-radius: 6px;
   text-align: center;
-  margin-right: 8px;
+  margin-right: 90px;
   border: #2F4454;
   letter-spacing: -1px; }
   .save-button:hover {
