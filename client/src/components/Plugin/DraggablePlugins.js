@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import store from '../../redux/store/index';
 import { setCurrPopupID } from "../../redux/actions/index";
-import swal from 'sweetalert';
+import Swal from 'sweetalert2'
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Plugin/Plugincard.css";
 
@@ -12,35 +12,36 @@ import "../../styles_CSS/Plugin/Plugincard.css";
 * we capture the id of a clicked plugin and send that id to the parent
 * App.js
 */ 
-let pluginModule = require('../Plugins');
+let pluginModule = require('../Model');
 
+async function getPort (id) {
+  const {value: text} = await Swal.fire({
+    title: 'Current Port: ' + store.getState().currProject.plugins[id].port,
+    input: 'textarea',
+    inputPlaceholder: 'Custom Port',
+    showCancelButton: true,
+    allowEnterKey:	true,
+  })
+  return text;
+}
 
 class DraggablePlugins extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      index: null
-    };
-    //this.handleClick = this.handleClick.bind(this);
-  }
-
-  /*
-  * This function captures the event and determines the id of the clicked plugin.
-  * This id is in turn sent up to PluginApp.js in order to tick the element at 
-  * the index of the id.
-  */
   handleClick = e => { 
     e.preventDefault();
     store.dispatch(setCurrPopupID(e.currentTarget.dataset.id));
     if(this.props.visibility === 'hidden') {
       this.props.handlerFromParent(e.currentTarget.dataset.id);
     } else {
-      swal("Port: " + pluginModule.plugins[store.getState().currPopupID].port, {
-        content: "input",
-      })
-      .then((value) => {
-        return pluginModule.plugins[store.getState().currPopupID].port = value;
-      });
+      (async () => {
+        let port = await getPort(e.currentTarget.dataset.id);
+        if(!port) return;
+        if(port.length > 4){ 
+          port = port.substring(0, 3) + '...'
+          Swal.fire("Ports larger than 4 characters will be truncated!")
+        }
+        pluginModule.project.plugins[store.getState().currPopupID].port = port;
+        console.log(pluginModule.project.plugins[store.getState().currPopupID].port)
+      })()
     }
   }
 

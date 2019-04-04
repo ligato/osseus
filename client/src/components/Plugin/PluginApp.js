@@ -2,57 +2,105 @@ import React from 'react'
 import PluginPicker from './PluginPicker';
 import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
+import Header from './Header/Header';
 import store from '../../redux/store/index';
-import { saveArray, setCurrArray } from "../../redux/actions/index";
+import { setCurrProject } from "../../redux/actions/index";
 import 'chai/register-expect';
+import Swal from 'sweetalert2'
 
-/*
-* OFFSET allows me to differentiate between categories of plugins
-* while looping through the unique components, the first 3 plugins
-* are their own category, the next 4 their own and so on.
-*/
-const { expect } = require('chai');
+//const { expect } = require('chai');
 const OFFSET = [[0],[3],[7],[9],[11],[17]];
-let pluginModule = require('../Plugins');
-let pluginPickedArray;
+let pluginModule = require('../Model');
 let visiblityArray;
-store.dispatch( setCurrArray([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]));
+let nameCapture;
+store.dispatch( setCurrProject(pluginModule.project));
+
 
 class PluginApp extends React.Component {
   constructor() {
     super();
-    pluginPickedArray = store.getState().currProject;
-    expect(pluginPickedArray).to.have.lengthOf(16);
-
-    visiblityArray = buildVisiblityArray();
-    expect(visiblityArray).to.have.lengthOf(16);
-
-    this.handleData = this.handleData.bind(this);
+    this.handlePluginData = this.handlePluginData.bind(this);
+    this.handleNewProject = this.handleNewProject.bind(this);
+    this.handleLoadedProject = this.handleLoadedProject.bind(this);
     this.state = {
       clickedIndex: null,
-      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.']
+      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.'], 
+      pluginPickedArray: getPluginPickedArray(),
+      currentProjectName: store.getState().currProject.projectName
     };
+    (async () => {
+      nameCapture = await getNameLocked();
+      if(nameCapture.length > 30){ 
+        nameCapture = nameCapture.substring(0, 29) + '...'
+        Swal.fire("Project names larger than 30 characters will be truncated!")
+      }
+      this.setState({
+        currentProjectName: nameCapture
+      });
+      pluginModule.project.projectName = nameCapture;
+    })()
+    visiblityArray = buildVisiblityArray(this.state.pluginPickedArray)
   }
     
-  //Captures incoming id from DraggablePlugins.js for use as an index
-  //to flip the value at that index of pluginPickedArray.
-  handleData = (index) => {
+  handlePluginData = (index) => {
+    let tempArray = this.state.pluginPickedArray;
+    tempArray[index] = !tempArray[index]*1;
     this.setState({
-      clickedIndex: index
+      pluginPickedArray: tempArray
     });
-    pluginPickedArray[index] = !pluginPickedArray[index]*1;
-    pluginModule.plugins[index].selected = !pluginModule.plugins[index].selected;
-    store.dispatch(saveArray(pluginModule.plugins));
-    if(pluginPickedArray[index] === 0) {
+    pluginModule.project.plugins[index].selected = !pluginModule.project.plugins[index].selected;
+    if(this.state.pluginPickedArray[index] === 0) {
       visiblityArray[index] = 'hidden';
     } else {
       visiblityArray[index] = 'visible';
     }
+    store.dispatch( setCurrProject(pluginModule.project));
+    console.log(store.getState().currProject)
+  }
+
+  handleNewProject = () => {
+    (async () => {
+      nameCapture = await getName();
+      if(!nameCapture) return;
+      if(nameCapture.length > 30){ 
+        nameCapture = nameCapture.substring(0, 29) + '...'
+        Swal.fire("Project names larger than 30 characters will be truncated!")
+      }
+      this.setState({
+        currentProjectName: nameCapture
+      });
+      pluginModule.project.projectName = nameCapture;
+    })()
+    for(let i = 0; i < pluginModule.project.plugins.length; i++) {
+      pluginModule.project.plugins[i].selected = false;
+      pluginModule.project.plugins[i].port = '0000';
+    }
+    store.dispatch( setCurrProject(pluginModule.project));
+    var selectedArray = getPluginPickedArray()
+    this.setState({
+      pluginPickedArray: selectedArray
+    });
+    visiblityArray = buildVisiblityArray(selectedArray)
+    console.log(store.getState().currProject)
+  }
+
+  handleLoadedProject() {
+    console.log("imhere")
+    var selectedArray = getPluginPickedArray()
+    this.setState({
+      pluginPickedArray: selectedArray
+    });
+    visiblityArray = buildVisiblityArray(selectedArray)
   }
 
   render() {
     return (
       <div>
+        <Header
+          newProjectHandlerFromParent={this.handleNewProject}
+          loadedProjectHandlerFromParent={this.handleLoadedProject}
+          currentProjectName={this.state.currentProjectName}
+        />
         <div className="left-column-background"></div>
           <div className="plugin-column">
             {this.state.sentInCategories.map((sentInCategory, outerIndex) => {
@@ -60,14 +108,14 @@ class PluginApp extends React.Component {
                 <PluginPicker 
                   key={outerIndex} 
                   sentInCategory={sentInCategory} 
-                  sentInArrayObject={pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
+                  sentInArrayObject={this.state.pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
                 >
-                  {pluginModule.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
+                  {pluginModule.project.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
                     return (
                       <DraggablePlugins
-                        pluginName={pluginModule.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
-                        image={pluginModule.plugins[Number(OFFSET[outerIndex]) + innerIndex].image}
-                        handlerFromParent={this.handleData}
+                        pluginName={pluginModule.project.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
+                        image={pluginModule.images[Number(OFFSET[outerIndex]) + innerIndex]}
+                        handlerFromParent={this.handlePluginData}
                         id={Number(OFFSET[outerIndex]) + innerIndex}
                         key={Number(OFFSET[outerIndex]) + innerIndex} 
                         visibility={visiblityArray[Number(OFFSET[outerIndex]) + innerIndex]}
@@ -78,13 +126,13 @@ class PluginApp extends React.Component {
               )
             })}
           </div>
-          <PluginPalette sentInArrayObject={pluginPickedArray}>
-            {pluginModule.plugins.map((i, index) => {
+          <PluginPalette sentInArrayObject={this.state.pluginPickedArray}>
+            {pluginModule.project.plugins.map((i, index) => {
               return (
                 <DraggablePlugins
-                  pluginName={pluginModule.plugins[index].pluginName}
-                  image={pluginModule.plugins[index].image}
-                  handlerFromParent={this.handleData}
+                  pluginName={pluginModule.project.plugins[index].pluginName}
+                  image={pluginModule.images[index]}
+                  handlerFromParent={this.handlePluginData}
                   id={index}
                   key={index}
                   visibility={visiblityArray[index]}
@@ -98,10 +146,48 @@ class PluginApp extends React.Component {
 }
 export default PluginApp;
 
-function buildVisiblityArray() {
+async function getName () {
+  const {value: text} = await Swal.fire({
+    title: 'CN-infra Generator App',
+    input: 'textarea',
+    inputPlaceholder: 'New Project Name',
+    showCancelButton: true,
+    allowEnterKey:	true,
+  })
+  return text;
+}
+
+async function getNameLocked () {
+  const {value: text} = await Swal.fire({
+    title: 'CN-infra Generator App',
+    input: 'textarea',
+    inputPlaceholder: 'Type your Project Name Here To Begin',
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    allowEnterKey:	true,
+    inputValidator: (value) => {
+      if (!value) {
+        return 'You need to choose a project name!'
+      }
+    }
+  })
+  return text;
+}
+
+function getPluginPickedArray() {
+  let selectedArray = store.getState().currProject.plugins;
+  let array = [];
+  for(let i = 0; i < selectedArray.length; i++) {
+    if(selectedArray[i].selected) array.push(Number(1))
+    else array.push(Number(0)) 
+  }
+  return array;
+}
+
+function buildVisiblityArray(sentInArray) {
   var array = [];
-  for(let i = 0; i < pluginPickedArray.length; i++) {
-    if(pluginPickedArray[i] === 0) {
+  for(let i = 0; i < sentInArray.length; i++) {
+    if(sentInArray[i] === 0) {
       array[i] = 'hidden';
     } else {
       array[i] = 'visible';
@@ -109,5 +195,8 @@ function buildVisiblityArray() {
   }
   return array;
 }
+
+
+
 
 

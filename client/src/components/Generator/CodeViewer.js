@@ -3,7 +3,7 @@ import 'chai/register-expect';
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
-let pluginModule = require('../Plugins');
+let pluginModule = require('../Model');
 /*
 * This component represents the right webpage division. This will
 * contain the generated code.

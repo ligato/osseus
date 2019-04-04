@@ -3,7 +3,7 @@ import CodeStructure from './CodeStructure';
 import CodeViewer from './CodeViewer';
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
-let pluginModule = require('../Plugins');
+let pluginModule = require('../Model');
 
 //This describes the format of the GeneratorApp
 class GeneratorApp extends React.Component {
