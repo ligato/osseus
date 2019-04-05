@@ -16,7 +16,6 @@
 package restapi
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/ligato/cn-infra/db/keyval"
@@ -27,8 +26,6 @@ import (
 
 //Generate model:
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/restmodel.proto
-
-const keyPrefix = "/myplugin/"
 
 // REST api methods
 const (
@@ -62,7 +59,7 @@ type Deps struct {
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 	if p.KVStore.Disabled() {
-		return fmt.Errorf("KV store is disabled")
+		p.Log.Error("KV store is disabled")
 	}
 	return nil
 }

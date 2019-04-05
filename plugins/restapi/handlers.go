@@ -30,6 +30,10 @@ const genPrefix = "/vnf-agent/vpp1/config/generator/v1/project/"
 const projectsPrefix = "/projects/v1/plugins/"
 
 type Response struct {
+	ProjectName string
+	Plugins     []Plugins
+}
+type Plugins struct{
 	PluginName string
 	Id         int32
 	Selected   bool
@@ -43,8 +47,7 @@ func (p *Plugin) registerHandlersHere() {
 	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	p.HTTPHandlers.RegisterHTTPHandler("/demo/save", p.registerHTTPBodyHandler, POST)
-	p.HTTPHandlers.RegisterHTTPHandler("/demo/saveMultiple", p.registerSaveMultiple, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
 
 }
@@ -68,54 +71,8 @@ func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, 
 	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
 }
 
-// registerHTTPBodyHandler is a common method that registers Http handlers that include a JSON body as input
-func (p *Plugin) registerHTTPBodyHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		reqParam := Response{}
-		err = json.Unmarshal(body, &reqParam)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		if reqParam.PluginName == "" {
-			errMsg := fmt.Sprintf("400 Bad request: pluginName parameter missing or empty\n")
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		if reqParam.Image == "" {
-			errMsg := fmt.Sprintf("400 Bad request: pluginImage parameter missing or empty\n")
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		p.SavePlugin(reqParam)
-
-		p.Log.Debugf("PluginName: %v", reqParam.PluginName)
-		p.Log.Debugf("PluginId: %v", reqParam.Id)
-		p.Log.Debugf("PluginSelected: %v", reqParam.Selected)
-		p.Log.Debugf("PluginImage: %v", reqParam.Image)
-		p.Log.Debugf("PluginPort: %v", reqParam.Port)
-		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
-	}
-}
-
-//registers handler for demo/saveMultiple endpoint
-func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc {
+//registers handler for osseus/v1/projects/save endpoint
+func (p *Plugin) registerSaveProject(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		body, err := ioutil.ReadAll(req.Body)
@@ -127,7 +84,7 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 		}
 
 		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
-		var reqParam []Response
+		var reqParam Response
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -136,6 +93,8 @@ func (p *Plugin) registerSaveMultiple(formatter *render.Render) http.HandlerFunc
 			return
 		}
 
+		//p.Log.Debug("project name: ", reqParam.ProjectName)
+		//p.Log.Debug("plugins", reqParam.Plugins)
 		p.SaveMultiplePlugins(reqParam)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
@@ -176,20 +135,10 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 	return "Ligato-gen server is up", nil
 }
 
-// handler for demo/save
-// API endpoint frontend container should call to save plugin info
-func (p *Plugin) SavePlugin(response Response) (interface{}, error) {
-	p.Log.Debug("REST API post /demo/save plugin reached")
+func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
+	p.Log.Debug("REST API post /osseus/v1/projects/save plugin reached")
 	p.genUpdater(response, projectsPrefix)
 	return response, nil
-}
-
-func (p *Plugin) SaveMultiplePlugins(responses []Response) (interface{}, error) {
-	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
-	for i := 0; i < len(responses); i++ {
-		p.genUpdater(responses[i], projectsPrefix)
-	}
-	return responses, nil
 }
 
 func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
@@ -199,13 +148,13 @@ func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error
 	}
 	return responses, nil
 }
-
 //updates the key that the generator watches on
 func (p *Plugin) genUpdater(response Response, prefix string) {
 	broker := p.KVStore.NewBroker(prefix)
 
-	key := response.PluginName
-	value := new(model.Plugin)
+	key := response.ProjectName
+	value := new(model.Project)
+	pluginval := new(model.Plugin)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -222,12 +171,18 @@ func (p *Plugin) genUpdater(response Response, prefix string) {
 	p.Log.Infof("updating..")
 
 	// Prepare data
-	value = &model.Plugin{
-		PluginName: response.PluginName,
-		Id:         response.Id,
-		Selected:   response.Selected,
-		Image:      response.Image,
-		Port:       response.Port,
+
+	pluginval = &model.Plugin{
+		PluginName: "temp",
+		Id: 1,
+		Selected: true,
+		Image: "temp",
+		Port: 1,
+	}
+
+	value = &model.Project{
+		ProjectName: response.ProjectName,
+		Plugin: []*model.Plugin{pluginval},
 	}
 
 	// Update value in KV store

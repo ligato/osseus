@@ -33,7 +33,7 @@ import (
 	"github.com/ligato/osseus/plugins/restapi"
 )
 
-// OsseusAgent is a struct holding internal data for the StrongSwan VPP Agent
+// OsseusAgent is a struct holding internal data for the Osseus Agent
 type OsseusAgent struct {
 	LogManager *logmanager.Plugin
 	Generator  *generator.Plugin

@@ -2,10 +2,18 @@ syntax = "proto3";
 
 package model;
 
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+option (gogoproto.messagename_all) = true;
+
 message Plugin {
     string pluginName = 1;
     int32 id = 2;
     bool selected = 3;
     string image = 4;
     int32 port = 5;
+};
+
+message Project {
+    string projectName = 1;
+    repeated Plugin plugin = 2;
 }
