@@ -10,19 +10,16 @@ The `Generator Plugin` facilitates watching ETCD for new changes/events, capturi
     <img src="../../docs/img/Generator.jpg" alt="Generator state flow">
 </p>
 
-## Notes
+## Quick Start
 
-**scheduler dump**: `curl localhost:9191/scheduler/dump`
-
-**etcdctl commands**: https://github.com/etcd-io/etcd/tree/master/etcdctl
 ```bash
-# Store a new plugin
-etcdctl put /vnf-agent/vpp1/config/generator/v1/plugin/grpc '{"name":"grpc", "template":"grpc_temp", "status":"ok"}'
+# First, run the docker image for etcd:
+docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:v3.1.0 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
 
-# Delete a plugin
-etcdctl del /vnf-agent/vpp1/config/generator/v1/plugin/grpc
+# Then, run the generator:
+cd cmd/agent/
+go run main.go
 
-# Return all keys
-etcdctl get --from-key ''
+# Lastly, execute a command on etcd to see generator operate:
+etcdctl put /vnf-agent/vpp1/config/generator/v1/project/test '{"name":"test", "plugin": '['{"name":"grpc"}']'}'
 ```
-

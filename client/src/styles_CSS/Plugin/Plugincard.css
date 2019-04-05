@@ -17,8 +17,7 @@
 }
 
 .card:hover {
-  box-shadow: 0 8px 16px 0 #2E2E2E;
-}
+  box-shadow: 0 8px 16px 0 #2E2E2E; }
 
 .cardtext {
   margin-top: 0px;
@@ -26,18 +25,15 @@
   color: white;
   background: #2F4454;
   text-align: center;
-  font-size: 10px;
-}
+  font-size: 10px; }
 
 .cardbody {
   font-family: "Lato", verdana, sans-serif;
   cursor: pointer;
-  z-index: 200;
-}
+  z-index: 200; }
 
 .img-holder {
-  position: relative;
-}
+  position: relative; }
 
 .main-img {
   border-radius: 5px 5px 0 0;
@@ -46,8 +42,7 @@
   display: block;
   margin-left: auto;
   margin-right: auto;
-  z-index: 1;
-}
+  z-index: 1; }
 
 .close-img {
   border-radius: 5px 5px 0 0;
@@ -57,9 +52,7 @@
   position: absolute;
   z-index: 3;
   top: -5px;
-  right: -5px;
-}
+  right: -5px; }
 
 .close-img:hover {
-  filter: brightness(130%);
-}
+  filter: brightness(130%); }

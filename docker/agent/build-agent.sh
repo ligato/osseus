@@ -13,28 +13,21 @@ echo "export PATH=$PATH" >> ~/.bashrc
 mkdir -p $GOPATH/{bin,pkg,src}
 
 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-go get -u github.com/golang/protobuf/protoc-gen-go
 
 # checkout agent code
-mkdir -p $GOPATH/src/github.com/dev
-cd $GOPATH/src/github.com/dev
+mkdir -p $GOPATH/src/github.com/ligato
+cd $GOPATH/src/github.com/ligato
 git clone https://github.com/ligato/osseus.git
 
-# build the agent
-cd $GOPATH/src/github.com/dev/osseus
-
 # install dependencies
+cd $GOPATH/src/github.com/ligato/osseus
 dep ensure -vendor-only
 dep ensure
 
-# install grpcserver package
-cd plugins/generator
-go install
-
 # build agent executable
-cd $GOPATH/src/github.com/dev/osseus/cmd/agent
+cd $GOPATH/src/github.com/ligato/osseus/cmd/agent
 go build
 
 # copy agent executable to bin
-cd $GOPATH/src/github.com/dev/osseus
+cd $GOPATH/src/github.com/ligato/osseus
 cp cmd/agent/agent $GOPATH/bin/

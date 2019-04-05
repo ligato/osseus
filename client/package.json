@@ -3,17 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "node-webhooks": "^1.4.2",
+    "npm": "^6.9.0",
     "react": "^16.8.3",
+    "react-contenteditable": "^3.2.6",
     "react-dom": "^16.8.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
     "semantic-ui-react": "^0.85.0",
-    "sweetalert": "^2.1.2"
+    "sweetalert2": "^8.8.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "mocha",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -26,6 +29,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
     "redux": "^4.0.1"
   }
 }

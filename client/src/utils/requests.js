@@ -8,7 +8,7 @@ function save() {
     const project = store.getState().projects
     console.log(project)
     // Save current project
-    fetch(`http://0.0.0.0:8000/v1/api/projects/?id=${project.id}`, {
+    fetch(`http://0.0.0.0:8000/v1/projects/?id=${project.id}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
@@ -21,9 +21,24 @@ function save() {
         .catch(err => console.log("Error: ", err))
 }
 
-function load(id) {
+function loadProject(id) {
     // Retrieve plugins from api
-    fetch(`http://0.0.0.0:8000/v1/api/projects/?id=${id}`, {
+    fetch(`http://0.0.0.0:8000/v1/projects/?id=${id}`, {
+        method: "GET",
+        mode: "no-cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+    })
+        // Decode response
+        .then(res => { return res.json() })
+        .then(data => console.log(data))
+        .catch(err => console.log("Error: ", err))
+}
+
+function loadAllProjects() {
+    // Retrieve plugins from api
+    fetch(`http://0.0.0.0:8000/v1/projects`, {
         method: "GET",
         mode: "no-cors",
         headers: {
@@ -44,7 +59,7 @@ function generate() {
     const project = store.getState().projects
     console.log(project)
     // Send plugins to agent
-    fetch(`http://0.0.0.0:8000/v1/api/template/?id=${project.id}`, {
+    fetch(`http://0.0.0.0:8000/v1/templates/?id=${project.id}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
@@ -57,4 +72,4 @@ function generate() {
         .catch(err => console.log("Error: ", err))
 }
 
-export default { save, load, generate }
+export default { save, loadProject, loadAllProjects, generate }
