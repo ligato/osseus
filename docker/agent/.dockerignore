@@ -1,0 +1,8 @@
+# Get only files needed for agent
+
+.git
+client
+mockups
+scrum
+vendor
+README.md
