@@ -1,9 +1,10 @@
+
 import React from 'react';
 import 'chai/register-expect';
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
-let pluginModule = require('../Plugins');
+let pluginModule = require('../Model');
 /*
 * This component represents the right webpage division. This will
 * contain the generated code.
@@ -16,9 +17,12 @@ class CodeViewer extends React.Component{
     this.state = {
       text: null
     };
+    console.log("im here")
 
     var request = require('request');
-    let url = 'http://127.0.0.1:2379/v2/keys/testKey?wait=true';
+    let url = 'http://0.0.0.0:2379/v2/keys/vnf-agent/vpp1/config/generator/v1/template?wait=true';
+    //let url = 'http://127.0.0.1:2379/v2/keys/testKey?wait=true';
+    console.log(url)
     function getBody(url, callback) {
       request({
         url: url,

@@ -3,54 +3,48 @@
   margin-top: -2px;
   box-shadow: 0 5px 0 #383838;
   height: 40px;
-  overflow: hidden;
   z-index: 201;
-}
+  position: relative; }
 
-.header-link {
-  text-align: center;
-  size: 50px;
-}
-
-.project-selection-link {
-  float: left;
+.new-project-button {
   font-size: 12px;
   background-color: #4AC68E;
   color: white;
-  padding: 0.4em 1.2em;
-  position: relative;
+  padding: 1.05em 2em;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -7px;
-  border-radius: 6px;
-  text-align: center;
-}
+  border: #4AC68E;
+  letter-spacing: -1px;
+  margin-left: -10px;
+  position: absolute;
+  margin-top: -13px; }
+  .new-project-button:hover {
+    background-color: #3D9970;
+    cursor: pointer; }
+  .new-project-button:active {
+    box-shadow: none;
+    top: 7px; }
+  .new-project-button:focus {
+    outline: none; }
 
-.plugin-nav {
-  float: right;
-  font-size: 12px;
-  background-color: #4AC68E;
-  box-shadow: 0 5px 0 #3D9970;
-  color: white;
-  padding: 0.9em 2.526em;
-  position: relative;
-  text-decoration: none;
-  text-transform: uppercase;
-  margin-top: -13px;
-}
+.header-text {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
 
-.generator-nav {
-  float: left;
-  font-size: 12px;
-  background-color: #4AC68E;
-  box-shadow: 0 5px 0 #3D9970;
+.current-project {
   color: white;
-  padding: 0.9em 1.5em;
-  position: relative;
-  text-decoration: none;
-  text-transform: uppercase;
-  margin-top: -13px;
-}
+  font-weight: 700;
+  font-size: 16px;
+  cursor: default; }
+
+.project-name {
+  color: #4AC68E;
+  font-weight: 700;
+  margin-top: -17px;
+  margin-left: 10px;
+  cursor: text;
+  font-size: 16px; }
 
 .generator-link {
   float: right;
@@ -61,10 +55,9 @@
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -7px;
+  margin-top: -45px;
   border-radius: 6px;
-  text-align: center;
-}
+  text-align: center; }
 
 .save-button {
   float: right;
@@ -75,35 +68,29 @@
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -7px;
+  margin-top: -45px;
   border-radius: 6px;
   text-align: center;
-  margin-right: 8px;
+  margin-right: 90px;
   border: #2F4454;
-  letter-spacing: -1px;
-}
-.save-button:hover {
-  background-color: #3D9970;
-  cursor: pointer;
-}
-.save-button:active {
-  box-shadow: none;
-  top: 5px;
-}
-.save-button:focus {
-  outline: none;
-}
+  letter-spacing: -1px; }
+  .save-button:hover {
+    background-color: #3D9970;
+    cursor: pointer; }
+  .save-button:active {
+    box-shadow: none;
+    top: 5px; }
+  .save-button:focus {
+    outline: none; }
 
 a:hover {
   background-color: #2F4454;
   cursor: pointer;
-  color: white;
-}
+  color: white; }
 a:active {
   box-shadow: none;
   top: 5px;
-  colr: white;
-}
+  colr: white; }
 
 .swal-text {
   background-color: #FEFAE3;
@@ -113,8 +100,7 @@ a:active {
   display: block;
   margin: 22px;
   text-align: center;
-  color: #61534e;
-}
+  color: #61534e; }
 
 .swal-button {
   padding: 7px 19px;
@@ -122,5 +108,4 @@ a:active {
   background-color: #4AC68E;
   font-size: 16px;
   border: 1px solid #3e549a;
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
-}
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3); }

@@ -1,56 +1,58 @@
-@import _colors.sass
+@import ../../_colors.sass
 
 .header-column 
   background-color: $light_gray
   margin-top: -2px
   box-shadow: 0 5px 0 $light_gray_shadow
   height: 40px
-  overflow: hidden
   z-index: 201
-
-.header-link 
-  text-align: center
-  size: 50px
-
-.project-selection-link 
-  float: left
-  font-size: 12px 
-  background-color: $teal
-  color: white
-  padding: 0.4em 1.2em
   position: relative
-  text-decoration: none
-  text-transform: uppercase
-  margin-top: -7px
-  border-radius: 6px
-  text-align: center
 
-.plugin-nav 
-  float: right
+.new-project-button
   font-size: 12px
   background-color: $teal
-  box-shadow: 0 5px 0 $dark_teal
   color: white
-  padding: 0.9em 2.526em
-  position: relative
+  padding: 1.05em 2.0em
   text-decoration: none
   text-transform: uppercase
+  border: $teal
+  letter-spacing: -1px
+  margin-left: -10px
+  position: absolute
   margin-top: -13px
-
-
-.generator-nav
-  float: left
-  font-size: 12px
-  background-color: $teal
-  box-shadow: 0 5px 0 $dark_teal
-  color: white
-  padding: 0.9em 1.5em
-  position: relative
-  text-decoration: none
-  text-transform: uppercase
-  margin-top: -13px
+  &:hover 
+    background-color: $dark_teal
+    cursor: pointer
   
+  
+  &:active 
+    box-shadow: none
+    top: 7px
+   
 
+  &:focus 
+    outline: none
+
+.header-text 
+  display: flex
+  justify-content: center
+  align-items: center
+
+.current-project
+  color: white
+  font-weight: 700
+  font-size: 16px
+  cursor: default
+  
+.project-name
+  color: $teal
+  font-weight: 700
+  margin-top: -17px
+  margin-left: 10px
+  cursor: text
+  font-size: 16px
+
+  
 .generator-link
   float: right
   font-size: 12px
@@ -60,7 +62,7 @@
   position: relative
   text-decoration: none
   text-transform: uppercase
-  margin-top: -7px
+  margin-top: -45px
   border-radius: 6px
   text-align: center
 
@@ -73,10 +75,10 @@
   position: relative
   text-decoration: none
   text-transform: uppercase
-  margin-top: -7px
+  margin-top: -45px
   border-radius: 6px
   text-align: center
-  margin-right: 8px
+  margin-right: 90px
   border: $dark_blue
   letter-spacing: -1px
   &:hover 
@@ -122,6 +124,8 @@ a
   font-size: 16px
   border: 1px solid #3e549a
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3)
+
+  
 
 
   
