@@ -16,9 +16,12 @@ class CodeViewer extends React.Component{
     this.state = {
       text: null
     };
+    console.log("im here")
 
     var request = require('request');
-    let url = 'http://127.0.0.1:2379/v2/keys/testKey?wait=true';
+    let url = 'http://0.0.0.0:2379/v2/keys/vnf-agent/vpp1/config/generator/v1/template?wait=true';
+    //let url = 'http://127.0.0.1:2379/v2/keys/testKey?wait=true';
+    console.log(url)
     function getBody(url, callback) {
       request({
         url: url,
