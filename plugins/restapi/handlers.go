@@ -46,9 +46,11 @@ func (p *Plugin) registerHandlersHere() {
 
 	// maybe change to /v1/projects/{id}
 	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
+	//todo figure out how to register load handler
 	p.registerHTTPHandler("/v1/projects/{id}", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
+	//p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.registerHTTPHandler, GET)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
 
 }
@@ -150,9 +152,8 @@ func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
 func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
 	p.Log.Debug("REST API Get /v1/projects/{id} load plugin reached with id: ", projectId)
 	projectValue := p.getValue(projectsPrefix, projectId)
-	p.Log.Debug("project json looks like: ", projectValue)
-	//todo reminder change to projectJson
-	return projectId, nil
+	p.Log.Debug()
+	return projectValue, nil
 }
 
 func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
@@ -212,8 +213,6 @@ func (p *Plugin) genUpdater(response Response, prefix string) {
 }
 
 // returns the value at specified key
-//todo 1 figure out how to return a json object for value -- need to marshal/create the object?
-	//wip looks like proto string of numbers; maybe need to go the proto route 
 func (p *Plugin) getValue(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 	value := new(model.Project)
