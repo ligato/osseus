@@ -45,7 +45,7 @@ type Plugins struct{
 func (p *Plugin) registerHandlersHere() {
 
 	// maybe change to /v1/projects/{id} for save
-	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.SaveProjectHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.GenerateHandler, POST)
 
@@ -132,7 +132,7 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 
 //save project
 func (p *Plugin) SaveProject(response Response) (interface{}, error) {
-	p.Log.Debug("REST API post /osseus/v1/projects/save plugin reached")
+	p.Log.Debug("REST API post /v1/projects plugin reached")
 	p.genUpdater(response, projectsPrefix)
 	return response, nil
 }
