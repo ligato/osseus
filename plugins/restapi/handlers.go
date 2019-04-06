@@ -17,6 +17,7 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -43,15 +44,16 @@ type Plugins struct{
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
-	p.registerHTTPHandler("/", GET, func() (interface{}, error) {
+	// maybe change to /v1/projects/{id}
+	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
+	p.registerHTTPHandler("/v1/projects/{id}", GET, func() (interface{}, error) {
 		return p.GetServerStatus()
 	})
-	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
 
 }
 
-// registerHTTPHandler is common register method for all handlers without JSON body input
+// registerHTTPHandler is common register method for all handlers without JSON body input and {id} variable at end
 func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, error)) {
 	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
 		return func(w http.ResponseWriter, req *http.Request) {
@@ -64,6 +66,10 @@ func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, 
 				return
 			}
 			p.Deps.Log.Debugf("Rest uri: %s, data: %v", key, res)
+			vars := mux.Vars(req)
+			pId := vars["id"]
+			p.LoadProject(pId)
+
 			p.logError(formatter.JSON(w, http.StatusOK, res))
 		}
 	}
@@ -92,8 +98,6 @@ func (p *Plugin) registerSaveProject(formatter *render.Render) http.HandlerFunc 
 			return
 		}
 
-		//p.Log.Debug("project name: ", reqParam.ProjectName)
-		//p.Log.Debug("plugins", reqParam.Plugins)
 		p.SaveMultiplePlugins(reqParam)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
@@ -134,13 +138,21 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 	return "Ligato-gen server is up", nil
 }
 
+//save project
+// todo change name to SaveProject
 func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /osseus/v1/projects/save plugin reached")
-	p.Log.Debug("response obj is: ", response)
-	p.Log.Debug("response name is: ", response.ProjectName)
-	p.Log.Debug("response plugins is: ", response.Plugins)
 	p.genUpdater(response, projectsPrefix)
 	return response, nil
+}
+
+//get project from given id
+func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
+	p.Log.Debug("REST API Get /v1/projects/{id} load plugin reached with id: ", projectId)
+	projectValue := p.getValue(projectsPrefix, projectId)
+	p.Log.Debug("project json looks like: ", projectValue)
+	//todo reminder change to projectJson
+	return projectId, nil
 }
 
 func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
@@ -150,7 +162,8 @@ func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error
 	}
 	return responses, nil
 }
-//updates the key that the generator watches on
+
+//updates the prefix key with the given response
 func (p *Plugin) genUpdater(response Response, prefix string) {
 	broker := p.KVStore.NewBroker(prefix)
 
@@ -194,7 +207,47 @@ func (p *Plugin) genUpdater(response Response, prefix string) {
 	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
+	//todo change so no %v
 	p.Log.Debug("kv store should have %v at key %v", value, key)
+}
+
+// returns the value at specified key
+//todo 1 figure out how to return a json object for value -- need to marshal/create the object?
+	//wip looks like proto string of numbers; maybe need to go the proto route 
+func (p *Plugin) getValue(prefix string, key string) interface{} {
+	broker := p.KVStore.NewBroker(prefix)
+	value := new(model.Project)
+
+	found, _, err := broker.GetValue(key, value)
+
+	if err != nil {
+		p.Log.Errorf("GetValue failed: %v", err)
+	} else if !found {
+		p.Log.Info("No plugins found..")
+	} else {
+		p.Log.Infof("Found some plugins: %+v", value)
+	}
+
+	var pluginsList []Plugins
+
+	for i := 0; i < len(value.Plugin); i++ {
+		pluginval := Plugins{
+			PluginName: value.Plugin[i].PluginName,
+			Id:         value.Plugin[i].Id,
+			Selected:   value.Plugin[i].Selected,
+			Port:       value.Plugin[i].Port,
+		}
+		pluginsList = append(pluginsList, pluginval)
+	}
+	project := Response{
+		ProjectName: value.ProjectName,
+		Plugins: pluginsList,
+	}
+	projectJson, err := json.Marshal(project)
+	if err != nil {
+		p.Log.Error(err)
+	}
+	return projectJson
 }
 
 // logError logs non-nil errors from JSON formatter
