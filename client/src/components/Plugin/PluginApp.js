@@ -29,17 +29,6 @@ class PluginApp extends React.Component {
       pluginPickedArray: getPluginPickedArray(),
       currentProjectName: store.getState().currProject.projectName
     };
-    (async () => {
-      nameCapture = await getNameLocked();
-      if(nameCapture.length > 30){ 
-        nameCapture = nameCapture.substring(0, 29) + '...'
-        Swal.fire("Project names larger than 30 characters will be truncated!")
-      }
-      this.setState({
-        currentProjectName: nameCapture
-      });
-      pluginModule.project.projectName = nameCapture;
-    })()
     visiblityArray = buildVisiblityArray(this.state.pluginPickedArray)
   }
     
@@ -159,23 +148,6 @@ async function getName () {
     inputPlaceholder: 'New Project Name',
     showCancelButton: true,
     allowEnterKey:	true,
-  })
-  return text;
-}
-
-async function getNameLocked () {
-  const {value: text} = await Swal.fire({
-    title: 'CN-infra Generator App',
-    input: 'textarea',
-    inputPlaceholder: 'Type your Project Name Here To Begin',
-    allowEscapeKey: false,
-    allowOutsideClick: false,
-    allowEnterKey:	true,
-    inputValidator: (value) => {
-      if (!value) {
-        return 'You need to choose a project name!'
-      }
-    }
   })
   return text;
 }

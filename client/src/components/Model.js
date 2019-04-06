@@ -130,7 +130,7 @@ var plugins = [REST_API,  GRPC,       PROMETHEUS,   ETCD,
                LOG_MNGR,  STTS_CHECK, PROBE,        KAFKA,     
                DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG];
 
-var projectName = ' ';
+var projectName = 'untitled';
 
 var project = {
     projectName,
