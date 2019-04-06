@@ -26,34 +26,20 @@ import (
 
 var projectEntries = []*model.Project{
 	&model.Project{
-		Name: "test1_project",
+		ProjectName: "test1_project",
 		Plugin: []*model.Plugin{
 			&model.Plugin{
-				Name:     "test1_plugin",
-				Id:       1,
-				Version:  2.4,
-				Category: "health",
-				Dependencies: []string{
-					"kafka",
-					"grpc",
-					"status-check",
-				},
+				PluginName: "test1_plugin",
+				Id:         1,
 			},
 		},
 	},
 	&model.Project{
-		Name: "test2_project",
+		ProjectName: "test2_project",
 		Plugin: []*model.Plugin{
 			&model.Plugin{
-				Name:     "test2_plugin",
-				Id:       3,
-				Version:  4.4,
-				Category: "rpc",
-				Dependencies: []string{
-					"logrus",
-					"prometheus",
-					"etcd",
-				},
+				PluginName: "test2_plugin",
+				Id:         3,
 			},
 		},
 	},

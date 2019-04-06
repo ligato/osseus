@@ -5,6 +5,7 @@ set -e
 # setup Go paths
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
+# export GOBIN=$GOROOT/bin
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$GOPATH/bin
 echo "export GOROOT=$GOROOT" >> ~/.bashrc
