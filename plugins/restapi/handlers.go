@@ -47,7 +47,7 @@ func (p *Plugin) registerHandlersHere() {
 	// maybe change to /v1/projects/{id} for save
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
-	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.GenerateHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
 
 }
 
@@ -109,7 +109,7 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		var reqParam []Response
+		var reqParam Response
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -118,7 +118,9 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		p.SavePluginsToGenerate(reqParam)
+		vars := mux.Vars(req)
+		pId := vars["id"]
+		p.SavePluginsToGenerate(reqParam, pId)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
@@ -133,7 +135,7 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 //save project
 func (p *Plugin) SaveProject(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /v1/projects plugin reached")
-	p.genUpdater(response, projectsPrefix)
+	p.genUpdater(response, projectsPrefix, response.ProjectName)
 	return response, nil
 }
 
@@ -144,19 +146,16 @@ func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
 	return projectValue, nil
 }
 
-func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
-	p.Log.Debug("REST API post /demo/generate plugin reached")
-	for i := 0; i < len(responses); i++ {
-		p.genUpdater(responses[i], genPrefix)
-	}
-	return responses, nil
+func (p *Plugin) SavePluginsToGenerate(response Response, projectId string) (interface{}, error) {
+	p.Log.Debug("REST API post /v1/templates generator plugin reached")
+	p.genUpdater(response, genPrefix, projectId)
+	return response, nil
 }
 
 //updates the prefix key with the given response
-func (p *Plugin) genUpdater(response Response, prefix string) {
+func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	broker := p.KVStore.NewBroker(prefix)
 
-	key := response.ProjectName
 	value := new(model.Project)
 	pluginval := new(model.Plugin)
 	found, _, err := broker.GetValue(key, value)
