@@ -37,7 +37,6 @@ type Plugins struct{
 	PluginName string
 	Id         int32
 	Selected   bool
-	Image      string
 	Port       int32
 }
 
@@ -137,6 +136,9 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 
 func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /osseus/v1/projects/save plugin reached")
+	p.Log.Debug("response obj is: ", response)
+	p.Log.Debug("response name is: ", response.ProjectName)
+	p.Log.Debug("response plugins is: ", response.Plugins)
 	p.genUpdater(response, projectsPrefix)
 	return response, nil
 }
@@ -171,24 +173,28 @@ func (p *Plugin) genUpdater(response Response, prefix string) {
 	p.Log.Infof("updating..")
 
 	// Prepare data
+	var pluginsList []*model.Plugin
 
-	pluginval = &model.Plugin{
-		PluginName: "temp",
-		Id: 1,
-		Selected: true,
-		Image: "temp",
-		Port: 1,
+	for i := 0; i < len(response.Plugins); i++ {
+		pluginval = &model.Plugin{
+			PluginName: response.Plugins[i].PluginName,
+			Id:         response.Plugins[i].Id,
+			Selected:   response.Plugins[i].Selected,
+			Port:       response.Plugins[i].Port,
+		}
+		pluginsList = append(pluginsList, pluginval)
 	}
 
 	value = &model.Project{
 		ProjectName: response.ProjectName,
-		Plugin: []*model.Plugin{pluginval},
+		Plugin: pluginsList,
 	}
 
 	// Update value in KV store
 	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
+	p.Log.Debug("kv store should have %v at key %v", value, key)
 }
 
 // logError logs non-nil errors from JSON formatter

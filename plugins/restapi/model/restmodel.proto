@@ -9,8 +9,7 @@ message Plugin {
     string pluginName = 1;
     int32 id = 2;
     bool selected = 3;
-    string image = 4;
-    int32 port = 5;
+    int32 port = 4;
 };
 
 message Project {
