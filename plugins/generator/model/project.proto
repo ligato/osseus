@@ -7,16 +7,14 @@ option (gogoproto.messagename_all) = true;
 
 // A plugin resource
 message Plugin {
-  string name = 1;
+  string pluginName = 1;
   int32 id = 2;
-  float version = 3;
-  string category = 4;
-  repeated string dependencies = 5;
-  
+  bool selected = 3;
+  int32 port = 4;
 };
 
 // Project holds the data fields stored
 message Project {
-  string name = 1;
+  string projectName = 1;
   repeated Plugin plugin = 2;
 }

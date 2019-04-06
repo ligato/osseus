@@ -40,7 +40,7 @@ var (
 // of a skeleton value with the given logical name.
 func ProjectKey(name string) string {
 	return models.Key(&Project{
-		Name: name,
+		ProjectName: name,
 	})
 }
 
