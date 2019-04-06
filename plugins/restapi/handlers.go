@@ -44,15 +44,38 @@ type Plugins struct{
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
+	//todo rename inside registering as a handler per url
+
 	// maybe change to /v1/projects/{id}
 	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
 	//todo figure out how to register load handler
-	p.registerHTTPHandler("/v1/projects/{id}", GET, func() (interface{}, error) {
-		return p.GetServerStatus()
-	})
-	//p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.registerHTTPHandler, GET)
+	/*p.registerHTTPHandler("/v1/projects/{id}", GET, func() (interface{}, error) {
+		return p.LoadProject()
+	})*/
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.registerLoadProject, GET)
 	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
 
+}
+
+//temp
+func (p *Plugin) registerLoadProject(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		vars := mux.Vars(req)
+		pId := vars["id"]
+		projectInfo, err := p.LoadProject(pId)
+		p.Log.Debug("project Info from method is", projectInfo)
+		if err != nil{
+			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
+
+	}
 }
 
 // registerHTTPHandler is common register method for all handlers without JSON body input and {id} variable at end
@@ -67,7 +90,7 @@ func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, 
 				p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
 				return
 			}
-			p.Deps.Log.Debugf("Rest uri: %s, data: %v", key, res)
+			p.Log.Debugf("Rest uri: %s, data: %v", key, res)
 			vars := mux.Vars(req)
 			pId := vars["id"]
 			p.LoadProject(pId)
@@ -152,7 +175,6 @@ func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
 func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
 	p.Log.Debug("REST API Get /v1/projects/{id} load plugin reached with id: ", projectId)
 	projectValue := p.getValue(projectsPrefix, projectId)
-	p.Log.Debug()
 	return projectValue, nil
 }
 
@@ -208,8 +230,7 @@ func (p *Plugin) genUpdater(response Response, prefix string) {
 	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
-	//todo change so no %v
-	p.Log.Debug("kv store should have %v at key %v", value, key)
+	p.Log.Debugf("kv store should have %v at key %v", value, key)
 }
 
 // returns the value at specified key
@@ -242,11 +263,12 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 		ProjectName: value.ProjectName,
 		Plugins: pluginsList,
 	}
-	projectJson, err := json.Marshal(project)
+	/*projectJson, err := json.Marshal(project)
 	if err != nil {
 		p.Log.Error(err)
-	}
-	return projectJson
+	}*/
+	//return projectJson
+	return project
 }
 
 // logError logs non-nil errors from JSON formatter
