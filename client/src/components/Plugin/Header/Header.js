@@ -32,18 +32,14 @@ class Header extends React.Component {
     };
   }
   tellMeToSave () {
-    var duplicate = false;
-    var duplicatedObject = JSON.parse(JSON.stringify( store.getState().currProject ));
-    let projectsState = store.getState().projects;
-    for(let i = 0; i < projectsState.length; i++) {
-      if(duplicatedObject.projectName === projectsState[i].projectName) duplicate = true;
-    }
+    var objectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
+    var duplicate = determineIfDuplicate(objectCopy.projectName);   
     if(!duplicate) {
-      store.dispatch( addCurrProject([duplicatedObject]));
+      store.dispatch( addCurrProject([objectCopy]));
       
       const savedToast = Swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: 'top',
         showConfirmButton: false,
         timer: 1500,
       })
@@ -52,14 +48,31 @@ class Header extends React.Component {
         title: '"' + pluginModule.project.projectName + '" saved successfully',
       })
     } else {
-      Swal.fire({
-        type: 'error',
-        title: 'Oops...',
-        text: 'Another project under this name already exists!',
+      store.dispatch( addCurrProject([objectCopy]));
+      let latestProjectName = store.getState().projects[store.getState().projects.length-1].projectName;
+      while(determineIfDuplicate(latestProjectName)) {
+        latestProjectName = makeUniqueAgain(latestProjectName);
+        console.log(determineIfDuplicate(latestProjectName))
+      }
+      let rename = latestProjectName
+    
+      store.getState().projects[store.getState().projects.length-1].projectName = rename;
+      this.props.newProjectNameHandler(rename)
+      store.getState().currProject.projectName = rename;
+      pluginModule.project.projectName = rename;
+
+      const savedToast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
       })
-      console.log("nah")
+      savedToast.fire({
+        type: 'warning',
+        title: 'Warning!',
+        text: 'Another project under this name already exists! Your project will be renamed: "' + rename + '"',
+      })
     }
-    console.log(store.getState().projects)
   }
 
   handleChange = evt => {
@@ -109,3 +122,29 @@ class Header extends React.Component {
   }
 }
 export default Header;
+
+function determineIfDuplicate(projectName) {
+  let isDuplicate;
+  for(let i = 0; i < store.getState().projects.length; i++) {
+    if(projectName === store.getState().projects[i].projectName) {
+      isDuplicate = true;
+      return isDuplicate;
+    } 
+  }
+  return isDuplicate = false;
+}
+
+function makeUniqueAgain(projectName) {
+  let regex = /\([0-9]+\)/;
+  if(projectName.match(regex)) {
+    let regexNumber = /[0-9]+/
+    let nthDuplicate = Number(projectName.match(regexNumber)[0]);
+    let matchSize = projectName.match(regex)[0].length
+    projectName = projectName.slice(0,-matchSize)
+    projectName = projectName + '(' + (nthDuplicate+1) + ')'
+    console.log(typeof(projectName))
+  } else {
+    projectName = projectName + '(1)';
+  }
+  return projectName;
+}
