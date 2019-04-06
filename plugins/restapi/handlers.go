@@ -44,26 +44,45 @@ type Plugins struct{
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
-	//todo rename inside registering as a handler per url
-
-	// maybe change to /v1/projects/{id}
-	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.registerSaveProject, POST)
-	//todo figure out how to register load handler
-	/*p.registerHTTPHandler("/v1/projects/{id}", GET, func() (interface{}, error) {
-		return p.LoadProject()
-	})*/
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.registerLoadProject, GET)
-	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.registerGenerate, POST)
+	// maybe change to /v1/projects/{id} for save
+	p.HTTPHandlers.RegisterHTTPHandler("/osseus/v1/projects/save", p.SaveProjectHandler, POST)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
+	p.HTTPHandlers.RegisterHTTPHandler("/demo/generate", p.GenerateHandler, POST)
 
 }
 
-//temp
-func (p *Plugin) registerLoadProject(formatter *render.Render) http.HandlerFunc {
+//registers handler for /v1/projects/ save endpoint
+func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		var reqParam Response
+		err = json.Unmarshal(body, &reqParam)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		p.SaveProject(reqParam)
+
+		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
+	}
+}
+
+func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		pId := vars["id"]
 		projectInfo, err := p.LoadProject(pId)
-		p.Log.Debug("project Info from method is", projectInfo)
 		if err != nil{
 			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
 			p.Log.Error(errMsg)
@@ -78,59 +97,8 @@ func (p *Plugin) registerLoadProject(formatter *render.Render) http.HandlerFunc 
 	}
 }
 
-// registerHTTPHandler is common register method for all handlers without JSON body input and {id} variable at end
-func (p *Plugin) registerHTTPHandler(key, method string, f func() (interface{}, error)) {
-	handlerFunc := func(formatter *render.Render) http.HandlerFunc {
-		return func(w http.ResponseWriter, req *http.Request) {
-
-			res, err := f()
-			if err != nil {
-				errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
-				p.Log.Error(errMsg)
-				p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
-				return
-			}
-			p.Log.Debugf("Rest uri: %s, data: %v", key, res)
-			vars := mux.Vars(req)
-			pId := vars["id"]
-			p.LoadProject(pId)
-
-			p.logError(formatter.JSON(w, http.StatusOK, res))
-		}
-	}
-	p.HTTPHandlers.RegisterHTTPHandler(key, handlerFunc, method)
-}
-
-//registers handler for osseus/v1/projects/save endpoint
-func (p *Plugin) registerSaveProject(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
-		var reqParam Response
-		err = json.Unmarshal(body, &reqParam)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		p.SaveMultiplePlugins(reqParam)
-
-		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
-	}
-}
-
 //registers handler for demo/generate endpoint
-func (p *Plugin) registerGenerate(formatter *render.Render) http.HandlerFunc {
+func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
 		body, err := ioutil.ReadAll(req.Body)
@@ -141,7 +109,6 @@ func (p *Plugin) registerGenerate(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		//https://stackoverflow.com/questions/38867692/parse-json-array-in-golang
 		var reqParam []Response
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
@@ -164,8 +131,7 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 }
 
 //save project
-// todo change name to SaveProject
-func (p *Plugin) SaveMultiplePlugins(response Response) (interface{}, error) {
+func (p *Plugin) SaveProject(response Response) (interface{}, error) {
 	p.Log.Debug("REST API post /osseus/v1/projects/save plugin reached")
 	p.genUpdater(response, projectsPrefix)
 	return response, nil
@@ -179,7 +145,7 @@ func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
 }
 
 func (p *Plugin) SavePluginsToGenerate(responses []Response) (interface{}, error) {
-	p.Log.Debug("REST API post /demo/saveMultiple plugin reached")
+	p.Log.Debug("REST API post /demo/generate plugin reached")
 	for i := 0; i < len(responses); i++ {
 		p.genUpdater(responses[i], genPrefix)
 	}
@@ -263,11 +229,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 		ProjectName: value.ProjectName,
 		Plugins: pluginsList,
 	}
-	/*projectJson, err := json.Marshal(project)
-	if err != nil {
-		p.Log.Error(err)
-	}*/
-	//return projectJson
+
 	return project
 }
 
