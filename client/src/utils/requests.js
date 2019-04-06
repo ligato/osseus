@@ -1,29 +1,25 @@
 import store from '../redux/store/index';
-import { addPluginArray, setCurrArray } from "../redux/actions/index";
 
 function save() {
-    const plugins = JSON.parse(JSON.stringify(store.getState().savedPlugins));
-    store.dispatch(addPluginArray([plugins]));
+    const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
 
-    const project = store.getState().projects
-    console.log(project)
     // Save current project
-    fetch(`http://0.0.0.0:8000/v1/projects/?id=${project.id}`, {
+    fetch(`http://0.0.0.0:8000/v1/projects/`, {
         method: "POST",
         mode: "no-cors",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(project)
+        body: JSON.stringify(currentProject)
     })
         // Log response
         .then(resp => resp.json())
         .catch(err => console.log("Error: ", err))
 }
 
-function loadProject(id) {
+function loadProject() {
     // Retrieve plugins from api
-    fetch(`http://0.0.0.0:8000/v1/projects/?id=${id}`, {
+    fetch(`http://0.0.0.0:8000/v1/projects/?id=${store.getState().currProject.projectName}`, {
         method: "GET",
         mode: "no-cors",
         headers: {
@@ -52,14 +48,8 @@ function loadAllProjects() {
 }
 
 function generate() {
-    // Get current plugins in palette
-    const plugins = JSON.parse(JSON.stringify(store.getState().currProject));
-    store.dispatch(setCurrArray([plugins]))
-
-    const project = store.getState().projects
-    console.log(project)
     // Send plugins to agent
-    fetch(`http://0.0.0.0:8000/v1/templates/?id=${project.id}`, {
+    fetch(`http://0.0.0.0:8000/v1/templates/?id=${store.getState().currProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
