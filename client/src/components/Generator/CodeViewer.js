@@ -1,16 +1,17 @@
 
 import React from 'react';
+import 'chai/register-expect';
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
-let pluginModule = require('../Plugins');
+let pluginModule = require('../Model');
 /*
 * This component represents the right webpage division. This will
 * contain the generated code.
 */
 
 
-class CodeViewer extends React.Component {
+class CodeViewer extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
@@ -25,13 +26,13 @@ class CodeViewer extends React.Component {
         json: true
       }, function (error, response, body) {
         if (error || response.statusCode !== 200) {
-          return callback(error || { statusCode: response.statusCode });
+          return callback(error || {statusCode: response.statusCode});
         }
-        callback(null, body);
+        callback(null, body); 
       });
     }
-
-    getBody(url, function (err, body) {
+    
+    getBody(url, function(err, body) {
       if (err) {
         console.log(err);
       } else {
@@ -42,8 +43,8 @@ class CodeViewer extends React.Component {
       }
     });
   }
-
-
+  
+  
   render() {
     return (
       <div className="body">

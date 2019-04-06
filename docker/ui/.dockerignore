@@ -2,7 +2,7 @@
 
 .git
 build
-client/node_modules
+node_modules
 cmd
 docs
 plugins

@@ -12,15 +12,11 @@ message Plugin {
   float version = 3;
   string category = 4;
   repeated string dependencies = 5;
+  
 };
 
 // Project holds the data fields stored
 message Project {
   string name = 1;
-  string pluginName = 2;
-  int32 id = 3;
-  bool selected = 4;
-  string image = 5;
-  int32 port = 6;
-  repeated Plugin plugin = 7;
+  repeated Plugin plugin = 2;
 }
