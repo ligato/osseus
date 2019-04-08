@@ -42,8 +42,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 		log.Fatal(err)
 	}
 
-	arr := buf.Bytes()
-	encodedTar := base64.StdEncoding.EncodeToString(arr)
+	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
 
 	// Create template
 	template := &model.Template{
