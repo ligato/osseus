@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
 import 'chai/register-expect';
 import '../../../styles_CSS/Plugin/Header/Header.css';
+import { generate, save, loadProject } from '../../../utils/requests';
 
 
 let pluginModule = require('../../Model');
@@ -36,6 +37,8 @@ class Header extends React.Component {
     var duplicate = determineIfDuplicate(objectCopy.projectName);   
     if(!duplicate) {
       store.dispatch( addCurrProject([objectCopy]));
+      save();
+      loadProject();
       
       const savedToast = Swal.mixin({
         toast: true,
@@ -60,6 +63,8 @@ class Header extends React.Component {
       this.props.newProjectNameHandler(rename)
       store.getState().currProject.projectName = rename;
       pluginModule.project.projectName = rename;
+      save();
+      loadProject();
 
       const savedToast = Swal.mixin({
         toast: true,
@@ -73,6 +78,11 @@ class Header extends React.Component {
         text: 'Another project under this name already exists! Your project will be renamed: "' + rename + '"',
       })
     }
+  }
+
+  tellMeToGenerate () {
+    console.log("im here")
+    generate();
   }
 
   handleChange = evt => {
@@ -111,7 +121,7 @@ class Header extends React.Component {
                     onChange={this.handleChange} // handle innerHTML change
                 />
               </div>
-              <Link className="generator-link" to="/GeneratorApp">Generate</Link>
+              <Link className="generator-link" onClick={this.tellMeToGenerate} to="/GeneratorApp">Generate</Link>
               <button className="save-button" onClick={this.tellMeToSave} >Save Project</button>
             </Grid.Column>
           </Grid>
