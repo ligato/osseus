@@ -12,5 +12,5 @@ message Template {
   float version = 3;
   string category = 4;
   repeated string dependencies = 5;
-  bytes tar_file = 6;
+  string tar_file = 6;
 };

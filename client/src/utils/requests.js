@@ -49,7 +49,7 @@ function loadAllProjects() {
 
 function generate() {
     // Send plugins to agent
-    fetch(`http://0.0.0.0:8000/v1/templates/?id=${store.getState().currProject.projectName}`, {
+    fetch(`http://0.0.0.0:9191/v1/templates/?id=${store.getState().currProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
         headers: {

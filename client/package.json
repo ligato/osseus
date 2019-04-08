@@ -29,8 +29,8 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "mocha": "*",
     "chai": "*",
+    "mocha": "^6.1.2",
     "redux": "^4.0.1"
   }
 }
