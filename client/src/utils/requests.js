@@ -1,6 +1,11 @@
 import store from '../redux/store/index';
 
-function save() {
+var request = require('request');
+
+//let pluginModule = require('../components/Model');
+//var request = require('request');
+
+export function save() {
     const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
 
     // Save current project
@@ -17,9 +22,9 @@ function save() {
         .catch(err => console.log("Error: ", err))
 }
 
-function loadProject() {
+export function loadProject() {
     // Retrieve plugins from api
-    fetch(`http://0.0.0.0:8000/v1/projects/?id=${store.getState().currProject.projectName}`, {
+    fetch(`http://0.0.0.0:8000/v1/projects/${store.getState().currProject.projectName}`, {
         method: "GET",
         mode: "no-cors",
         headers: {
@@ -32,7 +37,7 @@ function loadProject() {
         .catch(err => console.log("Error: ", err))
 }
 
-function loadAllProjects() {
+export function loadAllProjects() {
     // Retrieve plugins from api
     fetch(`http://0.0.0.0:8000/v1/projects`, {
         method: "GET",
@@ -47,19 +52,40 @@ function loadAllProjects() {
         .catch(err => console.log("Error: ", err))
 }
 
-function generate() {
+export function generate() {
+    const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
     // Send plugins to agent
-    fetch(`http://0.0.0.0:8000/v1/templates/?id=${store.getState().currProject.projectName}`, {
+    console.log("im here")
+    fetch(`http://0.0.0.0:9191/v1/templates/${store.getState().currProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(project)
+        body: JSON.stringify(currentProject)
     })
         // Log response
-        .then(resp => resp.json())
         .catch(err => console.log("Error: ", err))
+
+    let urls = `http://0.0.0.0:2379/v3alpha/watch`;
+
+
+    var dataString = '{"create_request": {"key":"/vnf-agent/vpp1/config/generator/v1/template/"} }';
+
+    var options = {
+        url: urls,
+        method: 'POST',
+        body: dataString
+    };
+
+    function callback(error, response, body) {
+        if (!error && response.statusCode === 200) {
+            console.log(body);
+        }
+    }
+
+    request(options, callback);
+    
 }
 
 export default { save, loadProject, loadAllProjects, generate }
