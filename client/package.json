@@ -14,7 +14,7 @@
     "sweetalert2": "^8.8.1"
   },
   "scripts": {
-    "start": "CHOKIDAR_USEPOLLING=true react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "mocha",
     "eject": "react-scripts eject"
