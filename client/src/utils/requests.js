@@ -1,7 +1,5 @@
 import store from '../redux/store/index';
 
-var request = require('request');
-
 //let pluginModule = require('../components/Model');
 //var request = require('request');
 
@@ -34,7 +32,7 @@ export function loadProject() {
         // Decode response
         .then(res => { return res.json() })
         .then(data => console.log(data))
-        .catch(err => console.log("Error: ", err))
+        .catch(err => console.log("Error: ", err));
 }
 
 export function loadAllProjects() {
@@ -49,43 +47,33 @@ export function loadAllProjects() {
         // Decode response
         .then(res => { return res.json() })
         .then(data => console.log(data))
-        .catch(err => console.log("Error: ", err))
+        .catch(err => console.log("Error: ", err));
 }
 
 export function generate() {
-    const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
+    const currentProject = store.getState().currProject;
+
     // Send plugins to agent
-    console.log("im here")
-    fetch(`http://0.0.0.0:9191/v1/templates/${store.getState().currProject.projectName}`, {
+    console.log("generate --> /template")
+    fetch(`http://0.0.0.0:9191/v1/templates/${currentProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(currentProject)
+        body: JSON.stringify(currentProject),
+    });
+
+    console.log("generate --> webhook watching")
+    fetch(`http://0.0.0.0:2379/v3alpha/watch`, {
+        method: "POST",
+        mode: "no-cors",
+        body: "{'create_request': {'key':'Y29uZmlnL2dlbmVyYXRvci92MS90ZW1wbGF0ZS91bnRpdGxlZA=='} }",
+        headers: {
+            "Content-Type": "text/plain"
+        },
     })
-        // Log response
-        .catch(err => console.log("Error: ", err))
-
-    let urls = `http://0.0.0.0:2379/v3alpha/watch`;
-
-
-    var dataString = '{"create_request": {"key":"/vnf-agent/vpp1/config/generator/v1/template/"} }';
-
-    var options = {
-        url: urls,
-        method: 'POST',
-        body: dataString
-    };
-
-    function callback(error, response, body) {
-        if (!error && response.statusCode === 200) {
-            console.log(body);
-        }
-    }
-
-    request(options, callback);
-    
+        .then(resp => resp.json())
+        .then(data => console.log(data))
+        .catch(err => console.log("Error: ", err));
 }
-
-export default { save, loadProject, loadAllProjects, generate }
