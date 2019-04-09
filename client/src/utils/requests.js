@@ -56,7 +56,7 @@ export function generate() {
     const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
     // Send plugins to agent
     console.log("im here")
-    fetch(`http://0.0.0.0:9191/v1/templates/${store.getState().currProject.projectName}`, {
+    fetch(`http://0.0.0.0:8000/v1/templates/${store.getState().currProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
         headers: {
