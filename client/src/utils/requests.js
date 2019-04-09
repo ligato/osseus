@@ -54,8 +54,13 @@ export function generate() {
     const currentProject = store.getState().currProject;
 
     // Send plugins to agent
+<<<<<<< HEAD
     console.log("generate --> /template")
     fetch(`http://0.0.0.0:9191/v1/templates/${currentProject.projectName}`, {
+=======
+    console.log("im here")
+    fetch(`http://0.0.0.0:8000/v1/templates/${store.getState().currProject.projectName}`, {
+>>>>>>> 1389f8038edb4b07a3c8a80442fd5e2ebe10a237
         method: "POST",
         mode: "no-cors",
         headers: {
