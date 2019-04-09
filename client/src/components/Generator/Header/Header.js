@@ -1,14 +1,12 @@
 import React from 'react';
+import 'chai/register-expect';
+import '../../../styles_CSS/Generator/Header/Header.css';
 import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import Dropdown from './Dropdown';
 import store from '../../../redux/store/index';
-import { addCurrProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
+import { addCurrProject } from "../../../redux/actions/index";
 import ContentEditable from 'react-contenteditable'
-import 'chai/register-expect';
-import '../../../styles_CSS/Plugin/Header/Header.css';
-
 
 let pluginModule = require('../../Model');
 let nameCapture;
@@ -23,14 +21,14 @@ let nameCapture;
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.tellMeToSave = this.tellMeToSave.bind(this);
-    this.resetPalette = this.resetPalette.bind(this);
-    this.bubbleUpLoadedProjectToParent = this.bubbleUpLoadedProjectToParent.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.state = {
       displayedName: ' '
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.tellMeToDownload = this.tellMeToDownload.bind(this);
+    this.tellMeToSave = this.tellMeToSave.bind(this);
   }
+
   tellMeToSave () {
     var objectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
     var duplicate = determineIfDuplicate(objectCopy.projectName);   
@@ -82,47 +80,32 @@ class Header extends React.Component {
     pluginModule.project.projectName = nameCapture;
   };
 
-  resetPalette = () => {
-    this.props.newProjectHandlerFromParent();
-  }
-
-  bubbleUpLoadedProjectToParent = (name) => {
-    this.props.loadedProjectHandlerFromParent(name);
+  tellMeToDownload() {
+    console.log('download')
   }
 
   render() {
     return (
-      <div>
-        <Segment>
-          <Grid columns={1} relaxed='very'>
-            <Grid.Column className="header-column"  >
-              <Dropdown 
-                className="new-project-link"
-                loadedProjectHandlerFromHeader={this.bubbleUpLoadedProjectToParent}
+      <Segment>
+        <Grid columns={1} relaxed='very'>
+          <Grid.Column className="header-column"  >
+            <Link className="plugin-app-button" to="/">Plugin App</Link>
+            <div className="header-text">
+              <p className="current-project">Current Project: </p>
+              <ContentEditable
+                  spellCheck={false}
+                  className="project-name"
+                  html={this.props.currentProjectName} // innerHTML of the editable div
+                  disabled={false} // use true to disable edition
+                  onChange={this.handleChange} // handle innerHTML change
               />
-              <img 
-                className="new-project-image" 
-                src='/images/new-project.png' 
-                alt='oops'
-                onClick={this.resetPalette}>
-              </img>
-              <div className="header-text">
-                <p className="current-project">Current Project: </p>
-                <ContentEditable
-                    spellCheck={false}
-                    className="project-name"
-                    html={this.props.currentProjectName} // innerHTML of the editable div
-                    disabled={false} // use true to disable edition
-                    onChange={this.handleChange} // handle innerHTML change
-                />
-              </div>
-              <Link className="generator-link" to="/GeneratorApp">Generate</Link>
-              <button className="save-button" onClick={this.tellMeToSave} >Save Project</button>
-            </Grid.Column>
-          </Grid>
-          <Divider vertical></Divider>
-        </Segment>
-      </div>
+            </div>
+            <button className="download-button" onClick={this.tellMeToDownload} >Download</button>
+            <button className="save-button-generator" onClick={this.tellMeToSave} >Save Project</button>
+          </Grid.Column>
+        </Grid>
+        <Divider vertical></Divider>
+      </Segment>
     );
   }
 }

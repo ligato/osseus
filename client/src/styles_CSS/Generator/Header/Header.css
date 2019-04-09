@@ -6,11 +6,11 @@
   z-index: 201;
   position: relative; }
 
-.new-project-button {
+.plugin-app-button {
   font-size: 12px;
   background-color: #4AC68E;
   color: white;
-  padding: 1.05em 2em;
+  padding: 0.83em 2em;
   text-decoration: none;
   text-transform: uppercase;
   border: #4AC68E;
@@ -18,13 +18,13 @@
   margin-left: -10px;
   position: absolute;
   margin-top: -13px; }
-  .new-project-button:hover {
+  .plugin-app-button:hover {
     background-color: #3D9970;
     cursor: pointer; }
-  .new-project-button:active {
+  .plugin-app-button:active {
     box-shadow: none;
-    top: 7px; }
-  .new-project-button:focus {
+    top: 18px; }
+  .plugin-app-button:focus {
     outline: none; }
 
 .header-text {
@@ -45,24 +45,8 @@
   margin-left: 10px;
   cursor: text;
   font-size: 16px; }
-  .project-name:hover {
-    background-color: white;
-    color: #3D9970; }
 
-.generator-link {
-  float: right;
-  font-size: 12px;
-  background-color: #2F4454;
-  color: white;
-  padding: 0.4em 1.2em;
-  position: relative;
-  text-decoration: none;
-  text-transform: uppercase;
-  margin-top: -45px;
-  border-radius: 6px;
-  text-align: center; }
-
-.save-button {
+.download-button {
   float: right;
   font-size: 12px;
   background-color: #2F4454;
@@ -74,16 +58,39 @@
   margin-top: -45px;
   border-radius: 6px;
   text-align: center;
-  margin-right: 90px;
   border: #2F4454;
   letter-spacing: -1px; }
-  .save-button:hover {
+  .download-button:hover {
     background-color: #3D9970;
     cursor: pointer; }
-  .save-button:active {
+  .download-button:active {
     box-shadow: none;
     top: 5px; }
-  .save-button:focus {
+  .download-button:focus {
+    outline: none; }
+
+.save-button-generator {
+  float: right;
+  font-size: 12px;
+  background-color: #2F4454;
+  color: white;
+  padding: 0.65em 1.5em;
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  margin-top: -45px;
+  border-radius: 6px;
+  text-align: center;
+  margin-right: 104px;
+  border: #2F4454;
+  letter-spacing: -1px; }
+  .save-button-generator:hover {
+    background-color: #3D9970;
+    cursor: pointer; }
+  .save-button-generator:active {
+    box-shadow: none;
+    top: 5px; }
+  .save-button-generator:focus {
     outline: none; }
 
 a:hover {
@@ -94,33 +101,3 @@ a:active {
   box-shadow: none;
   top: 5px;
   colr: white; }
-
-.swal-text {
-  background-color: #FEFAE3;
-  font-size: 20px;
-  padding: 17px;
-  border: 1px solid #F0E1A1;
-  display: block;
-  margin: 22px;
-  text-align: center;
-  color: #61534e; }
-
-.swal-button {
-  padding: 7px 19px;
-  border-radius: 2px;
-  background-color: #4AC68E;
-  font-size: 16px;
-  border: 1px solid #3e549a;
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3); }
-
-.new-project-image {
-  position: absolute;
-  width: 38px;
-  height: auto;
-  margin-top: -13px;
-  margin-left: 140px; }
-  .new-project-image:active {
-    top: 18px; }
-  .new-project-image:hover {
-    background-color: #3D9970;
-    cursor: pointer; }
