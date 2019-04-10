@@ -3,14 +3,15 @@ import store from '../../../redux/store/index';
 import { setCurrProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
 import '../../../styles_CSS/Plugin/Header/Dropdown.css';
+import { loadProject } from '../../../utils/requests'
 
 let flip = true;
-let clicked= false;
+let clicked = false;
 //let pluginModule = require('../../Model');
 
 
 class Dropdown extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       displayMenu: false,
@@ -20,21 +21,22 @@ class Dropdown extends React.Component {
   };
 
   handleClick = (e) => {
+    loadProject()
     e.preventDefault();
-    store.dispatch( setCurrProject(this.loadProjectState(e.currentTarget.dataset.id)));
+    store.dispatch(setCurrProject(this.loadProjectState(e.currentTarget.dataset.id)));
     this.props.loadedProjectHandlerFromHeader(store.getState().projects[e.currentTarget.dataset.id].projectName);
     flip = false;
   }
-  
+
   loadProjectState(projectID) {
-    let project =  JSON.parse(JSON.stringify(store.getState().projects[projectID]));
+    let project = JSON.parse(JSON.stringify(store.getState().projects[projectID]));
     return project;
   }
-  
+
 
   showDropdownMenu(event) {
     clicked = !clicked;
-    if(store.getState().projects.length === 0) {
+    if (store.getState().projects.length === 0) {
       const noProjectsToast = Swal.mixin({
         toast: true,
         position: 'top-start',
@@ -52,7 +54,7 @@ class Dropdown extends React.Component {
   }
 
   closeDropdownMenu() {
-    if(clicked) {
+    if (clicked) {
       flip = !flip;
       this.setState({ displayMenu: !flip });
       clicked = false
@@ -64,33 +66,33 @@ class Dropdown extends React.Component {
   //  
   render() {
     return (
-      <div  className="dropdown" onClick={this.showDropdownMenu} onMouseLeave={this.closeDropdownMenu}>
-	      <div className="dropdown-button" > Saved Projects </div>
-          { this.state.displayMenu ? (
-            <ul >
-              {store.getState().projects.map((plugin, index) => {
-                return (
-                  <li
-                    data-id={index} 
-                    onClick={this.handleClick} 
-                    key={index}
-                  >
+      <div className="dropdown" onClick={this.showDropdownMenu} onMouseLeave={this.closeDropdownMenu}>
+        <div className="dropdown-button" > Saved Projects </div>
+        {this.state.displayMenu ? (
+          <ul >
+            {store.getState().projects.map((plugin, index) => {
+              return (
+                <li
+                  data-id={index}
+                  onClick={this.handleClick}
+                  key={index}
+                >
                   {store.getState().projects[index].projectName}
-                  </li>
-                )
-              })}
-            </ul>
-            ) : ( null )
-          }
+                </li>
+              )
+            })}
+          </ul>
+        ) : (null)
+        }
       </div>
     );
   }
 }
 export default Dropdown;
 
-  /*for(let i = 0; i < store.getState().projects[projectID].length; i++) {
-    array[i] = store.getState().projects[projectID][i].selected*1;
-    pluginModule.plugins[i].port = store.getState().projects[projectID][i].port;
-  }*/
+/*for(let i = 0; i < store.getState().projects[projectID].length; i++) {
+  array[i] = store.getState().projects[projectID][i].selected*1;
+  pluginModule.plugins[i].port = store.getState().projects[projectID][i].port;
+}*/
 
 
