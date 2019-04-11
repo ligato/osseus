@@ -4,20 +4,24 @@
   "private": true,
   "dependencies": {
     "base64-js": "^1.3.0",
+    "concurrently": "^4.1.0",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
     "node-webhooks": "^1.4.2",
-    "npm": "^6.9.0",
     "react": "^16.8.3",
     "react-contenteditable": "^3.2.6",
     "react-dom": "^16.8.3",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
     "semantic-ui-react": "^0.85.0",
+    "socket.io": "^2.2.0",
     "sweetalert2": "^8.8.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"react-scripts start\" \"node server.js\"",
     "build": "react-scripts build",
-    "test": "mocha",
+    "test": "react-scripts test",
+    "server": "nodemon server.js",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -31,8 +35,9 @@
   ],
   "devDependencies": {
     "chai": "*",
-    "mocha": "*",
-    "redux": "^4.0.1",
-    "ws": "3.3.2"
-  }
+    "mocha": "^6.1.2",
+    "nodemon": "^1.18.11",
+    "redux": "^4.0.1"
+  },
+  "proxy": "http://localhost:8000"
 }

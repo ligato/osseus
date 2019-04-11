@@ -64,7 +64,6 @@ class Header extends React.Component {
       store.getState().currProject.projectName = rename;
       pluginModule.project.projectName = rename;
       save()
-      loadProject()
 
       const savedToast = Swal.mixin({
         toast: true,

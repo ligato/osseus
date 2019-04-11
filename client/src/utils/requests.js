@@ -49,9 +49,16 @@ export function loadAllProjects() {
 
 export function generate() {
     const currentProject = store.getState().currProject;
+    fetch('/api/templates', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(currentProject)
+    })
 
     // Send plugins to agent
-    console.log("generate --> /template")
+    /*console.log("generate --> /template")
     fetch(`http://0.0.0.0:9191/v1/templates/${currentProject.projectName}`, {
         method: "POST",
         mode: "no-cors",
@@ -72,5 +79,5 @@ export function generate() {
     })
         .then(resp => resp.json())
         .then(data => console.log(data))
-        .catch(err => console.log("Error: ", err));
+        .catch(err => console.log("Error: ", err));*/
 }
