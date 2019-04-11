@@ -7,7 +7,7 @@ export function save() {
     const currentProject = JSON.parse(JSON.stringify(store.getState().currProject));
 
     // Save current project
-    fetch(`http://0.0.0.0:8000/v1/projects/`, {
+    fetch(`http://0.0.0.0:9191/v1/projects`, {
         method: "POST",
         mode: "no-cors",
         headers: {
@@ -15,19 +15,16 @@ export function save() {
         },
         body: JSON.stringify(currentProject)
     })
-        // Log response
-        .then(resp => resp.json())
-        .catch(err => console.log("Error: ", err))
 }
 
 export function loadProject() {
     // Retrieve plugins from api
-    fetch(`http://0.0.0.0:8000/v1/projects/${store.getState().currProject.projectName}`, {
+    fetch(`http://0.0.0.0:9191/v1/projects/${store.getState().currProject.projectName}`, {
         method: "GET",
         mode: "no-cors",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        // headers: {
+        //     "Content-Type": "application/json"
+        // },
     })
         // Decode response
         .then(res => { return res.json() })
@@ -37,7 +34,7 @@ export function loadProject() {
 
 export function loadAllProjects() {
     // Retrieve plugins from api
-    fetch(`http://0.0.0.0:8000/v1/projects`, {
+    fetch(`http://0.0.0.0:9191/v1/projects`, {
         method: "GET",
         mode: "no-cors",
         headers: {

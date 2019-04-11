@@ -32,14 +32,14 @@ class Header extends React.Component {
       displayedName: ' '
     };
   }
-  tellMeToSave () {
-    var objectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
-    var duplicate = determineIfDuplicate(objectCopy.projectName);  
+  tellMeToSave() {
+    var objectCopy = JSON.parse(JSON.stringify(store.getState().currProject));
+    var duplicate = determineIfDuplicate(objectCopy.projectName);
     save()
-    loadProject() 
-    if(!duplicate) {
-      store.dispatch( addCurrProject([objectCopy]));
-      
+    // loadProject() 
+    if (!duplicate) {
+      store.dispatch(addCurrProject([objectCopy]));
+
       const savedToast = Swal.mixin({
         toast: true,
         position: 'top',
@@ -51,15 +51,15 @@ class Header extends React.Component {
         title: '"' + pluginModule.project.projectName + '" saved successfully',
       })
     } else {
-      store.dispatch( addCurrProject([objectCopy]));
-      let latestProjectName = store.getState().projects[store.getState().projects.length-1].projectName;
-      while(determineIfDuplicate(latestProjectName)) {
+      store.dispatch(addCurrProject([objectCopy]));
+      let latestProjectName = store.getState().projects[store.getState().projects.length - 1].projectName;
+      while (determineIfDuplicate(latestProjectName)) {
         latestProjectName = makeUniqueAgain(latestProjectName);
         console.log(determineIfDuplicate(latestProjectName))
       }
       let rename = latestProjectName
-    
-      store.getState().projects[store.getState().projects.length-1].projectName = rename;
+
+      store.getState().projects[store.getState().projects.length - 1].projectName = rename;
       this.props.newProjectNameHandler(rename)
       store.getState().currProject.projectName = rename;
       pluginModule.project.projectName = rename;
@@ -80,7 +80,7 @@ class Header extends React.Component {
     }
   }
 
-  tellMeToGenerate () {
+  tellMeToGenerate() {
     console.log("im here")
     generate();
   }
@@ -106,24 +106,24 @@ class Header extends React.Component {
         <Segment>
           <Grid columns={1} relaxed='very'>
             <Grid.Column className="header-column"  >
-              <Dropdown 
+              <Dropdown
                 className="new-project-link"
                 loadedProjectHandlerFromHeader={this.bubbleUpLoadedProjectToParent}
               />
-              <img 
-                className="new-project-image" 
-                src='/images/new-project.png' 
+              <img
+                className="new-project-image"
+                src='/images/new-project.png'
                 alt='oops'
                 onClick={this.resetPalette}>
               </img>
               <div className="header-text">
                 <p className="current-project">Current Project: </p>
                 <ContentEditable
-                    spellCheck={false}
-                    className="project-name"
-                    html={this.props.currentProjectName} // innerHTML of the editable div
-                    disabled={false} // use true to disable edition
-                    onChange={this.handleChange} // handle innerHTML change
+                  spellCheck={false}
+                  className="project-name"
+                  html={this.props.currentProjectName} // innerHTML of the editable div
+                  disabled={false} // use true to disable edition
+                  onChange={this.handleChange} // handle innerHTML change
                 />
               </div>
               <Link className="generator-link" onClick={this.tellMeToGenerate} to="/GeneratorApp">Generate</Link>
@@ -140,24 +140,24 @@ export default Header;
 
 function determineIfDuplicate(projectName) {
   let isDuplicate;
-  for(let i = 0; i < store.getState().projects.length; i++) {
-    if(projectName === store.getState().projects[i].projectName) {
+  for (let i = 0; i < store.getState().projects.length; i++) {
+    if (projectName === store.getState().projects[i].projectName) {
       isDuplicate = true;
       return isDuplicate;
-    } 
+    }
   }
   return isDuplicate = false;
 }
 
 function makeUniqueAgain(projectName) {
   let regex = /\([0-9]+\)/;
-  if(projectName.match(regex)) {
+  if (projectName.match(regex)) {
     let regexNumber = /[0-9]+/
     let nthDuplicate = Number(projectName.match(regexNumber)[0]);
     let matchSize = projectName.match(regex)[0].length
-    projectName = projectName.slice(0,-matchSize)
-    projectName = projectName + '(' + (nthDuplicate+1) + ')'
-    console.log(typeof(projectName))
+    projectName = projectName.slice(0, -matchSize)
+    projectName = projectName + '(' + (nthDuplicate + 1) + ')'
+    console.log(typeof (projectName))
   } else {
     projectName = projectName + '(1)';
   }
