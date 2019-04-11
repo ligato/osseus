@@ -1,15 +1,12 @@
 import React from 'react';
+import 'chai/register-expect';
+import '../../../styles_CSS/Generator/Header/Header.css';
 import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import Dropdown from './Dropdown';
 import store from '../../../redux/store/index';
-import { addCurrProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
+import { addCurrProject } from "../../../redux/actions/index";
 import ContentEditable from 'react-contenteditable'
-import 'chai/register-expect';
-import '../../../styles_CSS/Plugin/Header/Header.css';
-import { generate, save, loadProject } from '../../../utils/requests';
-
 
 let pluginModule = require('../../Model');
 let nameCapture;
@@ -24,22 +21,20 @@ let nameCapture;
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.tellMeToSave = this.tellMeToSave.bind(this);
-    this.resetPalette = this.resetPalette.bind(this);
-    this.bubbleUpLoadedProjectToParent = this.bubbleUpLoadedProjectToParent.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.state = {
       displayedName: ' '
     };
+    this.handleChange = this.handleChange.bind(this);
+    this.tellMeToDownload = this.tellMeToDownload.bind(this);
+    this.tellMeToSave = this.tellMeToSave.bind(this);
   }
-  tellMeToSave() {
-    var objectCopy = JSON.parse(JSON.stringify(store.getState().currProject));
-    var duplicate = determineIfDuplicate(objectCopy.projectName);
-    save()
-    // loadProject() 
-    if (!duplicate) {
-      store.dispatch(addCurrProject([objectCopy]));
 
+  tellMeToSave () {
+    var objectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
+    var duplicate = determineIfDuplicate(objectCopy.projectName);   
+    if(!duplicate) {
+      store.dispatch( addCurrProject([objectCopy]));
+      
       const savedToast = Swal.mixin({
         toast: true,
         position: 'top',
@@ -51,20 +46,18 @@ class Header extends React.Component {
         title: '"' + pluginModule.project.projectName + '" saved successfully',
       })
     } else {
-      store.dispatch(addCurrProject([objectCopy]));
-      let latestProjectName = store.getState().projects[store.getState().projects.length - 1].projectName;
-      while (determineIfDuplicate(latestProjectName)) {
+      store.dispatch( addCurrProject([objectCopy]));
+      let latestProjectName = store.getState().projects[store.getState().projects.length-1].projectName;
+      while(determineIfDuplicate(latestProjectName)) {
         latestProjectName = makeUniqueAgain(latestProjectName);
         console.log(determineIfDuplicate(latestProjectName))
       }
       let rename = latestProjectName
-
-      store.getState().projects[store.getState().projects.length - 1].projectName = rename;
+    
+      store.getState().projects[store.getState().projects.length-1].projectName = rename;
       this.props.newProjectNameHandler(rename)
       store.getState().currProject.projectName = rename;
       pluginModule.project.projectName = rename;
-      save()
-      loadProject()
 
       const savedToast = Swal.mixin({
         toast: true,
@@ -80,11 +73,6 @@ class Header extends React.Component {
     }
   }
 
-  tellMeToGenerate() {
-    console.log("im here")
-    generate();
-  }
-
   handleChange = evt => {
     nameCapture = evt.target.value;
     this.props.newProjectNameHandler(nameCapture)
@@ -92,47 +80,32 @@ class Header extends React.Component {
     pluginModule.project.projectName = nameCapture;
   };
 
-  resetPalette = () => {
-    this.props.newProjectHandlerFromParent();
-  }
-
-  bubbleUpLoadedProjectToParent = (name) => {
-    this.props.loadedProjectHandlerFromParent(name);
+  tellMeToDownload() {
+    console.log('download')
   }
 
   render() {
     return (
-      <div>
-        <Segment>
-          <Grid columns={1} relaxed='very'>
-            <Grid.Column className="header-column"  >
-              <Dropdown
-                className="new-project-link"
-                loadedProjectHandlerFromHeader={this.bubbleUpLoadedProjectToParent}
-              />
-              <img
-                className="new-project-image"
-                src='/images/new-project.png'
-                alt='oops'
-                onClick={this.resetPalette}>
-              </img>
-              <div className="header-text">
-                <p className="current-project">Current Project: </p>
-                <ContentEditable
+      <Segment>
+        <Grid columns={1} relaxed='very'>
+          <Grid.Column className="header-column"  >
+            <Link className="plugin-app-button" to="/">Plugin App</Link>
+            <div className="header-text">
+              <p className="current-project">Current Project: </p>
+              <ContentEditable
                   spellCheck={false}
                   className="project-name"
                   html={this.props.currentProjectName} // innerHTML of the editable div
                   disabled={false} // use true to disable edition
                   onChange={this.handleChange} // handle innerHTML change
-                />
-              </div>
-              <Link className="generator-link" onClick={this.tellMeToGenerate} to="/GeneratorApp">Generate</Link>
-              <button className="save-button" onClick={this.tellMeToSave} >Save Project</button>
-            </Grid.Column>
-          </Grid>
-          <Divider vertical></Divider>
-        </Segment>
-      </div>
+              />
+            </div>
+            <button className="download-button" onClick={this.tellMeToDownload} >Download</button>
+            <button className="save-button-generator" onClick={this.tellMeToSave} >Save Project</button>
+          </Grid.Column>
+        </Grid>
+        <Divider vertical></Divider>
+      </Segment>
     );
   }
 }
@@ -140,24 +113,24 @@ export default Header;
 
 function determineIfDuplicate(projectName) {
   let isDuplicate;
-  for (let i = 0; i < store.getState().projects.length; i++) {
-    if (projectName === store.getState().projects[i].projectName) {
+  for(let i = 0; i < store.getState().projects.length; i++) {
+    if(projectName === store.getState().projects[i].projectName) {
       isDuplicate = true;
       return isDuplicate;
-    }
+    } 
   }
   return isDuplicate = false;
 }
 
 function makeUniqueAgain(projectName) {
   let regex = /\([0-9]+\)/;
-  if (projectName.match(regex)) {
+  if(projectName.match(regex)) {
     let regexNumber = /[0-9]+/
     let nthDuplicate = Number(projectName.match(regexNumber)[0]);
     let matchSize = projectName.match(regex)[0].length
-    projectName = projectName.slice(0, -matchSize)
-    projectName = projectName + '(' + (nthDuplicate + 1) + ')'
-    console.log(typeof (projectName))
+    projectName = projectName.slice(0,-matchSize)
+    projectName = projectName + '(' + (nthDuplicate+1) + ')'
+    console.log(typeof(projectName))
   } else {
     projectName = projectName + '(1)';
   }
