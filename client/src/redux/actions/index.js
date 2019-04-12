@@ -3,6 +3,8 @@ import { SET_CURR_PROJECT } from "../constants/action-types";
 import { SET_CURR_POPUP_ID } from "../constants/action-types";
 import { SAVE_PROJECT } from "../constants/action-types";
 import { LOAD_PROJECT } from "../constants/action-types";
+import { GENERATE_CURR_PROJECT } from "../constants/action-types";
+import { DELIVER_GENERATED_TAR } from "../constants/action-types";
 
 export function addCurrProject(payload) {
   return { type: ADD_CURR_PROJECT, payload };
@@ -22,4 +24,12 @@ export function saveProject(payload) {
 
 export function loadProject(payload) {
   return { type: LOAD_PROJECT, payload }
+}
+
+export function generateCurrProject(payload) {
+  return { type: GENERATE_CURR_PROJECT, payload };
+}
+
+export function deliverGeneratedTar(payload) {
+  return { type: DELIVER_GENERATED_TAR, payload };
 }

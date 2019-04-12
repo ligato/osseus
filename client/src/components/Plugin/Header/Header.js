@@ -3,7 +3,7 @@ import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import Dropdown from './Dropdown';
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProject, loadProject } from "../../../redux/actions/index";
+import { addCurrProject, saveProject, loadProject, generateCurrProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
 import 'chai/register-expect';
@@ -84,6 +84,7 @@ class Header extends React.Component {
 
   tellMeToGenerate() {
     console.log("im here")
+    store.dispatch(generateCurrProject(store.getState().currProject))
   }
 
   handleChange = evt => {
