@@ -3,12 +3,11 @@ import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import Dropdown from './Dropdown';
 import store from '../../../redux/store/index';
-import { addCurrProject } from "../../../redux/actions/index";
+import { addCurrProject, saveProject, loadProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
 import 'chai/register-expect';
 import '../../../styles_CSS/Plugin/Header/Header.css';
-import { generate, save, loadProject } from '../../../utils/requests';
 
 
 let pluginModule = require('../../Model');
@@ -32,10 +31,15 @@ class Header extends React.Component {
       displayedName: ' '
     };
   }
+  tellMeToLoad() {
+    store.dispatch(loadProject(store.getState().currProject.projectName))
+  }
+
   tellMeToSave() {
     var objectCopy = JSON.parse(JSON.stringify(store.getState().currProject));
     var duplicate = determineIfDuplicate(objectCopy.projectName);
-    save()
+    store.dispatch(saveProject(store.getState().currProject))
+    console.log(store.getState().projects)
     // loadProject() 
     if (!duplicate) {
       store.dispatch(addCurrProject([objectCopy]));
@@ -63,7 +67,6 @@ class Header extends React.Component {
       this.props.newProjectNameHandler(rename)
       store.getState().currProject.projectName = rename;
       pluginModule.project.projectName = rename;
-      save()
 
       const savedToast = Swal.mixin({
         toast: true,
@@ -81,7 +84,6 @@ class Header extends React.Component {
 
   tellMeToGenerate() {
     console.log("im here")
-    generate();
   }
 
   handleChange = evt => {
@@ -127,6 +129,7 @@ class Header extends React.Component {
               </div>
               <Link className="generator-link" onClick={this.tellMeToGenerate} to="/GeneratorApp">Generate</Link>
               <button className="save-button" onClick={this.tellMeToSave} >Save Project</button>
+              <button className="save-button" style={{ marginRight: '210px' }} onClick={this.tellMeToLoad} >Load Project</button>
             </Grid.Column>
           </Grid>
           <Divider vertical></Divider>
@@ -156,7 +159,6 @@ function makeUniqueAgain(projectName) {
     let matchSize = projectName.match(regex)[0].length
     projectName = projectName.slice(0, -matchSize)
     projectName = projectName + '(' + (nthDuplicate + 1) + ')'
-    console.log(typeof (projectName))
   } else {
     projectName = projectName + '(1)';
   }
