@@ -6,7 +6,7 @@ Osseus is full-stack web application for generating configurable plugin template
 
 ## Development Installation
 
-First, clone the repo:
+### First, clone the repo or pull off Dockerhub:
 ```
 git clone https://github.com/ligato/osseus
 cd /osseus
@@ -14,8 +14,8 @@ cd /osseus
 docker pull anthonydevelops/agent:dev
 docker pull anthonydevelops/ui:dev
 ```
-# Build the UI & Agent images:<br/>
-*Only if you chose to clone instead of pull*
+### Build the UI & Agent images:<br/>
+*(Only if you chose to clone instead of pull in previous step)*
 ```bash
 # UI
 docker build --force-rm=true -t ui --no-cache -f docker/ui/Dockerfile .
@@ -24,18 +24,28 @@ docker build --force-rm=true -t ui --no-cache -f docker/ui/Dockerfile .
 docker build --force-rm=true -t agent --build-arg AGENT_COMMIT=2c2b0df32201c9bc814a167e0318329c78165b5c --no-cache -f docker/agent/Dockerfile .
 ```
 
-Build and run ETCD **before** running the Agent container:
+### Build and run ETCD **before** running the Agent container:
 ```bash
 docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:v3.1.0 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
 ```
 
-Lastly, run UI and Agent:
+### Lastly, run UI and Agent:
 ```bash
-# UI
-docker run --name ui --privileged --rm ui
 
 # Agent
-docker run --name agent --privileged --rm agent
+(If chose to clone)
+docker run -p 9191:9191 --name agent --privileged --rm agent
+-or-
+(If chose to pull)
+docker run -p 9191:9191 anthonydevelops/agent:dev
+
+# UI
+(If chose to clone)
+docker run --name ui --privileged --rm ui
+-or-
+(If chose to pull)
+docker run anthonydevelops/ui:dev
+
 ```
 
 **NOTE:**
