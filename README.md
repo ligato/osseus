@@ -10,8 +10,12 @@ First, clone the repo:
 ```
 git clone https://github.com/ligato/osseus
 cd /osseus
+-or-
+docker pull anthonydevelops/agent:dev
+docker pull anthonydevelops/ui:dev
 ```
-Build the UI & Agent images:
+# Build the UI & Agent images:<br/>
+*Only if you chose to clone instead of pull*
 ```bash
 # UI
 docker build --force-rm=true -t ui --no-cache -f docker/ui/Dockerfile .
