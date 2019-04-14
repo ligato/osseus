@@ -119,6 +119,14 @@ var CONFIG = {
     port: 0
 };
 
+var categories = [
+    [['REST_API', 'RPC'],      ['GRPC', 'RPC'],         ['PROMETHEUS', 'RPC']],  
+    [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
+    [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
+    [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
+    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']]
+]
+
 var images = ['/images/01-rest-api.png',  '/images/02-grpc.png',         '/images/03-prometheus.png', '/images/04-etcd.png',
               '/images/05-redis.png',     '/images/06-cassandra.png',    '/images/07-consul.png',     '/images/08-logrus.png',
               '/images/09-log-mngr.png',  '/images/10-status-check.png', '/images/11-probe.png',      '/images/12-kafka.png',
@@ -143,7 +151,8 @@ var generatedCode = 'Code Viewer'
 module.exports = {
     project: project,
     images: images,
-    generatedCode: generatedCode
+    generatedCode: generatedCode,
+    categories: categories
 }
 
 

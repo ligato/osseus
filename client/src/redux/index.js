@@ -4,8 +4,8 @@ import { setCurrProject } from "../redux/actions/index";
 import { setCurrPopupID } from "../redux/actions/index";
 import { generateCurrProject } from "../redux/actions/index";
 import { deliverGeneratedTar } from "../redux/actions/index";
-import { saveProject } from "../redux/actions/index";
-import { loadProject } from "../redux/actions/index";
+import { saveProjectToKV } from "../redux/actions/index";
+import { loadProjectFromKV } from "../redux/actions/index";
 
 window.store = store;
 window.addCurrProject = addCurrProject;
@@ -13,6 +13,6 @@ window.setCurrProject = setCurrProject;
 window.setCurrPopupID = setCurrPopupID;
 window.generateCurrProject = generateCurrProject;
 window.deliverGeneratedTar = deliverGeneratedTar;
-window.saveProject = saveProject;
-window.loadProject = loadProject;
+window.saveProjectToKV = saveProjectToKV;
+window.loadProjectFromKV = loadProjectFromKV;
 
