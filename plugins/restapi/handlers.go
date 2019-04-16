@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
@@ -50,9 +51,10 @@ func (p *Plugin) registerHandlersHere() {
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
 	//load all projects
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.LoadAllProjectsHandler, GET)
+	// delete a project
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler ,DELETE)
 	//save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
-
 }
 
 //registers handler for /v1/projects/ save endpoint
@@ -117,6 +119,25 @@ func (p *Plugin) LoadAllProjectsHandler(formatter *render.Render) http.HandlerFu
 	}
 }
 
+func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		vars := mux.Vars(req)
+		pId := vars["id"]
+		projectInfo, err := p.DeleteProject(pId)
+		if err != nil{
+			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
+
+	}
+}
+
 //registers handler for generate endpoint
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -171,6 +192,13 @@ func (p *Plugin) LoadAllProjects() (interface{}, error) {
 	p.Log.Debug("REST API Get /v1/projects load all projects reached")
 	projectValue := p.getAllValues(projectsPrefix)
 	p.Log.Debug("multiple projects?", projectValue)
+	return projectValue, nil
+}
+
+// delete project with given id
+func (p *Plugin) DeleteProject(projectId string) (interface{}, error) {
+	p.Log.Debug("REST API Del /v1/projects/{id} delete project reached with id: ", projectId)
+	projectValue := p.deleteValue(projectsPrefix, projectId)
 	return projectValue, nil
 }
 
@@ -269,7 +297,7 @@ func (p *Plugin) getAllValues(prefix string) interface{} {
 	prefix = "/projects/v1/plugins"
 	broker := p.KVStore.NewBroker(prefix)
 
-	keys, err := broker.ListKeys(prefix)
+	/*keys, err := broker.ListKeys(prefix)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -283,9 +311,10 @@ func (p *Plugin) getAllValues(prefix string) interface{} {
 		}
 
 		p.Log.Infof("Key: %q Val: %v", key, val)
-	}
+	}*/
 
-	/*resp, err := broker.ListValues("myproject")
+	format := new(model.Project)
+	resp, err := broker.ListValues("/myproject")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -296,13 +325,26 @@ func (p *Plugin) getAllValues(prefix string) interface{} {
 			break
 		}
 		p.Log.Debug("key is, ", kv.GetKey())
-		kv.GetValue()
-		p.Log.Debug("what is kv even", kv)
+		err = kv.GetValue(format)
+		if err != nil {
+			log.Fatal(err)
+		}
+		p.Log.Debug("value is", format.Plugin[0])
 	}
-	*/
+
 	return nil
 }
 
+// returns true if value at key deleted, false otherwise
+func (p *Plugin) deleteValue(prefix string, key string) interface{} {
+	broker := p.KVStore.NewBroker(prefix)
+	existed, err := broker.Delete(key)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return existed
+}
 
 // logError logs non-nil errors from JSON formatter
 func (p *Plugin) logError(err error) {
