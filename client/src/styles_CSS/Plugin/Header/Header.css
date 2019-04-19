@@ -1,4 +1,4 @@
-.header-column-mine {
+.header-column-plugin {
   background-color: #FFFFFF;
   margin-top: -2px;
   box-shadow: 0 5px 0 #CECECE;
@@ -47,10 +47,10 @@
   .generatorlink:hover {
     cursor: pointer;
     text-decoration: underline;
+    background-color: #00BCEB;
     color: white; }
   .generatorlink:active {
     box-shadow: none;
-    top: 5px;
     color: white; }
 
 .swal-text {
@@ -76,7 +76,7 @@
   width: 34px;
   height: auto;
   float: right;
-  margin-right: 145px;
+  margin-right: 155px;
   margin-top: -12px; }
   .new-project-image:active {
     top: 6px; }
@@ -88,7 +88,7 @@
   width: 34px;
   height: auto;
   float: right;
-  margin-right: 100px;
+  margin-right: 110px;
   margin-top: -50px; }
   .upload-image:active {
     top: 6px; }
@@ -103,3 +103,5 @@
   margin-left: -10px; }
   .cisco-logo:active {
     top: 18px; }
+
+/*# sourceMappingURL=Header.css.map */

@@ -1,7 +1,7 @@
 .dropdown {
   position: absolute;
   display: inline-block;
-  margin-left: 175px;
+  right: 82.5%;
   margin-top: -14px;
   width: 140.38px; }
 
@@ -21,7 +21,7 @@ ul {
   cursor: pointer; }
 
 li a {
-  color: #000;
+  color: #00BCEB;
   text-decoration: none;
   position: relative;
   cursor: pointer; }
@@ -30,7 +30,8 @@ li {
   padding: 8px 16px;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
-  cursor: pointer; }
+  cursor: pointer;
+  color: #00BCEB; }
 
 li:last-child {
   border-bottom: none;
@@ -39,7 +40,7 @@ li:last-child {
 
 li:hover {
   background-color: #e5e5e5;
-  color: black;
+  color: #3C73B7;
   position: relative;
   cursor: pointer; }
 
@@ -80,3 +81,5 @@ li:hover {
   border-color: #00BCEB transparent transparent transparent;
   right: 0px;
   top: 16px; }
+
+/*# sourceMappingURL=Dropdown.css.map */

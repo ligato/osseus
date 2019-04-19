@@ -87,7 +87,7 @@ class Header extends React.Component {
       <div>
         <Segment>
           <Grid columns={1} relaxed='very'>
-            <Grid.Column className="header-column-mine"  >
+            <Grid.Column className="header-column-plugin"  >
               <img
                 className="cisco-logo"
                 src='/images/cisco-logo.png'

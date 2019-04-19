@@ -71,9 +71,15 @@ class Header extends React.Component {
     return (
       <Segment>
         <Grid columns={1} relaxed='very'>
-          <Grid.Column className="header-column"  >
-            <Link className="plugin-app-button" to="/">Plugin App</Link>
-            <div className="header-text">
+          <Grid.Column className="header-column-gen"  >
+            <Link to="/">
+            <img
+                className="back-image"
+                src='/images/back.png'
+                alt='oops'>
+            </img>
+            </Link>
+            <div className="headergentext">
               <p className="current-project">Current Project: </p>
               <ContentEditable
                   spellCheck={false}
@@ -83,9 +89,12 @@ class Header extends React.Component {
                   onChange={this.handleEditedProjectName} // handle innerHTML change
               />
             </div>
-            <button className="download-button" onClick={this.downloadTar} >Download</button>
-            <button className="save-button-generator" onClick={this.saveProject} >Save Project</button>
-            <button className="load-button-generator" onClick={this.tellMeToLoad} >Load Project</button>
+            <img
+                className="download-image"
+                src='/images/download.png'
+                alt='oops'
+                onClick={this.downloadTar}>
+            </img>
           </Grid.Column>
         </Grid>
         <Divider vertical></Divider>

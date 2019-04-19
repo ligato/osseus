@@ -25,6 +25,7 @@ class Dropdown extends React.Component {
     event.preventDefault();
     store.dispatch(setCurrProject(loadProjectState(event.currentTarget.dataset.id)));
     this.props.loadedProjectHandlerFromHeader(store.getState().projects[event.currentTarget.dataset.id].projectName);
+    console.log(store.getState().currProject)
     flip = false;
   }
 
@@ -76,7 +77,6 @@ export default Dropdown;
 
 //Function loads a project based on the specific clicked dropdown item
 function loadProjectState(projectID) {
-  console.log('hello')
   let project = JSON.parse(JSON.stringify(store.getState().projects[projectID]));
   return project;
 }

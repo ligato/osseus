@@ -183,7 +183,6 @@ function buildOFFSET() {
     array.push(subarray)
     previouslength = Number(array[i+1]);
   }
-  console.log(array)
   return array;
 }
 
