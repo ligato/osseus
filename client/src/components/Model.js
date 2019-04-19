@@ -120,23 +120,28 @@ var CONFIG = {
 };
 
 var categories = [
-    [['REST_API', 'RPC'],      ['GRPC', 'RPC'],         ['PROMETHEUS', 'RPC']],  
-    [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
-    [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
-    [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
-    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']]
+/*RPC*/     [['REST_API', 'RPC'],      ['GRPC', 'RPC'],         ['PROMETHEUS', 'RPC']],  
+/*DS*/      [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
+/*LOGGING*/ [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
+/*HEALTH*/  [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
+/*MISC*/    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']]
 ]
 
-var images = ['/images/01-rest-api.png',  '/images/02-grpc.png',         '/images/03-prometheus.png', '/images/04-etcd.png',
-              '/images/05-redis.png',     '/images/06-cassandra.png',    '/images/07-consul.png',     '/images/08-logrus.png',
-              '/images/09-log-mngr.png',  '/images/10-status-check.png', '/images/11-probe.png',      '/images/12-kafka.png',
-              '/images/13-data-sync.png', '/images/14-idx-map.png',      '/images/15-srvc-label.png', '/images/16-config.png',
+var images = [
+/*RPC*/     '/images/rpc.png',     '/images/rpc.png',     '/images/rpc.png',
+/*DS*/      '/images/ds.png',      '/images/ds.png',      '/images/ds.png',   '/images/ds.png',    
+/*LOGGING*/ '/images/logging.png', '/images/logging.png', 
+/*HEALTH*/  '/images/health.png',  '/images/health.png',   
+/*MISC*/    '/images/misc.png',    '/images/misc.png',    '/images/misc.png', '/images/misc.png', '/images/misc.png',
 ]
 
-var plugins = [REST_API,  GRPC,       PROMETHEUS,   ETCD,      
-               REDIS,     CASSANDRA,  CONSUL,       LOGRUS,     
-               LOG_MNGR,  STTS_CHECK, PROBE,        KAFKA,     
-               DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG];
+var plugins = [
+/*RPC*/      REST_API,   GRPC,      PROMETHEUS,   
+/*DS*/       ETCD,       REDIS,     CASSANDRA,  CONSUL,  
+/*LOGGING*/  LOGRUS,     LOG_MNGR,
+/*HEALTH*/   STTS_CHECK, PROBE,
+/*MISC*/     KAFKA,      DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG
+];
 
 var projectName = 'untitled';
 

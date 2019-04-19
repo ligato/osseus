@@ -87,7 +87,13 @@ class Header extends React.Component {
       <div>
         <Segment>
           <Grid columns={1} relaxed='very'>
-            <Grid.Column className="header-column"  >
+            <Grid.Column className="header-column-mine"  >
+              <img
+                className="cisco-logo"
+                src='/images/cisco-logo.png'
+                alt='oops'
+                onClick={this.resetPalette}>
+              </img>
               <Dropdown
                 className="new-project-link"
                 loadedProjectHandlerFromHeader={this.bubbleUpLoadedProjectToParent}
@@ -99,18 +105,22 @@ class Header extends React.Component {
                 onClick={this.resetPalette}>
               </img>
               <div className="header-text">
-                <p className="current-project">Current Project: </p>
+                <p className="currentproject">Current Project: </p>
                 <ContentEditable
                   spellCheck={false}
-                  className="project-name"
+                  className="projectname"
                   html={this.props.currentProjectName} // innerHTML of the editable div
                   disabled={false} // use true to disable edition
                   onChange={this.handleEditedProjectName} // handle innerHTML change
                 />
               </div>
-              <Link className="generator-link" onClick={this.generateProject} to="/GeneratorApp">Generate</Link>
-              <button className="save-button" onClick={this.saveProject} >Save Project</button>
-              <button className="save-button" style={{ marginRight: '210px' }} onClick={this.loadProject} >Load Project</button>
+              <Link className="generatorlink" onClick={this.generateProject} to="/GeneratorApp">Generate</Link>
+              <img
+                className="upload-image"
+                src='/images/upload.png'
+                alt='oops'
+                onClick={this.saveProject}>
+              </img>
             </Grid.Column>
           </Grid>
           <Divider vertical></Divider>

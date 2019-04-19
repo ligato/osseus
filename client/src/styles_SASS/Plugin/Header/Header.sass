@@ -1,62 +1,41 @@
 @import ../../_colors.sass
 
-.header-column 
-  background-color: $light_gray
+.header-column-mine 
+  background-color: #FFFFFF
   margin-top: -2px
-  box-shadow: 0 5px 0 $light_gray_shadow
+  box-shadow: 0 5px 0 #CECECE
   height: 40px
   z-index: 201
   position: relative
-
-.new-project-button
-  font-size: 12px
-  background-color: $teal
-  color: white
-  padding: 1.05em 2.0em
-  text-decoration: none
-  text-transform: uppercase
-  border: $teal
-  letter-spacing: -1px
-  margin-left: -10px
-  position: absolute
-  margin-top: -13px
-  &:hover 
-    background-color: $dark_teal
-    cursor: pointer
-  &:active 
-    box-shadow: none
-    top: 7px
-  &:focus 
-    outline: none
 
 .header-text 
   display: flex
   justify-content: center
   align-items: center
 
-.current-project
-  color: white
+.currentproject
+  color: #959FAE
   font-weight: 700
   font-size: 16px
   cursor: default
+  margin-left: 150px
   
-.project-name
-  color: $teal
-  font-weight: 700
-  margin-top: -17px
+.projectname
+  color: #00BCEB
+  font-family: Arial, Helvetica, sans-serif
+  font-weight: bold
+  margin-top: -16px
   margin-left: 10px
   cursor: text
   font-size: 16px
   &:hover 
     background-color: white
-    color: $dark_teal
+    color: #3C73B7
 
   
-.generator-link
+.generatorlink
   float: right
   font-size: 12px
-  background-color: $dark_blue
-  color: white
   padding: 0.4em 1.2em
   position: relative
   text-decoration: none
@@ -64,43 +43,19 @@
   margin-top: -45px
   border-radius: 6px
   text-align: center
-
-.save-button
-  float: right
-  font-size: 12px
-  background-color: $dark_blue
-  color: white
-  padding: .65em 1.5em
-  position: relative
-  text-decoration: none
-  text-transform: uppercase
-  margin-top: -45px
-  border-radius: 6px
-  text-align: center
-  margin-right: 90px
-  border: $dark_blue
-  letter-spacing: -1px
+  color: #00BCEB
+  letter-spacing: -1.5px
+  font-size: 14px
+  font-family: Arial, Helvetica, sans-serif
   &:hover 
-    background-color: $dark_teal
     cursor: pointer
-  &:active 
-    box-shadow: none
-    top: 5px
-  &:focus 
-    outline: none
-
-  
-
-a 
-  &:hover 
-    background-color: $dark_blue
-    cursor: pointer
+    text-decoration: underline
     color: white
   
   &:active 
     box-shadow: none
     top: 5px
-    colr: white
+    color: white
 
 .swal-text 
   background-color: #FEFAE3
@@ -121,16 +76,38 @@ a
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3)
 
 .new-project-image
-  position: absolute
-  width: 38px
+  position: relative
+  width: 34px
   height: auto
-  margin-top: -13px
-  margin-left: 140px
+  float: right
+  margin-right: 145px
+  margin-top: -12px
+  &:active 
+    top: 6px
+  &:hover 
+    cursor: pointer
+
+.upload-image
+  position: relative
+  width: 34px
+  height: auto
+  float: right
+  margin-right: 100px
+  margin-top: -50px
+  &:active 
+    top: 6px
+  &:hover 
+    cursor: pointer
+
+.cisco-logo
+  position: absolute
+  width: 68px
+  height: auto
+  margin-top: -12px
+  margin-left: -10px
   &:active 
     top: 18px
-  &:hover 
-    background-color: $dark_teal
-    cursor: pointer
+
 
   
 
