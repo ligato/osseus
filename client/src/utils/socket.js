@@ -8,11 +8,11 @@ const configureSocket = dispatch => {
         console.log('connected to server');
     });
 
+    //Sockets will call the specified redux action
     socket.on('SEND_PROJECT_TO_CLIENT', project => {
         dispatch({ type: 'RETURN_LOAD_PROJECT', project })
     });
     socket.on('GENERATED_TAR', state => {
-        console.log('state is :' + state)
         dispatch({ type: 'DELIVER_GENERATED_TAR', state })
     });
 

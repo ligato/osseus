@@ -24,7 +24,7 @@ io.on('connection', socket => {
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
 
-    // Generates new project
+    // Generates current project
     socket.on('GENERATE_PROJECT', state => {
         // Initialize webhook
         const webhooks = new Webhooks({
@@ -53,7 +53,7 @@ io.on('connection', socket => {
             console.log(this.event + ' on trigger webHook' + name + 'with status code', statusCode, 'and body', body)
         })
 
-        // // Set reponse variable
+        // // Set response variable
         const generatedTar = 'generatedTar is set in server'
         socket.broadcast.emit('GENERATED_TAR', generatedTar);
     })

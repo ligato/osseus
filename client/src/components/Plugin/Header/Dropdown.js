@@ -1,13 +1,13 @@
 import React from 'react';
+import Swal from 'sweetalert2'
+
 import store from '../../../redux/store/index';
 import { setCurrProject } from "../../../redux/actions/index";
-import Swal from 'sweetalert2'
+
 import '../../../styles_CSS/Plugin/Header/Dropdown.css';
 
 let flip = true;
 let clicked = false;
-//let pluginModule = require('../../Model');
-
 
 class Dropdown extends React.Component {
   constructor(props) {
@@ -17,37 +17,25 @@ class Dropdown extends React.Component {
     };
     this.showDropdownMenu = this.showDropdownMenu.bind(this);
     this.closeDropdownMenu = this.closeDropdownMenu.bind(this);
+    this.handleDropdownClick = this.handleDropdownClick.bind(this);
   };
 
-  handleClick = (e) => {
-    e.preventDefault();
-    store.dispatch(setCurrProject(this.loadProjectState(e.currentTarget.dataset.id)));
-    this.props.loadedProjectHandlerFromHeader(store.getState().projects[e.currentTarget.dataset.id].projectName);
+  //Function determines which dropdown list element is clicked
+  handleDropdownClick = (event) => {
+    event.preventDefault();
+    store.dispatch(setCurrProject(loadProjectState(event.currentTarget.dataset.id)));
+    this.props.loadedProjectHandlerFromHeader(store.getState().projects[event.currentTarget.dataset.id].projectName);
+    console.log(store.getState().currProject)
     flip = false;
   }
 
-  loadProjectState(projectID) {
-    let project = JSON.parse(JSON.stringify(store.getState().projects[projectID]));
-    return project;
-  }
-
-
   showDropdownMenu(event) {
-    clicked = !clicked;
-    if (store.getState().projects.length === 0) {
-      const noProjectsToast = Swal.mixin({
-        toast: true,
-        position: 'top-start',
-        showConfirmButton: false,
-        timer: 1500,
-      })
-      noProjectsToast.fire({
-        type: 'error',
-        title: 'No saved Projects',
-      })
-    }
-    flip = !flip;
     event.preventDefault();
+    if (store.getState().projects.length === 0) {
+      noCurrentSavesToast();
+    }
+    clicked = !clicked;
+    flip = !flip;
     this.setState({ displayMenu: !flip });
   }
 
@@ -61,7 +49,6 @@ class Dropdown extends React.Component {
 
   //The logic of how this dropdown works is that the list is
   //shown and hidden based on the click of the dropdown button.
-  //  
   render() {
     return (
       <div className="dropdown" onClick={this.showDropdownMenu} onMouseLeave={this.closeDropdownMenu}>
@@ -72,7 +59,7 @@ class Dropdown extends React.Component {
               return (
                 <li
                   data-id={index}
-                  onClick={this.handleClick}
+                  onClick={this.handleDropdownClick}
                   key={index}
                 >
                   {store.getState().projects[index].projectName}
@@ -88,9 +75,24 @@ class Dropdown extends React.Component {
 }
 export default Dropdown;
 
-/*for(let i = 0; i < store.getState().projects[projectID].length; i++) {
-  array[i] = store.getState().projects[projectID][i].selected*1;
-  pluginModule.plugins[i].port = store.getState().projects[projectID][i].port;
-}*/
+//Function loads a project based on the specific clicked dropdown item
+function loadProjectState(projectID) {
+  let project = JSON.parse(JSON.stringify(store.getState().projects[projectID]));
+  return project;
+}
+
+//Funtion tells the user that there doesnt exist a saved project 
+function noCurrentSavesToast() {
+  const noProjectsToast = Swal.mixin({
+    toast: true,
+    position: 'top-start',
+    showConfirmButton: false,
+    timer: 1500,
+  })
+  noProjectsToast.fire({
+    type: 'error',
+    title: 'No saved Projects',
+  })
+}
 
 

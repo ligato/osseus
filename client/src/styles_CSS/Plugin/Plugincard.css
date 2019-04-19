@@ -4,8 +4,7 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray;
-}
+  background-color: gray; }
 
 .card-palette {
   width: 133%;
@@ -13,8 +12,7 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray;
-}
+  background-color: gray; }
 
 .card:hover {
   box-shadow: 0 8px 16px 0 #2E2E2E; }
@@ -52,7 +50,8 @@
   position: absolute;
   z-index: 3;
   top: -5px;
-  right: -5px; }
+  right: -5px;
+  transform: rotate(45deg); }
 
 .close-img:hover {
   filter: brightness(130%); }

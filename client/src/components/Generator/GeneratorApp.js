@@ -16,9 +16,12 @@ class GeneratorApp extends React.Component {
     };
     this.newProjectName = this.newProjectName.bind(this);
   }
-  newProjectName(name) {
+
+  //Function saves the retrieved new name from the children
+  //of generator app
+  newProjectName(projectName) {
     this.setState({
-      currentProjectName: name
+      currentProjectName: projectName
     });
   }
 
