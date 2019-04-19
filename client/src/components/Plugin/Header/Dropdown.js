@@ -3,7 +3,6 @@ import store from '../../../redux/store/index';
 import { setCurrProject } from "../../../redux/actions/index";
 import Swal from 'sweetalert2'
 import '../../../styles_CSS/Plugin/Header/Dropdown.css';
-import { loadProject } from '../../../utils/requests'
 
 let flip = true;
 let clicked = false;
@@ -21,7 +20,6 @@ class Dropdown extends React.Component {
   };
 
   handleClick = (e) => {
-    loadProject()
     e.preventDefault();
     store.dispatch(setCurrProject(this.loadProjectState(e.currentTarget.dataset.id)));
     this.props.loadedProjectHandlerFromHeader(store.getState().projects[e.currentTarget.dataset.id].projectName);
