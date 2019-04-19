@@ -16,6 +16,7 @@
     "react-redux": "^7.0.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
+    "react-syntax-highlighter": "^10.2.1",
     "semantic-ui-react": "^0.85.0",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
