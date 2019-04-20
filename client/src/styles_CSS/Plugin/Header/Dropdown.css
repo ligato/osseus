@@ -67,8 +67,7 @@ li:hover {
     cursor: pointer;
     text-decoration: underline; }
   .dropdown-button:active {
-    box-shadow: none;
-    top: 6px; }
+    box-shadow: none; }
   .dropdown-button:focus {
     outline: none; }
 

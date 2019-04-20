@@ -20,13 +20,13 @@
 .cardtext {
   margin-top: 0px;
   margin-bottom: 0px;
-  color: white;
-  background: #2F4454;
+  color: #3C73B7;
   text-align: center;
-  font-size: 10px; }
+  font-size: 12px;
+  letter-spacing: -1px;
+  font-family: Arial, Helvetica, sans-serif; }
 
 .cardbody {
-  font-family: "Lato", verdana, sans-serif;
   cursor: pointer;
   z-index: 200; }
 
@@ -35,8 +35,8 @@
 
 .main-img {
   border-radius: 5px 5px 0 0;
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   display: block;
   margin-left: auto;
   margin-right: auto;
