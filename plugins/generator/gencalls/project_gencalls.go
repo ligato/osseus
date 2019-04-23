@@ -9,21 +9,40 @@ import (
 	"github.com/ligato/osseus/plugins/generator/model"
 )
 
+type fileEntry struct{
+	Name string
+	Body string
+}
+
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	// Init buf writer
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 	// Create tar structure
-	var files = []struct {
-		Name, Body string
-	}{
+	var files = []fileEntry{
 		{"/cmd/agent/main.go", "Agent file to run plugins"},
-		{"/plugins/plugin_impl_test.go", "Plugin file that holds main functions"},
-		{"/plugins/doc.go", "Doc file for package description"},
-		{"/plugins/options.go", "Config file for plugin"},
 	}
-	// Loop through files & write to tar
+	//append a struc of name/body for evy new plugin in project
+	for i := 0; i < len(val.Plugin); i++ {
+		pluginDirectoryName := 	val.Plugin[i].PluginName
+		pluginDocEntry := fileEntry{
+			"/plugins/" +  pluginDirectoryName + "/doc.go",
+			"Doc file for package description",
+		}
+		pluginOptionsEntry := fileEntry{
+			"/plugins/" +  pluginDirectoryName + "/options.go",
+			"Config file for plugin",
+		}
+		pluginImplEntry := fileEntry{
+			"/plugins/" +  pluginDirectoryName + "/plugin_impl_test.go",
+			"Plugin file that holds main functions",
+		}
+
+			files = append(files, pluginDocEntry, pluginOptionsEntry,pluginImplEntry)
+	}
+
+		// Loop through files & write to tar
 	for _, file := range files {
 		hdr := &tar.Header{
 			Name: file.Name,
