@@ -14,39 +14,23 @@ import "../../styles_CSS/Plugin/Plugincard.css";
 */ 
 let pluginModule = require('../Model');
 
-async function getPort (id) {
-  const {value: text} = await Swal.fire({
-    title: 'Current Port: ' + store.getState().currProject.plugins[id].port,
-    input: 'textarea',
-    inputPlaceholder: 'Custom Port',
-    showCancelButton: true,
-    allowEnterKey:	true,
-  })
-  return text;
-}
-
 class DraggablePlugins extends React.Component {
-  handleClick = e => { 
-    e.preventDefault();
-    store.dispatch(setCurrPopupID(e.currentTarget.dataset.id));
+  //Function will either move the plugin into the plugin palette, or
+  //bring up the port popup.
+  handleClick = (event) => { 
+    event.preventDefault();
+    store.dispatch( setCurrPopupID(event.currentTarget.dataset.id) );
     if(this.props.visibility === 'hidden') {
-      this.props.handlerFromParent(e.currentTarget.dataset.id);
+      this.props.handleClickedPlugin(event.currentTarget.dataset.id);
     } else {
-      (async () => {
-        let port = await getPort(e.currentTarget.dataset.id);
-        if(!port) return;
-        if(port.length > 4){ 
-          port = port.substring(0, 3) + '...'
-          Swal.fire("Ports larger than 4 characters will be truncated!")
-        }
-        pluginModule.project.plugins[store.getState().currPopupID].port = port;
-      })()
+      setPort(event);
     }
   }
 
-  handleInnerClick = e => {
-    e.stopPropagation();
-    this.props.handlerFromParent(e.currentTarget.dataset.id);
+  //Function will remove the plugin from the plugin palette.
+  handleRemovePluginClick = (event) => {
+    event.stopPropagation();
+    this.props.handleClickedPlugin(event.currentTarget.dataset.id);
   }
   
   render() {
@@ -65,7 +49,7 @@ class DraggablePlugins extends React.Component {
               alt='close'
               data-id={this.props.id}
               style={{visibility: this.props.visibility}}
-              onClick={this.handleInnerClick}
+              onClick={this.handleRemovePluginClick}
             ></img>
           </div>
           <div>
@@ -81,7 +65,32 @@ export default DraggablePlugins;
 DraggablePlugins.propTypes = {
   pluginName:         PropTypes.string.isRequired,
   image:              PropTypes.string.isRequired,
-  handlerFromParent:  PropTypes.func.isRequired,
+  handleClickedPlugin:  PropTypes.func.isRequired,
   id:                 PropTypes.number.isRequired,
   visibility:         PropTypes.string.isRequired
+}
+
+//Function load the port for the specific plugin the user clicked
+async function getPort (id) {
+  const {value: text} = await Swal.fire({
+    title: 'Current Port: ' + store.getState().currProject.plugins[id].port,
+    input: 'textarea',
+    inputPlaceholder: 'Custom Port',
+    showCancelButton: true,
+    allowEnterKey:	true,
+  })
+  return text;
+}
+
+//Function allow the user to set the port through a popup
+function setPort(event) {
+  (async () => {
+    let port = await getPort(event.currentTarget.dataset.id);
+    if(!port) return;
+    if(port.length > 4){ 
+      port = port.substring(0, 3) + '...'
+      Swal.fire("Ports larger than 4 characters will be truncated!")
+    }
+    pluginModule.project.plugins[store.getState().currPopupID].port = port;
+  })()
 }

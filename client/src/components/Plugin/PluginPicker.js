@@ -1,5 +1,5 @@
 import React from 'react';
-//import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Plugin/Splitleft.css";
 
@@ -17,8 +17,8 @@ const PluginPicker = (props) => {
   //current counter (i) is === 1. The net result is that if for example 
   //sentInArrayObject = [0,1,1,0], plugins with the id attribute 0 and 3
   //are rendered within PluginPicker and not PluginPalette.
-  for(let i = props.sentInArrayObject.length; i >= 0; i--) {
-    if(props.sentInArrayObject[i] === 1 || props.sentInArrayObject[i] === true) { pluginArray.splice(i,1); }
+  for(let i = props.sentInArray.length; i >= 0; i--) {
+    if(props.sentInArray[i] === 1 || props.sentInArray[i] === true) { pluginArray.splice(i,1); }
   }
  
   return (
@@ -32,7 +32,7 @@ const PluginPicker = (props) => {
 };
 export default PluginPicker;
 
-/*PluginPicker.propTypes = {
+PluginPicker.propTypes = {
   sentInCategory:      PropTypes.string.isRequired,
-  sentInArrayObject:   PropTypes.object.isRequired,
-}*/
+  sentInArray:         PropTypes.array.isRequired,
+}
