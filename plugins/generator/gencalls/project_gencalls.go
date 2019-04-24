@@ -13,14 +13,6 @@ import (
 	"github.com/ligato/osseus/plugins/generator/model"
 )
 
-const tpl = `
-package main
-	
-import "fmt"
-func main() {
-    fmt.Println({{.Title}})
-}`
-
 type fileEntry struct {
 	Name string
 	Body string
@@ -31,7 +23,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	encodedFile := d.createTar(val)
 
 	// Create template
-	template := &model.Template{
+	data := &model.Template{
 		Name:     val.GetProjectName(),
 		Id:       1,
 		Version:  2.4,
@@ -45,12 +37,12 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	}
 
 	// Put new value in etcd
-	err := d.broker.Put(val.GetProjectName(), template)
+	err := d.broker.Put(val.GetProjectName(), data)
 	if err != nil {
 		d.log.Errorf("Could not create template")
 		return err
 	}
-	d.log.Infof("Return data, Key: %q Value: %+v", val.GetProjectName(), template)
+	d.log.Infof("Return data, Key: %q Value: %+v", val.GetProjectName(), data)
 
 	return nil
 }
@@ -68,13 +60,14 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 }
 
 func (d *ProjectHandler) fillTemplate() string {
-	// Write varibles into template
+	// Write variables into template
 	var genCode bytes.Buffer
 	check := func(err error) {
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+	tpl := d.getTemplate()
 	t, er := template.New("webpage").Parse(tpl)
 	check(er)
 
