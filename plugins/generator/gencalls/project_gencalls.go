@@ -4,10 +4,19 @@ import (
 	"archive/tar"
 	"bytes"
 	"encoding/base64"
+	"html/template"
 	"log"
 
 	"github.com/ligato/osseus/plugins/generator/model"
 )
+
+const tpl = `
+package main
+	
+import "fmt"
+func main() {
+    fmt.Println({{.Title}})
+}`
 
 type fileEntry struct{
 	Name string
@@ -19,9 +28,29 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	// Init buf writer
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
+
+	var genCode bytes.Buffer
+	check := func(err error) {
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	t, er := template.New("webpage").Parse(tpl)
+	check(er)
+
+	data := struct {
+		Title string
+	}{
+		Title: "Hello world!",
+	}
+	er = t.Execute(&genCode, data)
+	check(er)
+
+	d.log.Debug("contents of genCode buffer: ", genCode.String())
+
 	// Create tar structure
 	var files = []fileEntry{
-		{"/cmd/agent/main.go", "Agent file to run plugins"},
+		{"/cmd/agent/main.go", genCode.String()},
 	}
 	//append a struc of name/body for evy new plugin in project
 	for i := 0; i < len(val.Plugin); i++ {
@@ -100,3 +129,5 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 
 	return nil
 }
+
+
