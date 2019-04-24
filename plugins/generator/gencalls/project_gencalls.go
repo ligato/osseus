@@ -59,7 +59,7 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 	return nil
 }
 
-func (d *ProjectHandler) fillTemplate() string {
+func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	// Write variables into template
 	var genCode bytes.Buffer
 	check := func(err error) {
@@ -73,9 +73,9 @@ func (d *ProjectHandler) fillTemplate() string {
 
 	// Print hello world
 	data := struct {
-		Title string
+		ProjectName string
 	}{
-		Title: "Hello world!",
+		ProjectName: val.ProjectName,
 	}
 	er = t.Execute(&genCode, data)
 	check(er)
@@ -86,7 +86,7 @@ func (d *ProjectHandler) fillTemplate() string {
 }
 
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
-	template := d.fillTemplate()
+	template := d.fillTemplate(val)
 
 	// Create tar structure
 	var files = []fileEntry{
