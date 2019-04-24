@@ -31,6 +31,7 @@ import (
 const (
 	GET  = http.MethodGet
 	POST = http.MethodPost
+	DELETE = http.MethodDelete
 )
 
 // RegisterFlags registers command line flags.

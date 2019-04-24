@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
@@ -45,11 +46,14 @@ type Plugins struct {
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 
-	// maybe change to /v1/projects/{id} for save
+	//save project state
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
+	//load project state for project with name = {id}
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
+	// delete a project
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler ,DELETE)
+	//save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
-
 }
 
 //registers handler for /v1/projects/ save endpoint
@@ -99,7 +103,26 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-//registers handler for demo/generate endpoint
+func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		vars := mux.Vars(req)
+		pId := vars["id"]
+		projectInfo, err := p.DeleteProject(pId)
+		if err != nil{
+			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
+
+	}
+}
+
+//registers handler for generate endpoint
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
@@ -136,15 +159,22 @@ func (p *Plugin) GetServerStatus() (interface{}, error) {
 
 //save project
 func (p *Plugin) SaveProject(response Response) (interface{}, error) {
-	p.Log.Debug("REST API post /v1/projects plugin reached")
+	p.Log.Debug("REST API post /v1/projects save project reached")
 	p.genUpdater(response, projectsPrefix, response.ProjectName)
 	return response, nil
 }
 
 //get project from given id
 func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
-	p.Log.Debug("REST API Get /v1/projects/{id} load plugin reached with id: ", projectId)
+	p.Log.Debug("REST API Get /v1/projects/{id} load project reached with id: ", projectId)
 	projectValue := p.getValue(projectsPrefix, projectId)
+	return projectValue, nil
+}
+
+// delete project with given id
+func (p *Plugin) DeleteProject(projectId string) (interface{}, error) {
+	p.Log.Debug("REST API Del /v1/projects/{id} delete project reached with id: ", projectId)
+	projectValue := p.deleteValue(projectsPrefix, projectId)
 	return projectValue, nil
 }
 
@@ -232,6 +262,17 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	}
 
 	return project
+}
+
+// returns true if value at key deleted, false otherwise
+func (p *Plugin) deleteValue(prefix string, key string) interface{} {
+	broker := p.KVStore.NewBroker(prefix)
+	existed, err := broker.Delete(key)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	return existed
 }
 
 // logError logs non-nil errors from JSON formatter
