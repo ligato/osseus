@@ -17,11 +17,12 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gorilla/mux"
 
 	"github.com/ligato/osseus/plugins/restapi/model"
 
@@ -35,7 +36,7 @@ type Response struct {
 	ProjectName string
 	Plugins     []Plugins
 }
-type Plugins struct{
+type Plugins struct {
 	PluginName string
 	Id         int32
 	Selected   bool
@@ -89,7 +90,7 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		vars := mux.Vars(req)
 		pId := vars["id"]
 		projectInfo, err := p.LoadProject(pId)
-		if err != nil{
+		if err != nil {
 			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
@@ -97,7 +98,8 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		projectJson, _ := json.Marshal(projectInfo)
+		// projectJson := json.NewEncoder(w).Encode(projectInfo)
 		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
 
 	}
@@ -244,7 +246,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 
 	value = &model.Project{
 		ProjectName: response.ProjectName,
-		Plugin: pluginsList,
+		Plugin:      pluginsList,
 	}
 
 	// Update value in KV store
@@ -282,7 +284,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	}
 	project := Response{
 		ProjectName: value.ProjectName,
-		Plugins: pluginsList,
+		Plugins:     pluginsList,
 	}
 
 	return project

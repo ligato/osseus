@@ -1,8 +1,8 @@
 .dropdown {
   position: absolute;
   display: inline-block;
-  margin-left: -10px;
-  margin-top: -15px;
+  right: 82.5%;
+  margin-top: -14px;
   width: 140.38px; }
 
 ul {
@@ -21,7 +21,7 @@ ul {
   cursor: pointer; }
 
 li a {
-  color: #000;
+  color: #00BCEB;
   text-decoration: none;
   position: relative;
   cursor: pointer; }
@@ -30,7 +30,8 @@ li {
   padding: 8px 16px;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
-  cursor: pointer; }
+  cursor: pointer;
+  color: #00BCEB; }
 
 li:last-child {
   border-bottom: none;
@@ -39,18 +40,19 @@ li:last-child {
 
 li:hover {
   background-color: #e5e5e5;
-  color: black;
+  color: #3C73B7;
   position: relative;
   cursor: pointer; }
 
 .dropdown-button {
-  letter-spacing: -0.5px;
-  font-size: 12px;
+  letter-spacing: -1.5px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
   width: 140.38px;
   height: 40px;
-  background-color: #4AC68E;
-  padding: 12px 0px 0px 24px;
-  color: white;
+  background-color: #FFFFFF;
+  padding: 12px 0px 0px 8px;
+  color: #00BCEB;
   text-overflow: ellipsis;
   text-transform: uppercase;
   cursor: pointer;
@@ -62,11 +64,10 @@ li:hover {
   user-select: none;
   position: relative; }
   .dropdown-button:hover {
-    background-color: #3D9970;
-    cursor: pointer; }
+    cursor: pointer;
+    text-decoration: underline; }
   .dropdown-button:active {
-    box-shadow: none;
-    top: 6px; }
+    box-shadow: none; }
   .dropdown-button:focus {
     outline: none; }
 
@@ -76,6 +77,8 @@ li:hover {
   width: 0px;
   height: 10px;
   border: 10px solid;
-  border-color: white transparent transparent transparent;
-  right: 4px;
-  top: 17px; }
+  border-color: #00BCEB transparent transparent transparent;
+  right: 0px;
+  top: 16px; }
+
+/*# sourceMappingURL=Dropdown.css.map */

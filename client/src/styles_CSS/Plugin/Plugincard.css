@@ -4,8 +4,7 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray;
-}
+  background-color: gray; }
 
 .card-palette {
   width: 133%;
@@ -13,8 +12,7 @@
   box-shadow: 0 4px 8px 0 #2E2E2E;
   transition: 0.1s;
   border-radius: 5px;
-  background-color: gray;
-}
+  background-color: gray; }
 
 .card:hover {
   box-shadow: 0 8px 16px 0 #2E2E2E; }
@@ -22,13 +20,13 @@
 .cardtext {
   margin-top: 0px;
   margin-bottom: 0px;
-  color: white;
-  background: #2F4454;
+  color: #3C73B7;
   text-align: center;
-  font-size: 10px; }
+  font-size: 12px;
+  letter-spacing: -1px;
+  font-family: Arial, Helvetica, sans-serif; }
 
 .cardbody {
-  font-family: "Lato", verdana, sans-serif;
   cursor: pointer;
   z-index: 200; }
 
@@ -37,8 +35,8 @@
 
 .main-img {
   border-radius: 5px 5px 0 0;
-  width: 80%;
-  height: 80%;
+  width: 70%;
+  height: 70%;
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -52,7 +50,8 @@
   position: absolute;
   z-index: 3;
   top: -5px;
-  right: -5px; }
+  right: -5px;
+  transform: rotate(45deg); }
 
 .close-img:hover {
   filter: brightness(130%); }

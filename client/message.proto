@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package template;
+
+// Template holds the data that will be generated
+message Template {
+  string name = 1;
+  int32 id = 2;
+  float version = 3;
+  string category = 4;
+  repeated string dependencies = 5;
+  string tar_file = 6;
+};
+
+
+// {
+//     "nested": {
+//         "Template": {
+//             "fields": {
+//                 "name": {
+//                     "type": "string",
+//                     "id": 1
+//                 },
+//                 "id": {
+//                     "type": "int32",
+//                     "id": 2
+//                 },
+//                 "version": {
+//                     "type": "float",
+//                     "id": 3
+//                 },
+//                 "category": {
+//                     "type": "string",
+//                     "id": 4
+//                 },
+//                 "dependencies": {
+//                     "type": "Array.string",
+//                     "id": 5
+//                 },
+//                 "tar_file": {
+//                     "type": "string",
+//                     "id": 6
+//                 }
+//             }
+//         }
+//     }
+// }
