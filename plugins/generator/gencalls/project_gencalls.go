@@ -46,6 +46,8 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	er = t.Execute(&genCode, data)
 	check(er)
 
+	d.log.Debug("contents of genCode buffer: ", genCode.String())
+
 	// Create tar structure
 	var files = []fileEntry{
 		{"/cmd/agent/main.go", genCode.String()},
