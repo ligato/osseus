@@ -7,7 +7,11 @@ import (
 	"github.com/ligato/cn-infra/agent"
 	"github.com/ligato/cn-infra/logging"
 	log "github.com/ligato/cn-infra/logging/logrus"
-	
+	{{.Resync}}
+	{{.Etcd}}
+	{{.Cassandra}}
+	{{.Redis}}
+
 	//todo variable number of imports
 )
 type {{.ProjectName}} struct {
@@ -54,7 +58,3 @@ func init() {
 	log.DefaultLogger().SetOutput(os.Stdout)
 	log.DefaultLogger().SetLevel(logging.DebugLevel)
 }`
-
-func (d *ProjectHandler) getTemplate() string {
-	return goCodeTemplate
-}

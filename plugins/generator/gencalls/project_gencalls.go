@@ -5,10 +5,10 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"os"
+	"text/template"
 
 	"github.com/ligato/osseus/plugins/generator/model"
 )
@@ -67,15 +67,22 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 			log.Fatal(err)
 		}
 	}
-	tpl := d.getTemplate()
-	t, er := template.New("webpage").Parse(tpl)
+	t, er := template.New("webpage").Parse(goCodeTemplate)
 	check(er)
 
-	// Print hello world
+	// Populate code template with variables
 	data := struct {
 		ProjectName string
+		Etcd        string
+		Redis       string
+		Resync      string
+		Cassandra   string
 	}{
 		ProjectName: val.ProjectName,
+		Etcd:        etcd,
+		Redis:       redis,
+		Resync:      resync,
+		Cassandra:   cassandra,
 	}
 	er = t.Execute(&genCode, data)
 	check(er)
