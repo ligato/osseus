@@ -70,14 +70,18 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	t, er := template.New("webpage").Parse(goCodeTemplate)
 	check(er)
 
-	
-	for _, incomingPlugin := range val.Plugin {
-		for _, plugin := range AllPlugins {
-			if incomingPlugin.GetPluginName() == plugin {
+	// for _, incomingPlugin := range val.Plugin {
+	// 	for _, plugin := range AllPlugins {
+	// 		if incomingPlugin.GetPluginName() == plugin {
 
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// }
+
+	// // Populate code template with variables
+	// data := struct {
+
+	// }
 
 	// Populate code template with variables
 	data := struct {
