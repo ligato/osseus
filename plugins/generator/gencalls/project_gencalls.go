@@ -5,21 +5,13 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"os"
+	"text/template"
 
 	"github.com/ligato/osseus/plugins/generator/model"
 )
-
-const tpl = `
-package main
-	
-import "fmt"
-func main() {
-    fmt.Println({{.Title}})
-}`
 
 type fileEntry struct {
 	Name string
@@ -31,7 +23,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	encodedFile := d.createTar(val)
 
 	// Create template
-	template := &model.Template{
+	data := &model.Template{
 		Name:     val.GetProjectName(),
 		Id:       1,
 		Version:  2.4,
@@ -45,12 +37,12 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	}
 
 	// Put new value in etcd
-	err := d.broker.Put(val.GetProjectName(), template)
+	err := d.broker.Put(val.GetProjectName(), data)
 	if err != nil {
 		d.log.Errorf("Could not create template")
 		return err
 	}
-	d.log.Infof("Return data, Key: %q Value: %+v", val.GetProjectName(), template)
+	d.log.Infof("Return data, Key: %q Value: %+v", val.GetProjectName(), data)
 
 	return nil
 }
@@ -67,22 +59,48 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 	return nil
 }
 
-func (d *ProjectHandler) fillTemplate() string {
-	// Write varibles into template
+func (d *ProjectHandler) fillTemplate(val *model.Project) string {
+	// Write variables into template
 	var genCode bytes.Buffer
 	check := func(err error) {
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	t, er := template.New("webpage").Parse(tpl)
+	t, er := template.New("webpage").Parse(goCodeTemplate)
 	check(er)
 
-	// Print hello world
+	
+	for _, incomingPlugin := range val.Plugin {
+		for _, plugin := range AllPlugins {
+			if incomingPlugin.GetPluginName() == plugin {
+
+			}
+		}
+	}
+
+	// Populate code template with variables
 	data := struct {
-		Title string
+		ProjectName                string
+		Etcd, EtcdImport           string
+		Redis, RedisImport         string
+		Resync, ResyncImport       string
+		Cassandra, CassandraImport string
+		Plugin, DefPlugin          string
+		Amper                      string
 	}{
-		Title: "Hello world!",
+		ProjectName:     val.GetProjectName(),
+		EtcdImport:      etcdImport,
+		Etcd:            etcd,
+		RedisImport:     redisImport,
+		Redis:           redis,
+		ResyncImport:    resyncImport,
+		Resync:          resync,
+		CassandraImport: cassandraImport,
+		Cassandra:       cassandra,
+		DefPlugin:       DefPlugin,
+		Plugin:          Plugin,
+		Amper:           Amper,
 	}
 	er = t.Execute(&genCode, data)
 	check(er)
@@ -93,7 +111,7 @@ func (d *ProjectHandler) fillTemplate() string {
 }
 
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
-	template := d.fillTemplate()
+	template := d.fillTemplate(val)
 
 	// Create tar structure
 	var files = []fileEntry{
