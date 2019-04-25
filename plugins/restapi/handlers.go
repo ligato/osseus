@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"time"
 
@@ -49,11 +50,10 @@ func (p *Plugin) registerHandlersHere() {
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
 	//load project state for project with name = {id}
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
-	//load all projects
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.LoadAllProjectsHandler, GET)
+	// delete a project
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler ,DELETE)
 	//save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
-
 }
 
 //registers handler for /v1/projects/ save endpoint
@@ -96,16 +96,19 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		projectJson, _ := json.Marshal(projectInfo)
+		// projectJson := json.NewEncoder(w).Encode(projectInfo)
 		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
 
 	}
 }
 
-func (p *Plugin) LoadAllProjectsHandler(formatter *render.Render) http.HandlerFunc {
+func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		projectsInfo, err := p.LoadAllProjects()
-		if err != nil {
+		vars := mux.Vars(req)
+		pId := vars["id"]
+		projectInfo, err := p.DeleteProject(pId)
+		if err != nil{
 			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
@@ -113,8 +116,9 @@ func (p *Plugin) LoadAllProjectsHandler(formatter *render.Render) http.HandlerFu
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		projectsJson := json.NewEncoder(w).Encode(projectsInfo)
-		p.logError(formatter.JSON(w, http.StatusOK, projectsJson))
+		projectJson := json.NewEncoder(w).Encode(projectInfo)
+		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
+
 	}
 }
 
@@ -167,11 +171,10 @@ func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
 	return projectValue, nil
 }
 
-//get project from given id
-func (p *Plugin) LoadAllProjects() (interface{}, error) {
-	p.Log.Debug("REST API Get /v1/projects load all projects reached")
-	projectValue := p.getAllValues(projectsPrefix)
-	p.Log.Debug("multiple projects?", projectValue)
+// delete project with given id
+func (p *Plugin) DeleteProject(projectId string) (interface{}, error) {
+	p.Log.Debug("REST API Del /v1/projects/{id} delete project reached with id: ", projectId)
+	projectValue := p.deleteValue(projectsPrefix, projectId)
 	return projectValue, nil
 }
 
@@ -261,47 +264,15 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	return project
 }
 
-// todo or note: not completely impl yet; list keys thinks there's no keys
-// todo possible thing to try is if the prefix isn't correct with the slash at the end
-// todo also the thing with kv.GetValue needs to be in some proto structure
-// todo so maybe a response struct
-func (p *Plugin) getAllValues(prefix string) interface{} {
-
-	prefix = "/projects/v1/plugins"
+// returns true if value at key deleted, false otherwise
+func (p *Plugin) deleteValue(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
+	existed, err := broker.Delete(key)
 
-	keys, err := broker.ListKeys(prefix)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	}
-
-	for {
-		key, val, all := keys.GetNext()
-		if all == true {
-			p.Log.Debug("AAAAAAAAAAA")
-			break
-		}
-
-		p.Log.Infof("Key: %q Val: %v", key, val)
-	}
-
-	/*resp, err := broker.ListValues("myproject")
 	if err != nil {
 		log.Fatal(err)
 	}
-	for {
-		kv, stop := resp.GetNext()
-		if stop {
-			p.Log.Debug("stop")
-			break
-		}
-		p.Log.Debug("key is, ", kv.GetKey())
-		kv.GetValue()
-		p.Log.Debug("what is kv even", kv)
-	}
-	*/
-	return nil
+	return existed
 }
 
 // logError logs non-nil errors from JSON formatter
