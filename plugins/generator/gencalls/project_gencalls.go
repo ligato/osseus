@@ -70,19 +70,37 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	t, er := template.New("webpage").Parse(goCodeTemplate)
 	check(er)
 
+	
+	for _, incomingPlugin := range val.Plugin {
+		for _, plugin := range AllPlugins {
+			if incomingPlugin.GetPluginName() == plugin {
+
+			}
+		}
+	}
+
 	// Populate code template with variables
 	data := struct {
-		ProjectName string
-		Etcd        string
-		Redis       string
-		Resync      string
-		Cassandra   string
+		ProjectName                string
+		Etcd, EtcdImport           string
+		Redis, RedisImport         string
+		Resync, ResyncImport       string
+		Cassandra, CassandraImport string
+		Plugin, DefPlugin          string
+		Amper                      string
 	}{
-		ProjectName: val.ProjectName,
-		Etcd:        etcd,
-		Redis:       redis,
-		Resync:      resync,
-		Cassandra:   cassandra,
+		ProjectName:     val.GetProjectName(),
+		EtcdImport:      etcdImport,
+		Etcd:            etcd,
+		RedisImport:     redisImport,
+		Redis:           redis,
+		ResyncImport:    resyncImport,
+		Resync:          resync,
+		CassandraImport: cassandraImport,
+		Cassandra:       cassandra,
+		DefPlugin:       DefPlugin,
+		Plugin:          Plugin,
+		Amper:           Amper,
 	}
 	er = t.Execute(&genCode, data)
 	check(er)

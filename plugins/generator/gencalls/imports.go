@@ -1,12 +1,41 @@
 package gencalls
 
+var (
+    AllPlugins = []string{
+        "etcd",
+        "cassandra",
+        "redis",
+        "resync",
+    }
+)
+
 const (
-	resync = `"github.com/ligato/cn-infra/datasync/resync"
+	// DefPlugin variable
+	DefPlugin = `.DefaultPlugin`
+
+	// Plugin variable
+    Plugin = `.Plugin`
+    
+    // Amper variable
+    Amper = `&`
+
+	// Resync
+	resyncImport = `"github.com/ligato/cn-infra/datasync/resync"
     `
-	etcd = `"github.com/ligato/cn-infra/db/keyval/etcd"
+	resync = `resync`
+
+	// Etcd
+	etcdImport = `"github.com/ligato/cn-infra/db/keyval/etcd"
     `
-	cassandra = `"github.com/ligato/cn-infra/db/keyval/cassandra"
+	etcd = `etcd`
+
+	// Cassandra
+	cassandraImport = `"github.com/ligato/cn-infra/db/keyval/cassandra"
     `
-	redis = `"github.com/ligato/cn-infra/db/keyval/redis"
+	cassandra = `cassandra`
+
+	// Redis
+	redisImport = `"github.com/ligato/cn-infra/db/keyval/redis"
     `
+	redis = `redis`
 )
