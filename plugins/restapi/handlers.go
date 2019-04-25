@@ -51,7 +51,7 @@ func (p *Plugin) registerHandlersHere() {
 	//load project state for project with name = {id}
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
 	// delete a project
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler ,DELETE)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
 	//save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
 }
@@ -108,7 +108,7 @@ func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc
 		vars := mux.Vars(req)
 		pId := vars["id"]
 		projectInfo, err := p.DeleteProject(pId)
-		if err != nil{
+		if err != nil {
 			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
 			p.Log.Error(errMsg)
 			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))

@@ -67,44 +67,31 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 			log.Fatal(err)
 		}
 	}
-	t, er := template.New("webpage").Parse(goCodeTemplate)
+	t, er := template.New("main.go").Parse(goCodeTemplate)
 	check(er)
 
-	// for _, incomingPlugin := range val.Plugin {
-	// 	for _, plugin := range AllPlugins {
-	// 		if incomingPlugin.GetPluginName() == plugin {
+	// Get all plugin attributes based off selected plugins
+	var pluginAttributes [][]string
+	for _, plugin := range val.Plugin {
+		pluginName := plugin.GetPluginName()
+		pluginVariables := AllPlugins[pluginName] //returns [import, plugin]
+		pluginAttributes = append(pluginAttributes, pluginVariables)
+	}
 
-	// 		}
-	// 	}
-	// }
-
-	// // Populate code template with variables
-	// data := struct {
-
-	// }
+	d.log.Debug("values for plugins are: ", pluginAttributes)
 
 	// Populate code template with variables
 	data := struct {
-		ProjectName                string
-		Etcd, EtcdImport           string
-		Redis, RedisImport         string
-		Resync, ResyncImport       string
-		Cassandra, CassandraImport string
-		Plugin, DefPlugin          string
-		Amper                      string
+		ProjectName       string
+		pluginValues      [][]string
+		Plugin, DefPlugin string
+		Amper             string
 	}{
-		ProjectName:     val.GetProjectName(),
-		EtcdImport:      etcdImport,
-		Etcd:            etcd,
-		RedisImport:     redisImport,
-		Redis:           redis,
-		ResyncImport:    resyncImport,
-		Resync:          resync,
-		CassandraImport: cassandraImport,
-		Cassandra:       cassandra,
-		DefPlugin:       DefPlugin,
-		Plugin:          Plugin,
-		Amper:           Amper,
+		ProjectName:  val.GetProjectName(),
+		pluginValues: pluginAttributes,
+		DefPlugin:    DefPlugin,
+		Plugin:       Plugin,
+		Amper:        Amper,
 	}
 	er = t.Execute(&genCode, data)
 	check(er)
