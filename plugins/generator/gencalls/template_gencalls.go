@@ -4,13 +4,10 @@ const goCodeTemplate = `
 package main
 
 import (
-	"github.com/ligato/cn-infra/agent"
-	"github.com/ligato/cn-infra/logging"
-	log "github.com/ligato/cn-infra/logging/logrus"
-	{{.Resync}}
-	{{.Etcd}}
-	{{.Cassandra}}
-	{{.Redis}}
+    "github.com/ligato/cn-infra/agent"
+    "github.com/ligato/cn-infra/logging"
+    log "github.com/ligato/cn-infra/logging/logrus"
+    {{.Resync}}{{.Etcd}}{{.Cassandra}}{{.Redis}}
 
 	//todo variable number of imports
 )
