@@ -119,10 +119,9 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	var files = []fileEntry{
 		{"/cmd/agent/main.go", template},
 	}
-	//append a struc of name/body for every new plugin in project
-	//todo change this to better for loop without indexes
-	for i := 0; i < len(val.Plugin); i++ {
-		pluginDirectoryName := val.Plugin[i].PluginName
+	//append a struct of name/body for every new plugin in project
+	for _, plugin := range val.Plugin{
+		pluginDirectoryName := plugin.PluginName
 		pluginDocEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/doc.go",
 			"Doc file for package description",
@@ -168,6 +167,17 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 		log.Fatal(err)
 	}
 
+	//temporary - debug tar file contents
+	d.readTarHelper(buf)
+
+	// Encode to base64 string
+	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
+
+	return encodedTar
+}
+
+// temporary helper function to print/view contents of tar file
+func (d *ProjectHandler) readTarHelper(buf bytes.Buffer) {
 	// Open and iterate through the files in the archive.
 	tr := tar.NewReader(&buf)
 	for {
@@ -184,9 +194,4 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 		}
 		fmt.Println()
 	}
-
-	// Encode to base64 string
-	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
-
-	return encodedTar
 }
