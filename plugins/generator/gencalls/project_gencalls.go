@@ -18,6 +18,10 @@ type fileEntry struct {
 	Body string
 }
 
+type PluginAttr struct {
+	ImportPath	string
+}
+
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	encodedFile := d.createTar(val)
@@ -67,38 +71,45 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 			log.Fatal(err)
 		}
 	}
-	t, er := template.New("main.go").Parse(goCodeTemplate)
+
+	//get array of plugin structs [only imports for now]
+	PluginsList := d.createPluginStructs(val.Plugin)
+
+	t, er := template.New("main.go_template").Parse(goCodeTemplate)
 	check(er)
-
-	// Get all plugin attributes based off selected plugins
-	var pluginAttributes [][]string
-	for _, plugin := range val.Plugin {
-		pluginName := plugin.GetPluginName()
-		pluginVariables := AllPlugins[pluginName] //returns [import, plugin]
-		pluginAttributes = append(pluginAttributes, pluginVariables)
-	}
-
-	d.log.Debug("values for plugins are: ", pluginAttributes)
 
 	// Populate code template with variables
 	data := struct {
 		ProjectName       string
-		pluginValues      [][]string
 		Plugin, DefPlugin string
-		Amper             string
+		PluginAttributes  []PluginAttr
 	}{
 		ProjectName:  val.GetProjectName(),
-		pluginValues: pluginAttributes,
 		DefPlugin:    DefPlugin,
 		Plugin:       Plugin,
-		Amper:        Amper,
+		PluginAttributes: PluginsList,
 	}
+
 	er = t.Execute(&genCode, data)
 	check(er)
 
-	d.log.Debug("contents of genCode buffer: ", genCode.String())
+	d.log.Debug("generated code populated")
 
 	return genCode.String()
+}
+
+//create array of plugin structs [only imports for now]
+func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []PluginAttr{
+	var PluginsList []PluginAttr
+	for _, plugin := range plugins{
+		pluginValue := AllPlugins[plugin.PluginName]
+		PluginTemplateVals := PluginAttr{
+			ImportPath: pluginValue,
+		}
+		PluginsList = append(PluginsList,PluginTemplateVals)
+
+	}
+	return PluginsList
 }
 
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
@@ -109,6 +120,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/cmd/agent/main.go", template},
 	}
 	//append a struc of name/body for every new plugin in project
+	//todo change this to better for loop without indexes
 	for i := 0; i < len(val.Plugin); i++ {
 		pluginDirectoryName := val.Plugin[i].PluginName
 		pluginDocEntry := fileEntry{

@@ -7,8 +7,9 @@ import (
     "github.com/ligato/cn-infra/agent"
     "github.com/ligato/cn-infra/logging"
     log "github.com/ligato/cn-infra/logging/logrus"
-    {{.ResyncImport}}{{.EtcdImport}}{{.CassandraImport}}{{.RedisImport}}
-
+{{range .PluginAttributes -}}
+    {{.ImportPath}}
+{{- end}}
 )
 
 type {{.ProjectName}} struct {
@@ -16,9 +17,9 @@ type {{.ProjectName}} struct {
 }
 
 func New() *{{.ProjectName}} {
-// todo: unhardcode structs
 	return &{{.ProjectName}} {
-		Resync: {{.Amper}}{{.Resync}}{{.DefPlugin}}
+		//todo
+		Resync: insert here
 	}
 }
 
