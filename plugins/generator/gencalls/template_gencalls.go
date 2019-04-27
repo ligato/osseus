@@ -16,14 +16,16 @@ import (
 
 // {{.ProjectName}} is a struct holding internal data for the {{.ProjectName}} Agent
 type {{.ProjectName}} struct {
-	
+{{range .PluginAttributes}}
+    {{.ReferenceName}}    *{{.Identifier}}.Plugin
+{{end}}
 }
 
 // New creates new {{.ProjectName}} instance.
 func New() *{{.ProjectName}} {
     return &{{.ProjectName}} {
-{{range .PluginAttributes -}}
-	{{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
+{{range .PluginAttributes}}
+    {{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
 {{end}}		
     }
 }

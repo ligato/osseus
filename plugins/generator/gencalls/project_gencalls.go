@@ -84,8 +84,9 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	data := struct {
 		ProjectName       string
 		PluginAttributes  []PluginAttr
+		Tab 			  string
 	}{
-		ProjectName:  val.GetProjectName(),
+		ProjectName:      val.GetProjectName(),
 		PluginAttributes: PluginsList,
 	}
 
