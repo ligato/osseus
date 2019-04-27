@@ -19,7 +19,9 @@ type fileEntry struct {
 }
 
 type PluginAttr struct {
-	ImportPath	string
+	ImportPath		string
+	Identifier		string
+	ReferenceName	string
 }
 
 // GenAddProj creates a new generated template under the /template prefix
@@ -81,12 +83,9 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	// Populate code template with variables
 	data := struct {
 		ProjectName       string
-		Plugin, DefPlugin string
 		PluginAttributes  []PluginAttr
 	}{
 		ProjectName:  val.GetProjectName(),
-		DefPlugin:    DefPlugin,
-		Plugin:       Plugin,
 		PluginAttributes: PluginsList,
 	}
 
@@ -102,9 +101,13 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []PluginAttr{
 	var PluginsList []PluginAttr
 	for _, plugin := range plugins{
-		pluginValue := AllPlugins[plugin.PluginName]
+		pluginImport := AllPlugins[plugin.PluginName][0]
+		pluginReference := AllPlugins[plugin.PluginName][1]
+		pluginIdentifier := AllPlugins[plugin.PluginName][2]
 		PluginTemplateVals := PluginAttr{
-			ImportPath: pluginValue,
+			ImportPath: pluginImport,
+			ReferenceName:  pluginReference,
+			Identifier: pluginIdentifier,
 		}
 		PluginsList = append(PluginsList,PluginTemplateVals)
 

@@ -21,40 +21,41 @@ type {{.ProjectName}} struct {
 
 // New creates new {{.ProjectName}} instance.
 func New() *{{.ProjectName}} {
-	return &{{.ProjectName}} {
-		//todo
-		Resync: insert here
-	}
+    return &{{.ProjectName}} {
+{{range .PluginAttributes -}}
+	{{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
+{{end}}		
+    }
 }
 
 // Init initializes main plugin.
 func (pr *{{.ProjectName}}) Init() error {
-	return nil
+    return nil
 }
 
 func (pr *{{.ProjectName}}) AfterInit() error {
-	resync.DefaultPlugin.DoResync()
-	return nil
+    resync.DefaultPlugin.DoResync()
+    return nil
 }
 
 // Close can be used to close used resources.
 func (pr *{{.ProjectName}}) Close() error {
-	return nil
+    return nil
 }
 
 // String returns name of the plugin.
 func (pr *{{.ProjectName}}) String() string {
-	return "{{.ProjectName}}"
+    return "{{.ProjectName}}"
 }
 
 func main() {
-	{{.ProjectName}} := New()
+    {{.ProjectName}} := New()
 
-	a := agent.NewAgent(agent.AllPlugins({{.ProjectName}}))
+    a := agent.NewAgent(agent.AllPlugins({{.ProjectName}}))
 
-	if err := a.Run(); err != nil {
-		log.DefaultLogger().Fatal(err)
-	}
+    if err := a.Run(); err != nil {
+        log.DefaultLogger().Fatal(err)
+    }
 }
 
 func init() {

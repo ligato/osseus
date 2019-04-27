@@ -1,45 +1,36 @@
 package gencalls
 
 const (
-	// DefPlugin variable
-	DefPlugin = `.DefaultPlugin`
-
-	// Plugin variable
-	Plugin = `.Plugin`
 
 	// Resync
 	resyncImport = `    "github.com/ligato/cn-infra/datasync/resync"
 `
+	resyncRef = `        Resync`
 	resync = `resync`
 
 	// Etcd
 	etcdImport = `    "github.com/ligato/cn-infra/db/keyval/etcd"
 `
+	etcdRef = `        ETCDDataSync`
 	etcd = `etcd`
 
 	// Cassandra
 	cassandraImport = `    "github.com/ligato/cn-infra/db/keyval/cassandra"
 `
+	cassandraRef = `        Cassandra`
 	cassandra = `cassandra`
 
 	// Redis
 	redisImport = `    "github.com/ligato/cn-infra/db/keyval/redis"
 `
+	redisRef = `        Redis`
 	redis = `redis`
 )
 
 // AllPlugins holds all available plugin data
-/*var AllPlugins = map[string][]string{
-	"etcd":      []string{etcdImport, etcd},
-	"redis":     []string{redisImport, redis},
-	"resync":    []string{resyncImport, resync},
-	"cassandra": []string{cassandraImport, cassandra},
-}*/
-
-//temp AllPlugins with only an import
-var AllPlugins = map[string]string{
-	"etcd":      etcdImport,
-	"redis":     redisImport,
-	"resync":    resyncImport,
-	"cassandra": cassandraImport,
+var AllPlugins = map[string][]string{
+	"etcd":      []string{etcdImport, etcdRef, etcd},
+	"redis":     []string{redisImport, redisRef, redis},
+	"resync":    []string{resyncImport, resyncRef, resync},
+	"cassandra": []string{cassandraImport,cassandraRef, cassandra},
 }
