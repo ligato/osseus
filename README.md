@@ -6,16 +6,12 @@ Osseus is full-stack web application for generating configurable plugin template
 
 ## Development Installation
 
-### First, clone the repo or pull off Dockerhub:
+### First, clone the repo:
 ```
 git clone https://github.com/ligato/osseus
 cd /osseus
--or-
-docker pull anthonydevelops/agent:dev
-docker pull anthonydevelops/ui:dev
 ```
 ### Build the UI & Agent images:<br/>
-*(Only if you chose to clone instead of pull in previous step)*
 ```bash
 # UI
 docker build --force-rm=true -t ui --no-cache -f docker/ui/Dockerfile .
@@ -26,30 +22,20 @@ docker build --force-rm=true -t agent --build-arg AGENT_COMMIT=2c2b0df32201c9bc8
 
 ### Build and run ETCD **before** running the Agent container:
 ```bash
-docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:v3.1.0 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
+docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:latest /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
 ```
 
 ### Lastly, run UI and Agent:
 ```bash
-
 # Agent
-(If chose to clone)
-docker run -p 9191:9191 --name agent --privileged --rm agent
--or-
-(If chose to pull)
-docker run -p 9191:9191 anthonydevelops/agent:dev
+docker run -p 9191:9191 agent
 
 # UI
-(If chose to clone)
-docker run --name ui --privileged --rm ui
--or-
-(If chose to pull)
-docker run anthonydevelops/ui:dev
-
+docker run ui
 ```
 
 **NOTE:**
-To test everything is working properly, first make sure that there are no errors in any of the build processes or when the containers start up. Then, simply go to the local network endpoint where the **ui** is displayed, click new project, choose some plugins & click "save project". You'll then see Agent go through transactions and can double check that the k-v pairs were stored successfully in etcd by running ```etcdctl get --from-key ''```.
+To test everything is working properly, first make sure that there are no errors in any of the build processes or when the containers start up. Then, go to the local network endpoint where the **ui** is displayed, click new project, choose some plugins & click "save project". You'll then see Agent go through transactions and can double check that the k-v pairs were stored successfully in etcd by running ```etcdctl get --from-key ''```.
 
 ## Documentation
 
