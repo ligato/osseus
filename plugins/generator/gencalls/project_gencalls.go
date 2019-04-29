@@ -18,6 +18,12 @@ type fileEntry struct {
 	Body string
 }
 
+type PluginAttr struct {
+	ImportPath		string
+	Identifier		string
+	ReferenceName	string
+}
+
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	encodedFile := d.createTar(val)
@@ -67,47 +73,47 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 			log.Fatal(err)
 		}
 	}
-	t, er := template.New("webpage").Parse(goCodeTemplate)
+
+	//get array of plugin structs [only imports for now]
+	PluginsList := d.createPluginStructs(val.Plugin)
+
+	t, er := template.New("main.go_template").Parse(goCodeTemplate)
 	check(er)
-
-	
-	for _, incomingPlugin := range val.Plugin {
-		for _, plugin := range AllPlugins {
-			if incomingPlugin.GetPluginName() == plugin {
-
-			}
-		}
-	}
 
 	// Populate code template with variables
 	data := struct {
-		ProjectName                string
-		Etcd, EtcdImport           string
-		Redis, RedisImport         string
-		Resync, ResyncImport       string
-		Cassandra, CassandraImport string
-		Plugin, DefPlugin          string
-		Amper                      string
+		ProjectName       string
+		PluginAttributes  []PluginAttr
+		Tab 			  string
 	}{
-		ProjectName:     val.GetProjectName(),
-		EtcdImport:      etcdImport,
-		Etcd:            etcd,
-		RedisImport:     redisImport,
-		Redis:           redis,
-		ResyncImport:    resyncImport,
-		Resync:          resync,
-		CassandraImport: cassandraImport,
-		Cassandra:       cassandra,
-		DefPlugin:       DefPlugin,
-		Plugin:          Plugin,
-		Amper:           Amper,
+		ProjectName:      val.GetProjectName(),
+		PluginAttributes: PluginsList,
 	}
+
 	er = t.Execute(&genCode, data)
 	check(er)
 
-	d.log.Debug("contents of genCode buffer: ", genCode.String())
+	d.log.Debug("generated code populated")
 
 	return genCode.String()
+}
+
+//create array of plugin structs [only imports for now]
+func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []PluginAttr{
+	var PluginsList []PluginAttr
+	for _, plugin := range plugins{
+		pluginImport := AllPlugins[plugin.PluginName][0]
+		pluginReference := AllPlugins[plugin.PluginName][1]
+		pluginIdentifier := AllPlugins[plugin.PluginName][2]
+		PluginTemplateVals := PluginAttr{
+			ImportPath: pluginImport,
+			ReferenceName:  pluginReference,
+			Identifier: pluginIdentifier,
+		}
+		PluginsList = append(PluginsList,PluginTemplateVals)
+
+	}
+	return PluginsList
 }
 
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
@@ -117,9 +123,9 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	var files = []fileEntry{
 		{"/cmd/agent/main.go", template},
 	}
-	//append a struc of name/body for every new plugin in project
-	for i := 0; i < len(val.Plugin); i++ {
-		pluginDirectoryName := val.Plugin[i].PluginName
+	//append a struct of name/body for every new plugin in project
+	for _, plugin := range val.Plugin{
+		pluginDirectoryName := plugin.PluginName
 		pluginDocEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/doc.go",
 			"Doc file for package description",
@@ -165,6 +171,17 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 		log.Fatal(err)
 	}
 
+	//temporary - debug tar file contents
+	d.readTarHelper(buf)
+
+	// Encode to base64 string
+	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
+
+	return encodedTar
+}
+
+// temporary helper function to print/view contents of tar file
+func (d *ProjectHandler) readTarHelper(buf bytes.Buffer) {
 	// Open and iterate through the files in the archive.
 	tr := tar.NewReader(&buf)
 	for {
@@ -181,9 +198,4 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 		}
 		fmt.Println()
 	}
-
-	// Encode to base64 string
-	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
-
-	return encodedTar
 }
