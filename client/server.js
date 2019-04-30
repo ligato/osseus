@@ -40,6 +40,19 @@ io.on('connection', socket => {
 
     // Generates current project
     socket.on('GENERATE_PROJECT', async state => {
+        const selected = []
+        const allPlugins = state.plugins
+
+        // Filter out selected plugins
+        allPlugins.map(plugin => {
+            if (plugin.selected === true) {
+                selected.push(plugin)
+            }
+        })
+
+        // Set selected plugins for generation
+        state.plugins = selected
+
         // Send project to API /v1/templates/{id}
         let generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
             method: "POST",

@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"text/template"
 
 	"github.com/ligato/osseus/plugins/generator/model"
@@ -18,10 +19,10 @@ type fileEntry struct {
 	Body string
 }
 
-type PluginAttr struct {
-	ImportPath		string
-	Identifier		string
-	ReferenceName	string
+type pluginAttr struct {
+	ImportPath    string
+	Identifier    string
+	ReferenceName string
 }
 
 // GenAddProj creates a new generated template under the /template prefix
@@ -30,15 +31,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 
 	// Create template
 	data := &model.Template{
-		Name:     val.GetProjectName(),
-		Id:       1,
-		Version:  2.4,
-		Category: "health",
-		Dependencies: []string{
-			"grpc",
-			"kafka",
-			"Logrus",
-		},
+		Name:    val.GetProjectName(),
 		TarFile: encodedFile,
 	}
 
@@ -82,9 +75,9 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 
 	// Populate code template with variables
 	data := struct {
-		ProjectName       string
-		PluginAttributes  []PluginAttr
-		Tab 			  string
+		ProjectName      string
+		PluginAttributes []pluginAttr
+		Tab              string
 	}{
 		ProjectName:      val.GetProjectName(),
 		PluginAttributes: PluginsList,
@@ -99,18 +92,23 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 }
 
 //create array of plugin structs [only imports for now]
-func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []PluginAttr{
-	var PluginsList []PluginAttr
-	for _, plugin := range plugins{
-		pluginImport := AllPlugins[plugin.PluginName][0]
-		pluginReference := AllPlugins[plugin.PluginName][1]
-		pluginIdentifier := AllPlugins[plugin.PluginName][2]
-		PluginTemplateVals := PluginAttr{
-			ImportPath: pluginImport,
-			ReferenceName:  pluginReference,
-			Identifier: pluginIdentifier,
+func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAttr {
+	var PluginsList []pluginAttr
+
+	// Cycle through plugins & set import paths
+	for _, plugin := range plugins {
+		name := strings.ToLower(plugin.PluginName)
+		d.log.Debugf("plugin name: %v", name)
+
+		pluginImport := AllPlugins[name][0]
+		pluginReference := AllPlugins[name][1]
+		pluginIdentifier := AllPlugins[name][2]
+		PluginTemplateVals := pluginAttr{
+			ImportPath:    pluginImport,
+			ReferenceName: pluginReference,
+			Identifier:    pluginIdentifier,
 		}
-		PluginsList = append(PluginsList,PluginTemplateVals)
+		PluginsList = append(PluginsList, PluginTemplateVals)
 
 	}
 	return PluginsList
@@ -124,7 +122,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/cmd/agent/main.go", template},
 	}
 	//append a struct of name/body for every new plugin in project
-	for _, plugin := range val.Plugin{
+	for _, plugin := range val.Plugin {
 		pluginDirectoryName := plugin.PluginName
 		pluginDocEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/doc.go",
