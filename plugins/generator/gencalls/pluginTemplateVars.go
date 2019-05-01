@@ -2,27 +2,23 @@ package gencalls
 
 const (
 	// Resync
-	resyncImport = `    "github.com/ligato/cn-infra/datasync/resync"
-`
-	resyncRef = `    Resync`
+	resyncImport = `"github.com/ligato/cn-infra/datasync/resync"`
+	resyncRef = `Resync`
 	resync = `resync`
 
 	// Etcd
-	etcdImport = `    "github.com/ligato/cn-infra/db/keyval/etcd"
-`
-	etcdRef = `    ETCDDataSync`
+	etcdImport = `"github.com/ligato/cn-infra/db/keyval/etcd"`
+	etcdRef = `ETCDDataSync`
 	etcd = `etcd`
 
 	// Cassandra
-	cassandraImport = `    "github.com/ligato/cn-infra/db/keyval/cassandra"
-`
-	cassandraRef = `    Cassandra`
+	cassandraImport = `"github.com/ligato/cn-infra/db/keyval/cassandra"`
+	cassandraRef = `Cassandra`
 	cassandra = `cassandra`
 
 	// Redis
-	redisImport = `    "github.com/ligato/cn-infra/db/keyval/redis"
-`
-	redisRef = `    Redis`
+	redisImport = `"github.com/ligato/cn-infra/db/keyval/redis"`
+	redisRef = `Redis`
 	redis = `redis`
 )
 

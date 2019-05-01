@@ -9,24 +9,24 @@ import (
     "github.com/ligato/cn-infra/agent"
     "github.com/ligato/cn-infra/logging"
     log "github.com/ligato/cn-infra/logging/logrus"
-{{range .PluginAttributes -}}
-    {{.ImportPath}}
+{{- range .PluginAttributes}}
+    {{.ImportPath -}}
 {{- end}}
 )
 
 // {{.ProjectName}} is a struct holding internal data for the {{.ProjectName}} Agent
 type {{.ProjectName}} struct {
-{{range .PluginAttributes}}
+{{- range .PluginAttributes}}
     {{.ReferenceName}}    *{{.Identifier}}.Plugin
-{{end}}
+{{- end}}
 }
 
 // New creates new {{.ProjectName}} instance.
 func New() *{{.ProjectName}} {
     return &{{.ProjectName}} {
-{{range .PluginAttributes}}
-    {{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
-{{end}}		
+{{- range .PluginAttributes}}
+        {{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
+{{- end}}		
     }
 }
 

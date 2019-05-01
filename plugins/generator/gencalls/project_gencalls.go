@@ -67,7 +67,7 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 		}
 	}
 
-	//get array of plugin structs [only imports for now]
+	//get array of plugin structs
 	PluginsList := d.createPluginStructs(val.Plugin)
 
 	t, er := template.New("main.go_template").Parse(goCodeTemplate)
