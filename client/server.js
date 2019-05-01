@@ -18,6 +18,9 @@ const io = require('socket.io')(server);
 const cors = require('cors');
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
+const tar = require('tar')
+let Duplex = require('stream').Duplex
+const fs = require('fs')
 
 app.use(cors());
 
@@ -91,7 +94,20 @@ io.on('connection', socket => {
             let value = body.kvs[0].value.toString()
             value = Buffer.from(value, 'base64')
 
-            console.debug(`SUCCESS: ${name} ${statusCode} ${value}`)
+            // Decode tar
+            let buffer = JSON.parse(value)
+            buffer = Buffer.from(buffer.tar_file, 'base64')
+
+            // Displays code to frontend
+            fs.appendFile('public/code.txt', buffer, function (err) {
+                if (err) throw err;
+                console.log('Saved!');
+            });
+
+            // Create tar folder
+            fs.appendFile('public/template.tgz', buffer, function (err) {
+                console.log('Saved!');
+            });
         })
 
         emitter.on('*.failure', (name = 'etcdConn', statusCode, body) => {
@@ -105,4 +121,4 @@ io.on('connection', socket => {
 
 })
 
-server.listen(8000, () => console.log('connected to port 8000!'));
+server.listen(8000, () => console.log('connected to port 8000!'))

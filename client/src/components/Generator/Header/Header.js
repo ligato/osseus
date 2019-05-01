@@ -26,33 +26,33 @@ class Header extends React.Component {
     };
     this.handleEditedProjectName = this.handleEditedProjectName.bind(this);
     this.downloadTar = this.downloadTar.bind(this);
-    this.saveProject= this.saveProject.bind(this);
+    this.saveProject = this.saveProject.bind(this);
   }
-  
+
   saveProject() {
-    const projectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
+    const projectCopy = JSON.parse(JSON.stringify(store.getState().currProject));
     let projectCopyName = projectCopy.projectName;
-    let isDuplicateName = determineIfDuplicate(projectCopyName);  
+    let isDuplicateName = determineIfDuplicate(projectCopyName);
     //Their project name was found to be unique
-    if(!isDuplicateName) {
-      store.dispatch( addCurrProject([projectCopy]));
+    if (!isDuplicateName) {
+      store.dispatch(addCurrProject([projectCopy]));
       successfulSaveToast();
-    //Their project name was found to already exist
+      //Their project name was found to already exist
     } else {
-      store.dispatch( addCurrProject([projectCopy]));
+      store.dispatch(addCurrProject([projectCopy]));
       //Executes while project identifier number for project name is taken    
-      while(determineIfDuplicate(projectCopyName)) {
+      while (determineIfDuplicate(projectCopyName)) {
         projectCopyName = makeUniqueAgain(projectCopyName);
       }
       syncProjectNameState(projectCopyName);
       successfulRenameToast();
     }
     this.props.newProjectNameHandler(projectCopyName);
-    store.dispatch( saveProjectToKV(store.getState().currProject) );
+    store.dispatch(saveProjectToKV(store.getState().currProject));
   }
 
   tellMeToLoad() {
-    store.dispatch( loadProjectFromKV(store.getState().currProject.projectName) );
+    store.dispatch(loadProjectFromKV(store.getState().currProject.projectName));
   }
 
   downloadTar() {
@@ -73,28 +73,23 @@ class Header extends React.Component {
         <Grid columns={1} relaxed='very'>
           <Grid.Column className="header-column-gen"  >
             <Link to="/">
-            <img
+              <img
                 className="back-image"
                 src='/images/back.png'
                 alt='oops'>
-            </img>
+              </img>
             </Link>
             <div className="headergentext">
               <p className="current-project">Current Project: </p>
               <ContentEditable
-                  spellCheck={false}
-                  className="project-name"
-                  html={this.props.currentProjectName} // innerHTML of the editable div
-                  disabled={false} // use true to disable edition
-                  onChange={this.handleEditedProjectName} // handle innerHTML change
+                spellCheck={false}
+                className="project-name"
+                html={this.props.currentProjectName} // innerHTML of the editable div
+                disabled={false} // use true to disable edition
+                onChange={this.handleEditedProjectName} // handle innerHTML change
               />
             </div>
-            <img
-                className="download-image"
-                src='/images/download.png'
-                alt='oops'
-                onClick={this.downloadTar}>
-            </img>
+            <a href={`/template.tgz`} download>Download</a>
           </Grid.Column>
         </Grid>
         <Divider vertical></Divider>
@@ -110,11 +105,11 @@ export default Header;
 //to determine a match. Return true if a match is found.
 function determineIfDuplicate(projectName) {
   let isDuplicate;
-  for(let i = 0; i < store.getState().projects.length; i++) {
-    if(projectName === store.getState().projects[i].projectName) {
+  for (let i = 0; i < store.getState().projects.length; i++) {
+    if (projectName === store.getState().projects[i].projectName) {
       isDuplicate = true;
       return isDuplicate;
-    } 
+    }
   }
   return isDuplicate = false;
 }
@@ -124,12 +119,12 @@ function determineIfDuplicate(projectName) {
 function makeUniqueAgain(projectName) {
   const regexIdentifier = /\([0-9]+\)/;
   const regexNumber = /[0-9]+/;
-  if(projectName.match(regexIdentifier)) {
+  if (projectName.match(regexIdentifier)) {
     let nthDuplicate = Number(projectName.match(regexNumber)[0]);
     let matchSize = projectName.match(regexIdentifier)[0].length;
 
-    projectName = projectName.slice(0,-matchSize)
-    projectName = projectName + '(' + (nthDuplicate+1) + ')'
+    projectName = projectName.slice(0, -matchSize)
+    projectName = projectName + '(' + (nthDuplicate + 1) + ')'
   } else {
     projectName = projectName + '(1)';
   }
@@ -139,8 +134,8 @@ function makeUniqueAgain(projectName) {
 //Function will take project name and update local and redux project
 //name state.
 function syncProjectNameState(projectName) {
-  if(store.getState().projects[store.getState().projects.length-1]) {
-    store.getState().projects[store.getState().projects.length-1].projectName = projectName;
+  if (store.getState().projects[store.getState().projects.length - 1]) {
+    store.getState().projects[store.getState().projects.length - 1].projectName = projectName;
   }
   store.getState().currProject.projectName = projectName;
   pluginModule.project.projectName = projectName;
@@ -174,8 +169,8 @@ function successfulRenameToast() {
   savedToast.fire({
     type: 'warning',
     title: 'Warning!',
-    text: 'Another project under this name already exists! Your project will be renamed: "' 
-          + pluginModule.project.projectName + '"',
+    text: 'Another project under this name already exists! Your project will be renamed: "'
+      + pluginModule.project.projectName + '"',
   })
 }
 
