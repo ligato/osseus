@@ -18,8 +18,7 @@ const io = require('socket.io')(server);
 const cors = require('cors');
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
-const tar = require('tar')
-let Duplex = require('stream').Duplex
+const EventEmitter2 = require('eventemitter2').EventEmitter2;
 const fs = require('fs')
 
 app.use(cors());
@@ -57,14 +56,14 @@ io.on('connection', socket => {
         state.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        let generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
+        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(state)
         })
-        let result = await generate
+        const result = await generate
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
 
         // Initialize webhook
@@ -73,20 +72,22 @@ io.on('connection', socket => {
             httpSuccessCodes: [200, 201, 202, 203, 204],
         })
 
+        webhooks.emitter = new EventEmitter2({ wildcard: true, verboseMemoryLeak: true })
+
         // Encode key
         const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${state.projectName}`).toString('base64')
 
         // Add webhook watcher onto etcd /template keys
-        webhooks.add('etcdConn', 'http://localhost:2379/v3beta/watch')
-            .then(console.debug("Init Webhook"))
-            .catch(err => console.error(err))
+        await webhooks.add("etcd", 'http://localhost:2379/v3beta/watch')
 
         // Trigger webhook & send watch request
-        webhooks.trigger('etcdConn', { key: base64Key })
+        await webhooks.trigger("etcd", { key: base64Key })
 
         // Shows emitted events
-        const emitter = webhooks.getEmitter()
-        emitter.on('*.success', (name = 'etcdConn', statusCode, response) => {
+        const ee = webhooks.getEmitter()
+        ee.on("etcd.*", (name, statusCode, response) => {
+            console.log('SUCCESS triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
+
             // Create object from string response
             const body = JSON.parse(response)
 
@@ -108,10 +109,7 @@ io.on('connection', socket => {
             fs.appendFile('public/template.tgz', buffer, function (err) {
                 console.log('Saved!');
             });
-        })
 
-        emitter.on('*.failure', (name = 'etcdConn', statusCode, body) => {
-            console.error('FAILED triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
         })
 
         // Set response variable
