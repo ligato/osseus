@@ -2,33 +2,39 @@
   background-color: #FFFFFF;
   margin-top: -2px;
   box-shadow: 0 5px 0 #CECECE;
-  height: 40px;
+  height: 55px;
   z-index: 201;
-  position: relative; }
+  position: relative;
+}
 
 .header-text {
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+}
 
 .currentproject {
   color: #959FAE;
-  font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   cursor: default;
-  margin-left: 150px; }
+  margin-left: 150px;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+}
 
 .projectname {
   color: #00BCEB;
   font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
-  margin-top: -16px;
+  letter-spacing: -0.5px;
+  margin-top: -19px;
   margin-left: 10px;
   cursor: text;
-  font-size: 16px; }
-  .projectname:hover {
-    background-color: white;
-    color: #3C73B7; }
+  font-size: 18px;
+}
+.projectname:hover {
+  background-color: white;
+  color: #3C73B7;
+}
 
 .generatorlink {
   float: right;
@@ -37,21 +43,23 @@
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
-  margin-top: -45px;
-  border-radius: 6px;
+  margin-top: -43px;
+  margin-right: -10px;
   text-align: center;
   color: #00BCEB;
   letter-spacing: -1.5px;
-  font-size: 14px;
-  font-family: Arial, Helvetica, sans-serif; }
-  .generatorlink:hover {
-    cursor: pointer;
-    text-decoration: underline;
-    background-color: #00BCEB;
-    color: white; }
-  .generatorlink:active {
-    box-shadow: none;
-    color: white; }
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  border-left: 2px solid #CECECE;
+}
+.generatorlink:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.generatorlink:active {
+  box-shadow: none;
+  color: white;
+}
 
 .swal-text {
   background-color: #FEFAE3;
@@ -61,7 +69,8 @@
   display: block;
   margin: 22px;
   text-align: center;
-  color: #61534e; }
+  color: #61534e;
+}
 
 .swal-button {
   padding: 7px 19px;
@@ -69,39 +78,46 @@
   background-color: #4AC68E;
   font-size: 16px;
   border: 1px solid #3e549a;
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3); }
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
 
 .new-project-image {
   position: relative;
-  width: 34px;
+  width: 28px;
   height: auto;
   float: right;
-  margin-right: 155px;
-  margin-top: -12px; }
-  .new-project-image:active {
-    top: 6px; }
-  .new-project-image:hover {
-    cursor: pointer; }
+  margin-right: 170px;
+  margin-top: 2px;
+}
+.new-project-image:active {
+  top: 6px;
+}
+.new-project-image:hover {
+  cursor: pointer;
+}
 
 .upload-image {
   position: relative;
-  width: 34px;
+  width: 28px;
   height: auto;
   float: right;
-  margin-right: 110px;
-  margin-top: -50px; }
-  .upload-image:active {
-    top: 6px; }
-  .upload-image:hover {
-    cursor: pointer; }
+  margin-right: 125px;
+  margin-top: -39px;
+}
+.upload-image:active {
+  top: 6px;
+}
+.upload-image:hover {
+  cursor: pointer;
+}
 
 .cisco-logo {
   position: absolute;
-  width: 68px;
+  width: 85px;
   height: auto;
   margin-top: -12px;
-  margin-left: -10px; }
-  .cisco-logo:active {
-    top: 18px; }
-
-/*# sourceMappingURL=Header.css.map */
+  margin-left: -10px;
+}
+.cisco-logo:active {
+  top: 18px;
+}

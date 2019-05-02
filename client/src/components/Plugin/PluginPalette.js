@@ -29,7 +29,7 @@ const PluginPalette = (props) => {
       </div>
       <div className="split right-bottom">
         <div className="rectangle">
-          <p className="rectangletext">CN-infra</p>
+          <p className="rectangletext">Agent</p>
         </div>
       </div>
     </div>
