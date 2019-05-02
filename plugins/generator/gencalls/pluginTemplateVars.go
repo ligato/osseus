@@ -9,8 +9,8 @@ const (
 
 	// GRPC
 	grpcImport = `"github.com/ligato/cn-infra/rpc/grpc"`
-	grpcRef = 't'
-	grpc = 't'
+	grpcRef = `GRPC`
+	grpc = `grpc`
 
 	// Prometheus
 	prometheusImport = `"github.com/ligato/cn-infra/rpc/prometheus"`
@@ -35,18 +35,18 @@ const (
 
 	// Consul
 	consulImport = `"github.com/ligato/cn-infra/db/keyval/consul"`
-	consulRef = 't'
-	consul = 't'
+	consulRef = `Consul`
+	consul = `consul`
 
 	// Logrus
-	logrusImport = `"github.com/ligato/cn-infra/logging/logrus"`
-	logrusRef = 't'
-	logrus = 't'
+	logrusImport = ``
+	logrusRef = ``
+	logrus = ``
 
 	// Log Manager
-	logMgrImport = 't'
-	logMgrRef = 't'
-	logMgr = 't'
+	logMgrImport = `"github.com/ligato/cn-infra/logging/logmanager"`
+	logMgrRef = `LogManager`
+	logMgr = `logmanager`
 
 	// Status Check
 	statusImport = `"github.com/ligato/cn-infra/health/statuscheck"`
@@ -55,9 +55,9 @@ const (
 	//todo StatusCheck  statuscheck.StatusReader
 
 	// Probe
-	probeImport = 't'
-	probeRef = 't'
-	probe = 't'
+	probeImport = `"github.com/ligato/cn-infra/health/probe"`
+	probeRef = `Probe`
+	probe = `probe`
 
 	// Kafka
 	kafkaImport = `"github.com/ligato/cn-infra/messaging/kafka"`
@@ -78,13 +78,13 @@ const (
 
 	// Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
-	serviceLblRef = 't'
-	serviceLbl = 't'
+	serviceLblRef = `ServiceLabel`
+	serviceLbl = `servicelabel`
 
 	// Config
-	configImport = 't'
-	configRef = 't'
-	config = 't'
+	configImport = ``
+	configRef = ``
+	config = ``
 
 )
 
@@ -92,19 +92,19 @@ const (
 // used for lookup of a plugin's attributes
 var AllPlugins = map[string][]string{
 	//"rest api":      []string{restImport, restRef, rest},
-	"etcd":      []string{etcdImport, etcdRef, etcd},
-	"redis":     []string{redisImport, redisRef, redis},
-	"datasync":    []string{resyncImport, resyncRef, resync},
-	"cassandra": []string{cassandraImport,cassandraRef, cassandra},
-	//"grpc":      []string{restImport, restRef, rest},
+	"grpc":      []string{restImport, restRef, rest},
 	//"prometheus":      []string{restImport, restRef, rest},
-	//"consul":      []string{restImport, restRef, rest},
+	//"etcd":      []string{etcdImport, etcdRef, etcd},
+	"redis":     []string{redisImport, redisRef, redis},
+	"cassandra": []string{cassandraImport,cassandraRef, cassandra},
+	"consul":      []string{restImport, restRef, rest},
 	//"logrus":      []string{restImport, restRef, rest},
-	//"log mngr":      []string{restImport, restRef, rest},
+	"log mngr":      []string{restImport, restRef, rest},
 	//"stts check":      []string{restImport, restRef, rest},
-	//"probe":      []string{restImport, restRef, rest},
+	"probe":      []string{restImport, restRef, rest},
 	//"kafka":      []string{restImport, restRef, rest},
+	"datasync":    []string{resyncImport, resyncRef, resync},
 	//"idx map":      []string{restImport, restRef, rest},
-	//"srvc label":      []string{restImport, restRef, rest},
+	"srvc label":      []string{restImport, restRef, rest},
 	//"config":      []string{restImport, restRef, rest},
 }
