@@ -18,10 +18,7 @@ const io = require('socket.io')(server);
 const cors = require('cors');
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
-const EventEmitter2 = require('eventemitter2').EventEmitter2;
 const fs = require('fs')
-
-app.use(cors());
 
 io.on('connection', socket => {
     // Saves current project
@@ -47,7 +44,7 @@ io.on('connection', socket => {
 
         // Filter out selected plugins
         allPlugins.map(plugin => {
-            if (plugin.selected === true) {
+            if (plugin.selected) {
                 selected.push(plugin)
             }
         })
@@ -56,7 +53,7 @@ io.on('connection', socket => {
         state.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
+        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/testkey`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -66,57 +63,65 @@ io.on('connection', socket => {
         const result = await generate
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
 
+        // Webhook listener
+        // const etcdPut = 'etcdPut'
+        const etcdWatch = 'etcdWatch'
+
         // Initialize webhook
-        const webhooks = new Webhooks({
+        const webHooks = new Webhooks({
             db: './webHooksDB.json',
-            httpSuccessCodes: [200, 201, 202, 203, 204],
         })
 
-        webhooks.emitter = new EventEmitter2({ wildcard: true, verboseMemoryLeak: true })
-
         // Encode key
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${state.projectName}`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/testkey`).toString('base64')
 
         // Add webhook watcher onto etcd /template keys
-        await webhooks.add("etcd", 'http://localhost:2379/v3beta/watch')
+        // webHooks.add(etcdPut, 'http://localhost:2379/v3beta/kv/put')
+        //     .then(console.log("Put Webhook Set"))
+        //     .catch(e => console.debug(e))
+
+        webHooks.add(etcdWatch, 'http://localhost:2379/v3beta/watch')
+            .then(console.log("Watch Webhook Set"))
+            .catch(e => console.debug(e))
 
         // Trigger webhook & send watch request
-        await webhooks.trigger("etcd", { key: base64Key })
+        // webHooks.trigger(etcdPut, { key: base64Key, value: 'dGVtcA==' })
+        webHooks.trigger(etcdWatch, { key: base64Key })
 
         // Shows emitted events
-        const ee = webhooks.getEmitter()
-        ee.on("etcd.*", (name, statusCode, response) => {
-            console.log('SUCCESS triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
+        const emitter = webHooks.getEmitter()
+        emitter.once('etcdWatch.failure', (name, statusCode, body) => {
+            console.log('FAILURE triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
+        })
+
+        emitter.once('etcdWatch.success', (name, statusCode, response) => {
+            console.log('SUCCESS triggering webHook ' + name + ' with status code', statusCode, 'and body', response)
 
             // Create object from string response
             const body = JSON.parse(response)
+            console.log(body)
 
-            // Decode value
-            let value = body.kvs[0].value.toString()
-            value = Buffer.from(value, 'base64')
+            // // Decode value
+            // let value = body.kvs[0].value.toString()
+            // value = Buffer.from(value, 'base64')
 
-            // Decode tar
-            let buffer = JSON.parse(value)
-            buffer = Buffer.from(buffer.tar_file, 'base64')
+            // // Decode tar
+            // let buffer = JSON.parse(value)
+            // buffer = Buffer.from(buffer.tar_file, 'base64')
 
-            // Displays code to frontend
-            fs.appendFile('public/code.txt', buffer, function (err) {
-                if (err) throw err;
-                console.log('Saved!');
-            });
+            // // Displays code to frontend
+            // fs.appendFile('public/code.txt', buffer, function (err) {
+            //     if (err) throw err;
+            //     console.log('Saved!');
+            // });
 
-            // Create tar folder
-            fs.appendFile('public/template.tgz', buffer, function (err) {
-                console.log('Saved!');
-            });
+            // // Create tar folder
+            // fs.appendFile('public/template.tgz', buffer, function (err) {
+            //     console.log('Saved!');
+            // });
 
         })
-
-        // Set response variable
-        const generatedTar = 'generatedTar is set in server'
-        socket.broadcast.emit('GENERATED_TAR', generatedTar);
     })
-
 })
 
 server.listen(8000, () => console.log('connected to port 8000!'))
