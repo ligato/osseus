@@ -81,17 +81,18 @@ const (
 	serviceLblInit = `ServiceLabel:    &servicelabel.DefaultPlugin,`
 
 	// Config
-	configImport = ``
-	configRef = ``
-	config = ``
+	configImport = `"github.com/ligato/cn-infra/config"`
+	configDecl = `PluginConfig config.PluginConfig`
+	configInit = `PluginConfig: config.ForPlugin({{.ProjectName}}),`
+	//todo: insert projectName
 
 )
 
 // AllPlugins is a dictionary that holds all available plugin data
 // used for lookup of a plugin's attributes
 var AllPlugins = map[string][]string{
-	//"rest api":      []string{restImport, restRef, rest},
-	"grpc":      []string{restImport, restDecl, restInit},
+	"rest api":      []string{restImport, restDecl, restInit},
+	//"grpc":      []string{restImport, restDecl, restInit},
 	//"prometheus":      []string{restImport, restRef, rest},
 	//"etcd":      []string{etcdImport, etcdRef, etcd},
 	"redis":     []string{redisImport, redisDecl, redisInit},
@@ -105,5 +106,5 @@ var AllPlugins = map[string][]string{
 	"datasync":    []string{resyncImport, resyncDecl, resyncInit},
 	//"idx map":      []string{restImport, restRef, rest},
 	"srvc label":      []string{serviceLblImport, serviceLblDecl, serviceLblInit},
-	//"config":      []string{restImport, restRef, rest},
+	"config":      []string{configImport, configDecl, configInit},
 }
