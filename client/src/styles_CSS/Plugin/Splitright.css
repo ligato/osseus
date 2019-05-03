@@ -1,13 +1,14 @@
 .right {
   height: 85%;
-  top: 20px;
+  top: 35px;
   right: 0;
   z-index: 1;
   background-color: #DFDFDF;
   width: 82.5%;
   display: flex;
   justify-content: center;
-  opacity: 1; }
+  opacity: 1;
+}
 
 .right-bottom {
   display: flex;
@@ -17,7 +18,8 @@
   right: 0;
   background: #DFDFDF;
   justify-content: center;
-  display: flex; }
+  display: flex;
+}
 
 .rectangle {
   width: 80%;
@@ -27,7 +29,8 @@
   align-self: flex-end;
   border-radius: 15px;
   text-align: center;
-  color: #75BAEC; }
+  color: #75BAEC;
+}
 
 .rectangletext {
   color: #3C73B7;
@@ -36,7 +39,8 @@
   flex-direction: column;
   justify-content: space-between;
   opacity: 1;
-  font-size: 30px; }
+  font-size: 30px;
+}
 
 .grid-container-right {
   display: inline-grid;
@@ -44,4 +48,5 @@
   grid-template-columns: repeat(auto-fill, 24%);
   flex-wrap: wrap;
   background-color: #DFDFDF;
-  padding: 20px; }
+  padding: 20px;
+}
