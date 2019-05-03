@@ -4,8 +4,10 @@ import { SET_CURR_POPUP_ID } from "../constants/action-types";
 import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
 import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { RETURN_LOAD_PROJECT } from "../constants/action-types";
-import { GENERATE_CURR_PROJECT } from "../constants/action-types"
-import { DELIVER_GENERATED_TAR } from "../constants/action-types"
+import { GENERATE_CURR_PROJECT } from "../constants/action-types";
+import { DELIVER_GENERATED_TAR } from "../constants/action-types";
+import { DELETE_PROJECT } from "../constants/action-types";
+import { LOAD_ALL_PROJECTS } from "../constants/action-types";
 import { socket } from '../../index';
 
 
@@ -13,6 +15,7 @@ const initialState = {
   currPopupID: null,
   projects: [],
   currProject: null,
+  tar: null
 };
 function rootReducer(state = initialState, action) {
   //Add the current project to the array of saved projects
@@ -57,6 +60,14 @@ function rootReducer(state = initialState, action) {
   //Emits the server to call SEND_LOAD_PROJECT
   else if (action.type === LOAD_PROJECT_FROM_KV) {
     socket && socket.emit('SEND_LOAD_PROJECT', action.payload)
+  }
+  //Emits the server to call DELETE_PROJECT_FROM_KV
+  else if (action.type === DELETE_PROJECT) {
+    socket && socket.emit('DELETE_PROJECT_FROM_KV', action.payload)
+  }
+  //Emits the server to call LOAD_ALL_FROM_KV
+  else if (action.type === LOAD_ALL_PROJECTS) {
+    socket && socket.emit('LOAD_ALL_FROM_KV', action.payload)
   }
   return state;
 }

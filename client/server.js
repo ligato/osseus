@@ -37,6 +37,18 @@ io.on('connection', socket => {
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
 
+    //Loads all the existing projects
+    socket.on('LOAD_ALL_FROM_KV', state => {
+        console.log('load all')
+    })
+
+    //Deletes the selected project from the KV store
+    socket.on('DELETE_PROJECT_FROM_KV', state => {
+        console.log(state)
+        fetch(`http://0.0.0.0:9191/v1/projects/${state}`)
+            .then(res => console.log(res.body))
+    })
+
     // Generates current project
     socket.on('GENERATE_PROJECT', async state => {
         const selected = []

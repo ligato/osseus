@@ -6,6 +6,8 @@ import { generateCurrProject } from "../redux/actions/index";
 import { deliverGeneratedTar } from "../redux/actions/index";
 import { saveProjectToKV } from "../redux/actions/index";
 import { loadProjectFromKV } from "../redux/actions/index";
+import { deleteProject } from "../redux/actions/index";
+import { loadAllProjects } from "../redux/actions/index";
 
 window.store = store;
 window.addCurrProject = addCurrProject;
@@ -15,4 +17,6 @@ window.generateCurrProject = generateCurrProject;
 window.deliverGeneratedTar = deliverGeneratedTar;
 window.saveProjectToKV = saveProjectToKV;
 window.loadProjectFromKV = loadProjectFromKV;
+window.deleteProject = deleteProject;
+window.loadAllProjects = loadAllProjects;
 
