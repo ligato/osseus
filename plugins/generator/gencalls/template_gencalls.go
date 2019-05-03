@@ -17,7 +17,7 @@ import (
 // {{.ProjectName}} is a struct holding internal data for the {{.ProjectName}} Agent
 type {{.ProjectName}} struct {
 {{- range .PluginAttributes}}
-    {{.ReferenceName}}    *{{.Identifier}}.Plugin
+    {{.Declaration}}
 {{- end}}
 }
 
@@ -25,7 +25,7 @@ type {{.ProjectName}} struct {
 func New() *{{.ProjectName}} {
     return &{{.ProjectName}} {
 {{- range .PluginAttributes}}
-        {{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
+        {{.Initialization}}
 {{- end}}		
     }
 }

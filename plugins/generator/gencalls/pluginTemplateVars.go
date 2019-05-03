@@ -3,9 +3,8 @@ package gencalls
 const (
 	// REST
 	restImport = `"github.com/ligato/cn-infra/rpc/rest"`
-	restRef = `REST`
-	rest = `rest`
-	//todo rest uses .HTTPHandlers not .Plugin and no * (REST rest.HTTPHandlers)
+	restDecl = `HTTPHandlers    rest.HTTPHandlers`
+	restInit = `HTTPHandlers:    &rest.DefaultPlugin,`
 
 	// GRPC
 	grpcImport = `"github.com/ligato/cn-infra/rpc/grpc"`
@@ -25,18 +24,18 @@ const (
 
 	// Redis
 	redisImport = `"github.com/ligato/cn-infra/db/keyval/redis"`
-	redisRef = `Redis`
-	redis = `redis`
+	redisDecl = `Redis    *redis.Plugin`
+	redisInit = `Redis:    &redis.DefaultPlugin,`
 
 	// Cassandra
 	cassandraImport = `"github.com/ligato/cn-infra/db/keyval/cassandra"`
-	cassandraRef = `Cassandra`
-	cassandra = `cassandra`
+	cassandraDecl = `Cassandra    *cassandra.Plugin`
+	cassandraInit = `Cassandra:    &cassandra.DefaultPlugin,`
 
 	// Consul
 	consulImport = `"github.com/ligato/cn-infra/db/keyval/consul"`
-	consulRef = `Consul`
-	consul = `consul`
+	consulDecl = `Consul:    *consul.Plugin`
+	consulInit = `Consul:    &consul.DefaultPlugin,`
 
 	// Logrus
 	logrusImport = ``
@@ -45,8 +44,8 @@ const (
 
 	// Log Manager
 	logMgrImport = `"github.com/ligato/cn-infra/logging/logmanager"`
-	logMgrRef = `LogManager`
-	logMgr = `logmanager`
+	logMgrDecl = `LogManager    *logmanager.Plugin`
+	logMgrInit = `LogManager:    &logmanager.DefaultPlugin,`
 
 	// Status Check
 	statusImport = `"github.com/ligato/cn-infra/health/statuscheck"`
@@ -56,8 +55,8 @@ const (
 
 	// Probe
 	probeImport = `"github.com/ligato/cn-infra/health/probe"`
-	probeRef = `Probe`
-	probe = `probe`
+	probeDecl = `Probe    *probe.Plugin    `
+	probeInit = `Probe:    &probe.DefaultPlugin,`
 
 	// Kafka
 	kafkaImport = `"github.com/ligato/cn-infra/messaging/kafka"`
@@ -68,8 +67,8 @@ const (
 
 	// Datasync/Resync
 	resyncImport = `"github.com/ligato/cn-infra/datasync/resync"`
-	resyncRef = `Resync`
-	resync = `resync`
+	resyncDecl = `Resync    *resync.Plugin`
+	resyncInit = `Resync:    &resync.DefaultPlugin,`
 
 	// Idx Map
 	idxMapImport = `"github.com/ligato/cn-infra/idxmap"`
@@ -78,8 +77,8 @@ const (
 
 	// Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
-	serviceLblRef = `ServiceLabel`
-	serviceLbl = `servicelabel`
+	serviceLblDecl = `ServiceLabel    *servicelabel.Plugin`
+	serviceLblInit = `ServiceLabel:    &servicelabel.DefaultPlugin,`
 
 	// Config
 	configImport = ``
@@ -92,19 +91,19 @@ const (
 // used for lookup of a plugin's attributes
 var AllPlugins = map[string][]string{
 	//"rest api":      []string{restImport, restRef, rest},
-	"grpc":      []string{restImport, restRef, rest},
+	"grpc":      []string{restImport, restDecl, restInit},
 	//"prometheus":      []string{restImport, restRef, rest},
 	//"etcd":      []string{etcdImport, etcdRef, etcd},
-	"redis":     []string{redisImport, redisRef, redis},
-	"cassandra": []string{cassandraImport,cassandraRef, cassandra},
-	"consul":      []string{consulImport, consulRef, consul},
+	"redis":     []string{redisImport, redisDecl, redisInit},
+	"cassandra": []string{cassandraImport,cassandraDecl, cassandraInit},
+	"consul":      []string{consulImport, consulDecl, consulInit},
 	//"logrus":      []string{restImport, restRef, rest},
-	"log mngr":      []string{logMgrImport, logMgrRef, logMgr},
+	"log mngr":      []string{logMgrImport, logMgrDecl, logMgrInit},
 	//"stts check":      []string{restImport, restRef, rest},
-	"probe":      []string{probeImport, probeRef, probe},
+	"probe":      []string{probeImport, probeDecl, probeInit},
 	//"kafka":      []string{restImport, restRef, rest},
-	"datasync":    []string{resyncImport, resyncRef, resync},
+	"datasync":    []string{resyncImport, resyncDecl, resyncInit},
 	//"idx map":      []string{restImport, restRef, rest},
-	"srvc label":      []string{serviceLblImport, serviceLblRef, serviceLbl},
+	"srvc label":      []string{serviceLblImport, serviceLblDecl, serviceLblInit},
 	//"config":      []string{restImport, restRef, rest},
 }
