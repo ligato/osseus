@@ -86,8 +86,7 @@ const (
 	// Config
 	configImport = `"github.com/ligato/cn-infra/config"`
 	configDecl = `PluginConfig config.PluginConfig`
-	configInit = `PluginConfig: config.ForPlugin("{{.ProjectName}}"),`
-	//todo: insert projectName
+	configInit = "config"
 
 )
 

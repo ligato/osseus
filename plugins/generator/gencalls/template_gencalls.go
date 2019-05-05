@@ -25,8 +25,12 @@ type {{.ProjectName}} struct {
 func New() *{{.ProjectName}} {
     return &{{.ProjectName}} {
 {{- range .PluginAttributes}}
+{{- if eq .Initialization "config"}}
+        PluginConfig: config.ForPlugin("{{$.ProjectName}}"),
+{{- else}}
         {{.Initialization}}
-{{- end}}		
+{{- end}}
+{{- end}}
     }
 }
 
