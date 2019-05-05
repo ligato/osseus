@@ -71,11 +71,14 @@ const (
 	resyncInit = `Resync:    &resync.DefaultPlugin,`
 
 	// Idx Map
-	idxMapImport = `"github.com/ligato/cn-infra/idxmap"`
-	idxMapRef = ``
-	idxMap = ``
+	idxMapImport = `"github.com/ligato/cn-infra/idxmap"
+    "github.com/ligato/cn-infra/idxmap/mem"`
+	idxMapDecl = `mapping    idxmap.NamedMappingRW`
+	idxMapInit = `mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction)`
+	//type IndexFunction func(item interface{}) map[string][]string
 
-	// Service Label
+
+// Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
 	serviceLblDecl = `ServiceLabel    *servicelabel.Plugin`
 	serviceLblInit = `ServiceLabel:    &servicelabel.DefaultPlugin,`
@@ -83,7 +86,7 @@ const (
 	// Config
 	configImport = `"github.com/ligato/cn-infra/config"`
 	configDecl = `PluginConfig config.PluginConfig`
-	configInit = `PluginConfig: config.ForPlugin({{.ProjectName}}),`
+	configInit = `PluginConfig: config.ForPlugin("{{.ProjectName}}"),`
 	//todo: insert projectName
 
 )
@@ -104,7 +107,7 @@ var AllPlugins = map[string][]string{
 	"probe":      []string{probeImport, probeDecl, probeInit},
 	//"kafka":      []string{restImport, restRef, rest},
 	"datasync":    []string{resyncImport, resyncDecl, resyncInit},
-	//"idx map":      []string{restImport, restRef, rest},
+	"idx map":      []string{idxMapImport, idxMapDecl, idxMapInit},
 	"srvc label":      []string{serviceLblImport, serviceLblDecl, serviceLblInit},
 	"config":      []string{configImport, configDecl, configInit},
 }
