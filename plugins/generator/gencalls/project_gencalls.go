@@ -77,10 +77,12 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	data := struct {
 		ProjectName      string
 		PluginAttributes []pluginAttr
-		Tab              string
+		// special case plugins
+		IdxMapExists     bool
 	}{
 		ProjectName:      val.GetProjectName(),
 		PluginAttributes: PluginsList,
+		IdxMapExists:     contains(val.Plugin,"idx map"),
 	}
 
 	er = t.Execute(&genCode, data)
@@ -176,6 +178,16 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
 
 	return encodedTar
+}
+
+// check if plugins slice contains plugin
+func contains(plugins []*model.Plugin, pluginName string) bool {
+	for _, pl := range plugins {
+		if strings.ToLower(pl.PluginName) == pluginName {
+			return true
+		}
+	}
+	return false
 }
 
 // temporary helper function to print/view contents of tar file
