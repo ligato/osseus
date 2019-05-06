@@ -40,8 +40,8 @@ const (
 
 	// Logrus
 	logrusImport = ``
-	logrusRef = ``
-	logrus = ``
+	logrusDecl = `Logrus    logging.Logger`
+	logrusInit = `Logrus:    log.DefaultLogger(),`
 
 	// Log Manager
 	logMgrImport = `"github.com/ligato/cn-infra/logging/logmanager"`
