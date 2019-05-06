@@ -89,7 +89,12 @@ class Header extends React.Component {
                 onChange={this.handleEditedProjectName} // handle innerHTML change
               />
             </div>
-            <a href={`/template.tgz`} download>Download</a>
+            <a href={`/template.tgz`} download>
+            <img 
+                className="download-image"
+                src='/images/download.png'
+                alt='oops'>
+            </img></a>
           </Grid.Column>
         </Grid>
         <Divider vertical></Divider>

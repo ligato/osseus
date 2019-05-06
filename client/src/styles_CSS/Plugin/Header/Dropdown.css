@@ -2,8 +2,9 @@
   position: absolute;
   display: inline-block;
   right: 82.5%;
-  margin-top: -14px;
-  width: 140.38px; }
+  margin-top: 1px;
+  width: 140.38px;
+}
 
 ul {
   list-style-type: none;
@@ -17,32 +18,39 @@ ul {
   box-shadow: 0px 8px 16px 0px #515151;
   text-decoration: none;
   position: absolute;
-  overflow: visible;
-  cursor: pointer; }
+  cursor: pointer;
+}
+
+.list-text {
+  padding: 8px 6px 8px 16px;
+  margin-right: 35px;
+  overflow: hidden;
+}
+.list-text:hover {
+  cursor: pointer;
+  background-color: #e5e5e5;
+  color: #3C73B7;
+}
 
 li a {
   color: #00BCEB;
   text-decoration: none;
   position: relative;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 li {
-  padding: 8px 16px;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
   cursor: pointer;
-  color: #00BCEB; }
+  color: #00BCEB;
+}
 
 li:last-child {
   border-bottom: none;
   position: relative;
-  cursor: pointer; }
-
-li:hover {
-  background-color: #e5e5e5;
-  color: #3C73B7;
-  position: relative;
-  cursor: pointer; }
+  cursor: pointer;
+}
 
 .dropdown-button {
   letter-spacing: -1.5px;
@@ -62,14 +70,18 @@ li:hover {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  position: relative; }
-  .dropdown-button:hover {
-    cursor: pointer;
-    text-decoration: underline; }
-  .dropdown-button:active {
-    box-shadow: none; }
-  .dropdown-button:focus {
-    outline: none; }
+  position: relative;
+}
+.dropdown-button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.dropdown-button:active {
+  box-shadow: none;
+}
+.dropdown-button:focus {
+  outline: none;
+}
 
 .dropdown-button:before {
   content: "";
@@ -79,6 +91,29 @@ li:hover {
   border: 10px solid;
   border-color: #00BCEB transparent transparent transparent;
   right: 0px;
-  top: 16px; }
+  top: 16px;
+}
 
-/*# sourceMappingURL=Dropdown.css.map */
+.delete-img {
+  width: 60%;
+  height: auto;
+  z-index: 5;
+  transform: rotate(45deg);
+  margin-top: 8.5px;
+}
+
+.delete-img-container {
+  display: table-cell;
+  height: 35px;
+  text-align: center;
+  width: 35px;
+  vertical-align: middle;
+  right: 0;
+  top: 0;
+  position: absolute;
+  border-left: 1px solid #DFDFDF;
+}
+.delete-img-container:hover {
+  cursor: pointer;
+  background-color: #FFCCCB;
+}

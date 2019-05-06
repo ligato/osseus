@@ -2,7 +2,7 @@ import React from 'react';
 import Swal from 'sweetalert2'
 
 import store from '../../../redux/store/index';
-import { setCurrProject } from "../../../redux/actions/index";
+import { setCurrProject, deleteProject } from "../../../redux/actions/index";
 
 import '../../../styles_CSS/Plugin/Header/Dropdown.css';
 
@@ -47,6 +47,17 @@ class Dropdown extends React.Component {
     }
   }
 
+  deleteProject = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log(event.currentTarget.dataset.id)
+    store.dispatch( deleteProject(store.getState().projects[event.currentTarget.dataset.id].projectName) )
+    store.getState().projects.splice(event.currentTarget.dataset.id,1);
+    this.forceUpdate()
+    flip = false;
+    
+  }
+
   //The logic of how this dropdown works is that the list is
   //shown and hidden based on the click of the dropdown button.
   render() {
@@ -62,7 +73,15 @@ class Dropdown extends React.Component {
                   onClick={this.handleDropdownClick}
                   key={index}
                 >
-                  {store.getState().projects[index].projectName}
+                  <div className="list-text">{store.getState().projects[index].projectName}</div>
+                  <div className="delete-img-container" 
+                    onClick={this.deleteProject}
+                    data-id={index}>
+                    <img
+                      src={'/images/close.png'}
+                      alt='close'
+                      className="delete-img"></img>
+                  </div>
                 </li>
               )
             })}

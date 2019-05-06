@@ -4,7 +4,7 @@
   position: absolute
   display: inline-block
   right: 82.5%
-  margin-top: -14px
+  margin-top: 1px
   width: 140.38px
  
 
@@ -20,8 +20,16 @@ ul
   box-shadow: 0px 8px 16px 0px $light_gray
   text-decoration: none
   position: absolute
-  overflow: visible
   cursor: pointer
+
+.list-text
+  padding: 8px 6px 8px 16px
+  margin-right: 35px
+  overflow: hidden
+  &:hover 
+    cursor: pointer
+    background-color: $whitish
+    color: #3C73B7
   
 li a 
   color: #00BCEB
@@ -30,7 +38,6 @@ li a
   cursor: pointer
 
 li 
-  padding: 8px 16px
   border-bottom: 1px solid $whitish
   position: relative
   cursor: pointer
@@ -38,12 +45,6 @@ li
 
 li:last-child 
   border-bottom: none
-  position: relative
-  cursor: pointer
-
-li:hover 
-  background-color: $whitish
-  color: #3C73B7
   position: relative
   cursor: pointer
 
@@ -68,8 +69,7 @@ li:hover
   position: relative
   &:hover 
     cursor: pointer
-    text-decoration: underline
-    
+    text-decoration: underline 
   &:active 
     box-shadow: none
   &:focus 
@@ -84,4 +84,26 @@ li:hover
   border-color: #00BCEB transparent transparent transparent
   right: 0px
   top: 16px
+
+.delete-img 
+  width: 60%
+  height: auto
+  z-index: 5
+  transform: rotate(45deg)
+  margin-top: 8.5px
+
+.delete-img-container
+  display: table-cell
+  height: 35px
+  text-align: center
+  width: 35px
+  vertical-align: middle
+  right: 0
+  top: 0
+  position: absolute
+  border-left: 1px solid #DFDFDF
+  &:hover 
+    cursor: pointer
+    background-color: #FFCCCB
+
 

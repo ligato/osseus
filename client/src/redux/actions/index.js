@@ -5,6 +5,8 @@ import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
 import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { GENERATE_CURR_PROJECT } from "../constants/action-types";
 import { DELIVER_GENERATED_TAR } from "../constants/action-types";
+import { DELETE_PROJECT } from "../constants/action-types";
+import { LOAD_ALL_PROJECTS } from "../constants/action-types";
 
 export function addCurrProject(payload) {
   return { type: ADD_CURR_PROJECT, payload };
@@ -32,4 +34,12 @@ export function generateCurrProject(payload) {
 
 export function deliverGeneratedTar(payload) {
   return { type: DELIVER_GENERATED_TAR, payload };
+}
+
+export function deleteProject(payload) {
+  return { type: DELETE_PROJECT, payload }; 
+}
+
+export function loadAllProjects(payload) {
+  return { type: LOAD_ALL_PROJECTS, payload };
 }

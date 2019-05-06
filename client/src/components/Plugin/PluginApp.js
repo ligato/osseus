@@ -7,13 +7,13 @@ import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
 import Header from './Header/Header';
 import store from '../../redux/store/index';
-import { setCurrProject } from "../../redux/actions/index";
+import { setCurrProject, loadAllProjects } from "../../redux/actions/index";
 
 let pluginModule = require('../Model');
 let visiblityArray;
 const OFFSET = buildOFFSET();
-store.dispatch( setCurrProject(pluginModule.project));
-
+let loaded = false;
+store.dispatch( setCurrProject(pluginModule.project) );
 
 class PluginApp extends React.Component {
   constructor() {
@@ -28,6 +28,10 @@ class PluginApp extends React.Component {
     this.handleLoadedProject = this.handleLoadedProject.bind(this);
     this.newProjectName = this.newProjectName.bind(this);
     visiblityArray = buildVisiblityArray(this.state.pluginPickedArray)
+    if(!loaded) {
+      store.dispatch( loadAllProjects() );
+      loaded = true;
+    }
   }
     
   handlePluginData = (index) => {
