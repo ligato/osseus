@@ -54,6 +54,13 @@ func (pr *{{.ProjectName}}) String() string {
     return "{{.ProjectName}}"
 }
 
+{{- if .IdxMapExists}}
+// IndexFunction is used in idx map, returns map field->values for a given item.
+type IndexFunction func(item interface{}) map[string][]string{
+    return nil
+}
+{{- end}}
+
 func main() {
     {{.ProjectName}} := New()
 

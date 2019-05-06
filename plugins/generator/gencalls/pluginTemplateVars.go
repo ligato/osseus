@@ -17,11 +17,11 @@ const (
 	prometheusInit = `Prometheus:    &prometheus.DefaultPlugin,`
 
 	// Etcd
+	//assuming the kvstore tutorial method; not newEtcdConnectionWithBytes()
 	etcdImport = `"github.com/ligato/cn-infra/db/keyval"
     "github.com/ligato/cn-infra/db/keyval/etcd"`
 	etcdDecl = `KVStore    keyval.KvProtoPlugin`
 	etcdInit = `KVStore:    &etcd.DefaultPlugin,`
-	//assuming the kvstore tutorial method; not newEtcdConnectionWithBytes
 
 	// Redis
 	redisImport = `"github.com/ligato/cn-infra/db/keyval/redis"`
@@ -74,8 +74,6 @@ const (
     "github.com/ligato/cn-infra/idxmap/mem"`
 	idxMapDecl = `mapping    idxmap.NamedMappingRW`
 	idxMapInit = `mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction)`
-	//todo add: type IndexFunction func(item interface{}) map[string][]string{ return nil}
-
 
 // Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
@@ -99,7 +97,7 @@ var AllPlugins = map[string][]string{
 	"redis":     []string{redisImport, redisDecl, redisInit},
 	"cassandra": []string{cassandraImport,cassandraDecl, cassandraInit},
 	"consul":      []string{consulImport, consulDecl, consulInit},
-	//"logrus":      []string{lorgrusImport, logrusDecl, logrusInit},
+	"logrus":      []string{logrusImport, logrusDecl, logrusInit},
 	"log mngr":      []string{logMgrImport, logMgrDecl, logMgrInit},
 	"stts check":      []string{statusImport, statusDecl, statusInit},
 	"probe":      []string{probeImport, probeDecl, probeInit},
