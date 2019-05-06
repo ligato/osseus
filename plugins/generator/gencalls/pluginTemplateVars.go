@@ -8,19 +8,20 @@ const (
 
 	// GRPC
 	grpcImport = `"github.com/ligato/cn-infra/rpc/grpc"`
-	grpcRef = `GRPC`
-	grpc = `grpc`
+	grpcDecl = `GRPC    grpc.Server`
+	grpcInit = `GRPC:    &grpc.DefaultPlugin,`
 
 	// Prometheus
 	prometheusImport = `"github.com/ligato/cn-infra/rpc/prometheus"`
-	prometheusRef = `Prometheus`
-	prometheus = `prometheus`
-	//todo prometheus uses .API
+	prometheusDecl = `Prometheus    prometheus.API`
+	prometheusInit = `Prometheus:    &prometheus.DefaultPlugin,`
 
 	// Etcd
-	etcdImport = `"github.com/ligato/cn-infra/db/keyval/etcd"`
-	etcdRef = `ETCDDataSync`
-	etcd = `etcd`
+	etcdImport = `"github.com/ligato/cn-infra/db/keyval"
+    "github.com/ligato/cn-infra/db/keyval/etcd"`
+	etcdDecl = `KVStore    keyval.KvProtoPlugin`
+	etcdInit = `KVStore:    &etcd.DefaultPlugin,`
+	//assuming the kvstore tutorial method; not newEtcdConnectionWithBytes
 
 	// Redis
 	redisImport = `"github.com/ligato/cn-infra/db/keyval/redis"`
@@ -39,8 +40,8 @@ const (
 
 	// Logrus
 	logrusImport = ``
-	logrusRef = ``
-	logrus = ``
+	logrusDecl = `Logrus    logging.Logger`
+	logrusInit = `Logrus:    log.DefaultLogger(),`
 
 	// Log Manager
 	logMgrImport = `"github.com/ligato/cn-infra/logging/logmanager"`
@@ -49,9 +50,8 @@ const (
 
 	// Status Check
 	statusImport = `"github.com/ligato/cn-infra/health/statuscheck"`
-	statusRef = `StatusCheck`
-	status = `statuscheck`
-	//todo StatusCheck  statuscheck.StatusReader
+	statusDecl = `StatusCheck    statuscheck.StatusReader`
+	statusInit = `StatusCheck:    &statuscheck.DefaultPlugin,`
 
 	// Probe
 	probeImport = `"github.com/ligato/cn-infra/health/probe"`
@@ -59,11 +59,10 @@ const (
 	probeInit = `Probe:    &probe.DefaultPlugin,`
 
 	// Kafka
-	kafkaImport = `"github.com/ligato/cn-infra/messaging/kafka"`
-	kafkaRef = `Kafka`
-	kafka = `kafka`
-	//todo 			Kafka messaging.Mux (import "github.com/ligato/cn-infra/messaging")
-	//Kafka:         &kafka.DefaultPlugin
+	kafkaImport = `"github.com/ligato/cn-infra/messaging/kafka"
+    "github.com/ligato/cn-infra/messaging"`
+	kafkaDecl = `Kafka    messaging.Mux`
+	kafkaInit = `Kafka:    &kafka.DefaultPlugin,`
 
 	// Datasync/Resync
 	resyncImport = `"github.com/ligato/cn-infra/datasync/resync"`
@@ -75,7 +74,7 @@ const (
     "github.com/ligato/cn-infra/idxmap/mem"`
 	idxMapDecl = `mapping    idxmap.NamedMappingRW`
 	idxMapInit = `mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction)`
-	//type IndexFunction func(item interface{}) map[string][]string
+	//todo add: type IndexFunction func(item interface{}) map[string][]string{ return nil}
 
 
 // Service Label
@@ -94,17 +93,17 @@ const (
 // used for lookup of a plugin's attributes
 var AllPlugins = map[string][]string{
 	"rest api":      []string{restImport, restDecl, restInit},
-	//"grpc":      []string{restImport, restDecl, restInit},
-	//"prometheus":      []string{restImport, restRef, rest},
-	//"etcd":      []string{etcdImport, etcdRef, etcd},
+	"grpc":      []string{grpcImport, grpcDecl, grpcInit},
+	"prometheus":      []string{prometheusImport, prometheusDecl, prometheusInit},
+	"etcd":      []string{etcdImport, etcdDecl, etcdInit},
 	"redis":     []string{redisImport, redisDecl, redisInit},
 	"cassandra": []string{cassandraImport,cassandraDecl, cassandraInit},
 	"consul":      []string{consulImport, consulDecl, consulInit},
-	//"logrus":      []string{restImport, restRef, rest},
+	//"logrus":      []string{lorgrusImport, logrusDecl, logrusInit},
 	"log mngr":      []string{logMgrImport, logMgrDecl, logMgrInit},
-	//"stts check":      []string{restImport, restRef, rest},
+	"stts check":      []string{statusImport, statusDecl, statusInit},
 	"probe":      []string{probeImport, probeDecl, probeInit},
-	//"kafka":      []string{restImport, restRef, rest},
+	"kafka":      []string{kafkaImport, kafkaDecl, kafkaInit},
 	"datasync":    []string{resyncImport, resyncDecl, resyncInit},
 	"idx map":      []string{idxMapImport, idxMapDecl, idxMapInit},
 	"srvc label":      []string{serviceLblImport, serviceLblDecl, serviceLblInit},
