@@ -15,7 +15,6 @@
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-const cors = require('cors');
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
 const fs = require('fs')
@@ -87,8 +86,6 @@ io.on('connection', socket => {
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works
         webHooks.add('etcd', 'http://localhost:2379/v3beta/kv/range')
-            .then(console.log("Watch Webhook Set"))
-            .catch(e => console.debug(e))
 
         // Trigger webhook & send WATCH request
         webHooks.trigger('etcd', { key: base64Key })
@@ -112,17 +109,17 @@ io.on('connection', socket => {
                 if (err) throw err;
             });
 
-            //Deletes out-of-range ascii characters from file
+            // Deletes out-of-range ascii characters from file
             fs.readFile('public/code.txt', 'utf8', function (err, data) {
                 if (err) {
                     return console.log(err);
                 }
 
-                //Removal of anything not ascii
+                // Removal of anything not ascii
                 var withoutNull = data.replace(/[\x00]/g, "");
                 var withoutMetadata = removeMetadata(withoutNull);
 
-                //Captures results and writes it back to file
+                // Captures results and writes it back to file
                 let result = withoutMetadata.join('\n');
                 fs.writeFile('public/code.txt', result, 'utf8', function (err) {
                     if (err) return console.log(err);
