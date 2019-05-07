@@ -27,14 +27,14 @@
   width: 82.5%;
   right: 0;
   color: #00BCEB;
-  background-color: #DFDFDF;
+  background-color: blue;
   background: #DFDFDF;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   display: flex;
   justify-content: center;
   opacity: 1;
-  overflow: scroll; }
+  overflow: scroll;}
 
 .gencode {
   font: 16px; }

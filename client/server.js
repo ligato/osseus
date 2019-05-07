@@ -119,16 +119,32 @@ io.on('connection', socket => {
             console.log(JSON.stringify(buffer.toString()))
 
             // Displays code to frontend
-            fs.writeFile('public/code.go', buffer.toString(), function (err) {
+            fs.writeFile('public/code.txt', buffer.toString(), function (err) {
                 if (err) throw err;
                 console.log('Created code.txt');
+            });
+
+            //Deletes out-of-range ascii characters from file
+            fs.readFile('public/code.txt', 'utf8', function (err,data) {
+                if (err) {
+                  return console.log(err);
+                }
+
+                //Removal of anything not ascii
+                var withoutNull = data.replace(/[\x00]/g, "");
+                var withoutMetadata = removeMetadata(withoutNull);
+
+                //Captures results and writes it back to file
+                let result = withoutMetadata.join('\n');
+                fs.writeFile('public/code.txt', result, 'utf8', function (err) {
+                   if (err) return console.log(err);
+                });
             });
 
             // Create tar folder
             fs.writeFile('public/template.tgz', buffer, function (err) {
                 console.log('Created template.tgz');
             });
-
         })
 
         // emitter.once('etcd.failure', (name, statusCode, body) => {
@@ -138,3 +154,14 @@ io.on('connection', socket => {
 })
 
 server.listen(8000, () => console.log('connected to port 8000!'))
+
+// Removes first and last lines of file. These lines contain extra metadata created
+// by the generator, for display these tend to confuse the code highlighter
+function removeMetadata(file) {
+    let fileByLines = file.split('\n');
+    fileByLines.splice(-1, 1);
+    fileByLines.splice(0, 1);
+    fileByLines.unshift(' ', ' ');
+    fileByLines.push('}');
+    return fileByLines;
+}
