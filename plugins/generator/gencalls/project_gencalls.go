@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"encoding/base64"
+	"fmt"
 	"log"
 	"strings"
 	"text/template"
@@ -24,12 +25,13 @@ type pluginAttr struct {
 
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
-	encodedFile := d.createTar(val)
-
+	//encodedFile := d.createTar(val)
+	//temp
+	tempmain := d.fillTemplate(val)
 	// Create template
 	data := &model.Template{
 		Name:    val.GetProjectName(),
-		TarFile: encodedFile,
+		TarFile: tempmain,
 	}
 
 	// Put new value in etcd
@@ -83,6 +85,8 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 
 	er = t.Execute(&genCode, data)
 	check(er)
+
+	fmt.Println("temp contents of main go file", genCode.String())
 
 	return genCode.String()
 }

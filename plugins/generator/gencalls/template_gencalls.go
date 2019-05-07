@@ -72,6 +72,6 @@ func main() {
 }
 
 func init() {
-	log.DefaultLogger().SetOutput(os.Stdout)
-	log.DefaultLogger().SetLevel(logging.DebugLevel)
+    log.DefaultLogger().SetOutput(os.Stdout)
+    log.DefaultLogger().SetLevel(logging.DebugLevel)
 }`

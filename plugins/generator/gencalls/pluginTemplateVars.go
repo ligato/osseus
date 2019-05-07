@@ -35,7 +35,7 @@ const (
 
 	// Consul
 	consulImport = `"github.com/ligato/cn-infra/db/keyval/consul"`
-	consulDecl = `Consul:    *consul.Plugin`
+	consulDecl = `Consul    *consul.Plugin`
 	consulInit = `Consul:    &consul.DefaultPlugin,`
 
 	// Logrus
