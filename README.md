@@ -25,7 +25,7 @@ docker build --force-rm=true -t agent --build-arg AGENT_COMMIT=2c2b0df32201c9bc8
 docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:latest /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
 ```
 
-### Lastly, run UI and Agent:
+### Lastly, run the UI and Agent:
 ```bash
 # Agent
 docker run -p 9191:9191 agent
@@ -35,7 +35,7 @@ docker run ui
 ```
 
 **NOTE:**
-To test everything is working properly, first make sure that there are no errors in any of the build processes or when the containers start up. Then, go to the local network endpoint where the **ui** is displayed, click new project, choose some plugins & click "save project". You'll then see Agent go through transactions and can double check that the k-v pairs were stored successfully in etcd by running ```etcdctl get --from-key ''```.
+To test everything is working properly, first make sure that there are no errors in any of the build processes or when the containers start up. Then, go to the local network endpoint where the **UI** is displayed, choose some plugins & click "Generate". You'll then see the Agent go through transactions and can double check that the k-v pairs were stored successfully in etcd by running ```etcdctl get --from-key ''``` in a separate terminal.
 
 ## Documentation
 
@@ -43,12 +43,12 @@ Detailed documentation can be found [here](https://github.com/ligato/osseus/tree
 
 ## Architecture
 
-Osseus is built utilizing the CN-Infra framework, which provides plugin/library support and a plugin lifecycle management platform. We have each part of our application broken up into a microservice of it's own: UI, Agent, and KV. By taking advantage of containerization with Docker, we are able to improve scalability, resiliency from failing components, maintainability, and many more aspects as opposed to monolithic design.
+Osseus is built utilizing the CN-Infra framework, which provides plugin/library support and a plugin lifecycle management platform. We have each part of our application broken up into a microservice of it's own: Frontend, Agent, and Key-Value Store (ETCD). By taking advantage of containerization with Docker, we are able to improve scalability, resiliency from failing components, maintainability, and many more aspects as opposed to monolithic design.
 
 The architecture of the Osseus web application is shown below:
 
 <p align="center">
-    <img src="docs/img/Architecture.png" alt="Osseus Architecture">
+    <img src="docs/img/ColorArchitecture.png" alt="Osseus Architecture">
 </p>
 
 Osseus uses React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with the CN-Infra platform, where we are able to use packages that are built for ease-of-use in the design of our generator and restapi plugins. Lastly, ETCD allows for multiversion persistent key-value storage & is commonly used for data that is not frequently updated; there is also many plugins/libraries that support ETCD through the CN-Infra framework.
