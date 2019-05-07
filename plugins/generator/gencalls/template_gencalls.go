@@ -9,24 +9,28 @@ import (
     "github.com/ligato/cn-infra/agent"
     "github.com/ligato/cn-infra/logging"
     log "github.com/ligato/cn-infra/logging/logrus"
-{{range .PluginAttributes -}}
-    {{.ImportPath}}
+{{- range .PluginAttributes}}
+    {{.ImportPath -}}
 {{- end}}
 )
 
 // {{.ProjectName}} is a struct holding internal data for the {{.ProjectName}} Agent
 type {{.ProjectName}} struct {
-{{range .PluginAttributes}}
-    {{.ReferenceName}}    *{{.Identifier}}.Plugin
-{{end}}
+{{- range .PluginAttributes}}
+    {{.Declaration}}
+{{- end}}
 }
 
 // New creates new {{.ProjectName}} instance.
 func New() *{{.ProjectName}} {
     return &{{.ProjectName}} {
-{{range .PluginAttributes}}
-    {{.ReferenceName}}: &{{.Identifier}}.DefaultPlugin,
-{{end}}		
+{{- range .PluginAttributes}}
+{{- if eq .Initialization "config"}}
+        PluginConfig: config.ForPlugin("{{$.ProjectName}}"),
+{{- else}}
+        {{.Initialization}}
+{{- end}}
+{{- end}}
     }
 }
 
@@ -49,6 +53,13 @@ func (pr *{{.ProjectName}}) Close() error {
 func (pr *{{.ProjectName}}) String() string {
     return "{{.ProjectName}}"
 }
+
+{{- if .IdxMapExists}}
+// IndexFunction is used in idx map, returns map field->values for a given item.
+type IndexFunction func(item interface{}) map[string][]string{
+    return nil
+}
+{{- end}}
 
 func main() {
     {{.ProjectName}} := New()

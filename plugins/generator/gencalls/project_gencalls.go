@@ -21,8 +21,8 @@ type fileEntry struct {
 
 type pluginAttr struct {
 	ImportPath    string
-	Identifier    string
-	ReferenceName string
+	Declaration    string
+	Initialization string
 }
 
 // GenAddProj creates a new generated template under the /template prefix
@@ -67,7 +67,7 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 		}
 	}
 
-	//get array of plugin structs [only imports for now]
+	//get array of plugin structs
 	PluginsList := d.createPluginStructs(val.Plugin)
 
 	t, er := template.New("main.go_template").Parse(goCodeTemplate)
@@ -77,10 +77,12 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	data := struct {
 		ProjectName      string
 		PluginAttributes []pluginAttr
-		Tab              string
+		// special case plugins
+		IdxMapExists     bool
 	}{
 		ProjectName:      val.GetProjectName(),
 		PluginAttributes: PluginsList,
+		IdxMapExists:     contains(val.Plugin,"idx map"),
 	}
 
 	er = t.Execute(&genCode, data)
@@ -101,12 +103,12 @@ func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAt
 		d.log.Debugf("plugin name: %v", name)
 
 		pluginImport := AllPlugins[name][0]
-		pluginReference := AllPlugins[name][1]
-		pluginIdentifier := AllPlugins[name][2]
+		pluginDecl := AllPlugins[name][1]
+		pluginInit := AllPlugins[name][2]
 		PluginTemplateVals := pluginAttr{
 			ImportPath:    pluginImport,
-			ReferenceName: pluginReference,
-			Identifier:    pluginIdentifier,
+			Declaration: pluginDecl,
+			Initialization:    pluginInit,
 		}
 		PluginsList = append(PluginsList, PluginTemplateVals)
 
@@ -176,6 +178,16 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
 
 	return encodedTar
+}
+
+// check if plugins slice contains plugin
+func contains(plugins []*model.Plugin, pluginName string) bool {
+	for _, pl := range plugins {
+		if strings.ToLower(pl.PluginName) == pluginName {
+			return true
+		}
+	}
+	return false
 }
 
 // temporary helper function to print/view contents of tar file
