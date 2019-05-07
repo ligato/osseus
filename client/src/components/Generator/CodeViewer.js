@@ -11,9 +11,9 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 * contain the generated code.
 */
 
-function FileHelper(path){
+function FileHelper(path) {
   let pathOfFileToReadFrom = path
-  FileHelper.readStringFromFileAtPath = pathOfFileToReadFrom  
+  FileHelper.readStringFromFileAtPath = pathOfFileToReadFrom
   let request = new XMLHttpRequest();
   request.open("GET", pathOfFileToReadFrom, false);
   request.send(null);
@@ -23,7 +23,7 @@ function FileHelper(path){
 
 
 
-const codeString = FileHelper( "code.txt" );
+const codeString = FileHelper("code.txt");
 
 class CodeViewer extends React.Component {
   constructor(props) {
@@ -32,12 +32,12 @@ class CodeViewer extends React.Component {
       text: null
     };
   }
-  
+
   render() {
     return (
       <div className="body">
         <div className="split right-viewer">
-        <SyntaxHighlighter className="gencode" language='javascript' style={coy}>{codeString}</SyntaxHighlighter>
+          <SyntaxHighlighter className="gencode" language="go" style={coy}>{codeString}</SyntaxHighlighter>
         </div>
       </div>
     );

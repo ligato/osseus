@@ -45,8 +45,9 @@ io.on('connection', socket => {
     //Deletes the selected project from the KV store
     socket.on('DELETE_PROJECT_FROM_KV', state => {
         console.log(state)
-        fetch(`http://0.0.0.0:9191/v1/projects/${state}`)
-            .then(res => console.log(res.body))
+        fetch(`http://0.0.0.0:9191/v1/projects/${state}`, {
+            method: "DELETE",
+        })
     })
 
     // Generates current project
@@ -65,7 +66,7 @@ io.on('connection', socket => {
         state.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/testkey`, {
+        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -76,63 +77,63 @@ io.on('connection', socket => {
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
 
         // Webhook listener
-        // const etcdPut = 'etcdPut'
-        const etcdWatch = 'etcdWatch'
+        const etcd = 'etcd'
 
         // Initialize webhook
         const webHooks = new Webhooks({
-            db: './webHooksDB.json',
+            db: '../webhookDB.json',
         })
 
         // Encode key
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/testkey`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${state.projectName}`).toString('base64')
 
         // Add webhook watcher onto etcd /template keys
-        // webHooks.add(etcdPut, 'http://localhost:2379/v3beta/kv/put')
+        // webHooks.add(etcd, 'http://localhost:2379/v3beta/watch')
         //     .then(console.log("Put Webhook Set"))
         //     .catch(e => console.debug(e))
 
-        webHooks.add(etcdWatch, 'http://localhost:2379/v3beta/watch')
+        // Add webhook to GET value from specified project key
+        webHooks.add(etcd, 'http://localhost:2379/v3beta/kv/range')
             .then(console.log("Watch Webhook Set"))
             .catch(e => console.debug(e))
 
         // Trigger webhook & send watch request
-        // webHooks.trigger(etcdPut, { key: base64Key, value: 'dGVtcA==' })
-        webHooks.trigger(etcdWatch, { key: base64Key })
+        // webHooks.trigger(etcd, { key: base64Key })
+
+        // Trigger webhook & send GET request
+        webHooks.trigger(etcd, { key: base64Key })
 
         // Shows emitted events
         const emitter = webHooks.getEmitter()
-        emitter.once('etcdWatch.failure', (name, statusCode, body) => {
-            console.log('FAILURE triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
-        })
-
-        emitter.once('etcdWatch.success', (name, statusCode, response) => {
-            console.log('SUCCESS triggering webHook ' + name + ' with status code', statusCode, 'and body', response)
-
+        emitter.once('etcd.success', (name, statusCode, body) => {
             // Create object from string response
-            const body = JSON.parse(response)
-            console.log(body)
+            const data = JSON.parse(body)
 
-            // // Decode value
-            // let value = body.kvs[0].value.toString()
-            // value = Buffer.from(value, 'base64')
+            // Decode value
+            let value = data.kvs[0].value.toString()
+            value = Buffer.from(value, 'base64')
 
-            // // Decode tar
-            // let buffer = JSON.parse(value)
-            // buffer = Buffer.from(buffer.tar_file, 'base64')
+            // Decode tar
+            let buffer = JSON.parse(value)
+            buffer = Buffer.from(buffer.tar_file, 'base64')
+            console.log(JSON.stringify(buffer.toString()))
 
-            // // Displays code to frontend
-            // fs.appendFile('public/code.txt', buffer, function (err) {
-            //     if (err) throw err;
-            //     console.log('Saved!');
-            // });
+            // Displays code to frontend
+            fs.writeFile('public/code.go', buffer.toString(), function (err) {
+                if (err) throw err;
+                console.log('Created code.txt');
+            });
 
-            // // Create tar folder
-            // fs.appendFile('public/template.tgz', buffer, function (err) {
-            //     console.log('Saved!');
-            // });
+            // Create tar folder
+            fs.writeFile('public/template.tgz', buffer, function (err) {
+                console.log('Created template.tgz');
+            });
 
         })
+
+        // emitter.once('etcd.failure', (name, statusCode, body) => {
+        //     console.log('FAILURE triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
+        // })
     })
 })
 
