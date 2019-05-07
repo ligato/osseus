@@ -76,32 +76,22 @@ io.on('connection', socket => {
         const result = await generate
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
 
-        // Webhook listener
-        const etcd = 'etcd'
-
         // Initialize webhook
         const webHooks = new Webhooks({
             db: '../webhookDB.json',
         })
 
-        // Encode key
+        // Encode key to base64
         const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${state.projectName}`).toString('base64')
 
-        // Add webhook watcher onto etcd /template keys
-        // webHooks.add(etcd, 'http://localhost:2379/v3beta/watch')
-        //     .then(console.log("Put Webhook Set"))
-        //     .catch(e => console.debug(e))
-
-        // Add webhook to GET value from specified project key
-        webHooks.add(etcd, 'http://localhost:2379/v3beta/kv/range')
+        // Add webhook to get value from specified project key
+        // (TODO) Figure out why /v3beta/watch no longer works
+        webHooks.add('etcd', 'http://localhost:2379/v3beta/kv/range')
             .then(console.log("Watch Webhook Set"))
             .catch(e => console.debug(e))
 
-        // Trigger webhook & send watch request
-        // webHooks.trigger(etcd, { key: base64Key })
-
-        // Trigger webhook & send GET request
-        webHooks.trigger(etcd, { key: base64Key })
+        // Trigger webhook & send WATCH request
+        webHooks.trigger('etcd', { key: base64Key })
 
         // Shows emitted events
         const emitter = webHooks.getEmitter()
@@ -116,24 +106,19 @@ io.on('connection', socket => {
             // Decode tar
             let buffer = JSON.parse(value)
             buffer = Buffer.from(buffer.tar_file, 'base64')
-            console.log(JSON.stringify(buffer.toString()))
 
             // Displays code to frontend
-            fs.writeFile('public/code.go', buffer.toString(), function (err) {
+            fs.writeFile('public/code.txt', buffer.toString(), function (err) {
                 if (err) throw err;
-                console.log('Created code.txt');
             });
 
             // Create tar folder
             fs.writeFile('public/template.tgz', buffer, function (err) {
-                console.log('Created template.tgz');
+                if (err) throw err;
             });
 
+            console.log("Tar file generation complete")
         })
-
-        // emitter.once('etcd.failure', (name, statusCode, body) => {
-        //     console.log('FAILURE triggering webHook ' + name + ' with status code', statusCode, 'and body', body)
-        // })
     })
 })
 

@@ -20,7 +20,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
 
@@ -29,37 +28,43 @@ import (
 	"github.com/unrolled/render"
 )
 
-const genPrefix = "/vnf-agent/vpp1/config/generator/v1/project/"
-const projectsPrefix = "/projects/v1/plugins/"
+const (
+	genPrefix      = "/vnf-agent/vpp1/config/generator/v1/project/"
+	projectsPrefix = "/projects/v1/plugins/"
+)
 
+// Response struct from etcd
 type Response struct {
 	ProjectName string
 	Plugins     []Plugins
 }
+
+// Plugins struct to marshal input
 type Plugins struct {
 	PluginName string
-	Id         int32
+	ID         int32
 	Selected   bool
 	Port       int32
 }
 
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
-
-	//save project state
+	// save project state
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
-	//load project state for project with name = {id}
+	// load project state for project with name = {id}
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
 	// delete a project
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
-	//save project plugins to generate code
+	// save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
 }
 
-//registers handler for /v1/projects/ save endpoint
+// SaveProjectHandler handles saving projects to etcd
 func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		var reqParam Response
 
+		// Capture request body
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
@@ -68,7 +73,7 @@ func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		var reqParam Response
+		// Store JSON into Response struct
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -77,55 +82,50 @@ func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		p.SaveProject(reqParam)
+		// Store project in etcd under project prefix
+		p.genUpdater(reqParam, projectsPrefix, reqParam.ProjectName)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
 
+// LoadProjectHandler loads a project from etcd
 func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		// Retrieve value from etcd
 		vars := mux.Vars(req)
-		pId := vars["id"]
-		projectInfo, err := p.LoadProject(pId)
-		if err != nil {
-			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
-			return
-		}
+		pID := vars["id"]
+		projectInfo := p.getValue(projectsPrefix, pID)
 
+		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
-		projectJson, _ := json.Marshal(projectInfo)
+		projectJSON, _ := json.Marshal(projectInfo)
 		// projectJson := json.NewEncoder(w).Encode(projectInfo)
-		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
-
+		p.logError(formatter.JSON(w, http.StatusOK, projectJSON))
 	}
 }
 
+// DeleteProjectHandler deletes a stored project from etcd
 func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		// Delete value from etcd
 		vars := mux.Vars(req)
-		pId := vars["id"]
-		projectInfo, err := p.DeleteProject(pId)
-		if err != nil {
-			errMsg := fmt.Sprintf("500 Internal server error: request failed: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusInternalServerError, errMsg))
-			return
-		}
+		pID := vars["id"]
+		projectInfo := p.deleteValue(projectsPrefix, pID)
 
+		// Return status back to client
 		w.Header().Set("Content-Type", "application/json")
-		projectJson := json.NewEncoder(w).Encode(projectInfo)
-		p.logError(formatter.JSON(w, http.StatusOK, projectJson))
-
+		projectJSON := json.NewEncoder(w).Encode(projectInfo)
+		p.logError(formatter.JSON(w, http.StatusOK, projectJSON))
 	}
 }
 
-//registers handler for generate endpoint
+// GenerateHandler handles generating a new template project
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		var reqParam Response
 
+		// Capture request body
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
@@ -134,7 +134,7 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		var reqParam Response
+		// Store JSON into Response struct
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -143,51 +143,20 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
+		// Send project to trigger template generator
 		vars := mux.Vars(req)
-		pId := vars["id"]
-		p.SavePluginsToGenerate(reqParam, pId)
+		pID := vars["id"]
+		p.genUpdater(reqParam, genPrefix, pID)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
 	}
 }
 
-// handler for default path, displays message to verify if server endpoint is up
-func (p *Plugin) GetServerStatus() (interface{}, error) {
-	p.Log.Debug("REST API default home endpoint is up")
-	return "Ligato-gen server is up", nil
-}
-
-//save project
-func (p *Plugin) SaveProject(response Response) (interface{}, error) {
-	p.Log.Debug("REST API post /v1/projects save project reached")
-	p.genUpdater(response, projectsPrefix, response.ProjectName)
-	return response, nil
-}
-
-//get project from given id
-func (p *Plugin) LoadProject(projectId string) (interface{}, error) {
-	p.Log.Debug("REST API Get /v1/projects/{id} load project reached with id: ", projectId)
-	projectValue := p.getValue(projectsPrefix, projectId)
-	return projectValue, nil
-}
-
-// delete project with given id
-func (p *Plugin) DeleteProject(projectId string) (interface{}, error) {
-	p.Log.Debug("REST API Del /v1/projects/{id} delete project reached with id: ", projectId)
-	projectValue := p.deleteValue(projectsPrefix, projectId)
-	return projectValue, nil
-}
-
-func (p *Plugin) SavePluginsToGenerate(response Response, projectId string) (interface{}, error) {
-	p.Log.Debug("REST API post /v1/templates generator plugin reached")
-	p.genUpdater(response, genPrefix, projectId)
-	return response, nil
-}
-
-//updates the prefix key with the given response
+// updates the prefix key with the given response
 func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	broker := p.KVStore.NewBroker(prefix)
 
+	// Get value based on key
 	value := new(model.Project)
 	pluginval := new(model.Plugin)
 	found, _, err := broker.GetValue(key, value)
@@ -200,18 +169,14 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 		p.Log.Infof("Found some plugins: %+v", value)
 	}
 
-	// Wait few seconds
-	time.Sleep(time.Second * 2)
-
-	p.Log.Infof("updating..")
-
 	// Prepare data
 	var pluginsList []*model.Plugin
 
+	// Create a Plugins list that will be stored in etcd
 	for i := 0; i < len(response.Plugins); i++ {
 		pluginval = &model.Plugin{
 			PluginName: response.Plugins[i].PluginName,
-			Id:         response.Plugins[i].Id,
+			Id:         response.Plugins[i].ID,
 			Selected:   response.Plugins[i].Selected,
 			Port:       response.Plugins[i].Port,
 		}
@@ -227,14 +192,15 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
-	p.Log.Debugf("kv store should have %v at key %v", value, key)
+	p.Log.Debugf("kv store should have (key) %v at (prefix) %v", key, prefix)
 }
 
 // returns the value at specified key
 func (p *Plugin) getValue(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
-	value := new(model.Project)
 
+	// Get value based on key
+	value := new(model.Project)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -247,15 +213,17 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 
 	var pluginsList []Plugins
 
+	// Create a Plugins list that will be stored in etcd
 	for i := 0; i < len(value.Plugin); i++ {
 		pluginval := Plugins{
 			PluginName: value.Plugin[i].PluginName,
-			Id:         value.Plugin[i].Id,
+			ID:         value.Plugin[i].Id,
 			Selected:   value.Plugin[i].Selected,
 			Port:       value.Plugin[i].Port,
 		}
 		pluginsList = append(pluginsList, pluginval)
 	}
+
 	project := Response{
 		ProjectName: value.ProjectName,
 		Plugins:     pluginsList,
@@ -268,10 +236,10 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 func (p *Plugin) deleteValue(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 	existed, err := broker.Delete(key)
-
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return existed
 }
 

@@ -57,7 +57,6 @@ func NewTemplateDescriptor(log logging.PluginLogger) *kvs.KVDescriptor {
 
 // Create creates new value.
 func (d *TemplateDescriptor) Create(key string, value *model.Template) (metadata interface{}, err error) {
-	d.log.Infof("New Data, Key: %q Value: %+v", key, value)
 	return nil, nil
 }
 

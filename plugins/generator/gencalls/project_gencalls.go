@@ -4,10 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"encoding/base64"
-	"fmt"
-	"io"
 	"log"
-	"os"
 	"strings"
 	"text/template"
 
@@ -20,7 +17,7 @@ type fileEntry struct {
 }
 
 type pluginAttr struct {
-	ImportPath    string
+	ImportPath     string
 	Declaration    string
 	Initialization string
 }
@@ -41,7 +38,6 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 		d.log.Errorf("Could not create template")
 		return err
 	}
-	d.log.Infof("Return data, Key: %q Value: %+v", val.GetProjectName(), data)
 
 	return nil
 }
@@ -78,17 +74,15 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 		ProjectName      string
 		PluginAttributes []pluginAttr
 		// special case plugins
-		IdxMapExists     bool
+		IdxMapExists bool
 	}{
 		ProjectName:      val.GetProjectName(),
 		PluginAttributes: PluginsList,
-		IdxMapExists:     contains(val.Plugin,"idx map"),
+		IdxMapExists:     contains(val.Plugin, "idx map"),
 	}
 
 	er = t.Execute(&genCode, data)
 	check(er)
-
-	d.log.Debug("generated code populated")
 
 	return genCode.String()
 }
@@ -100,15 +94,14 @@ func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAt
 	// Cycle through plugins & set import paths
 	for _, plugin := range plugins {
 		name := strings.ToLower(plugin.PluginName)
-		d.log.Debugf("plugin name: %v", name)
 
 		pluginImport := AllPlugins[name][0]
 		pluginDecl := AllPlugins[name][1]
 		pluginInit := AllPlugins[name][2]
 		PluginTemplateVals := pluginAttr{
-			ImportPath:    pluginImport,
-			Declaration: pluginDecl,
-			Initialization:    pluginInit,
+			ImportPath:     pluginImport,
+			Declaration:    pluginDecl,
+			Initialization: pluginInit,
 		}
 		PluginsList = append(PluginsList, PluginTemplateVals)
 
@@ -171,9 +164,6 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 		log.Fatal(err)
 	}
 
-	//temporary - debug tar file contents
-	d.readTarHelper(buf)
-
 	// Encode to base64 string
 	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
 
@@ -188,24 +178,4 @@ func contains(plugins []*model.Plugin, pluginName string) bool {
 		}
 	}
 	return false
-}
-
-// temporary helper function to print/view contents of tar file
-func (d *ProjectHandler) readTarHelper(buf bytes.Buffer) {
-	// Open and iterate through the files in the archive.
-	tr := tar.NewReader(&buf)
-	for {
-		hdr, err := tr.Next()
-		if err == io.EOF {
-			break // End of archive
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("Contents of %s:\n", hdr.Name)
-		if _, err := io.Copy(os.Stdout, tr); err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println()
-	}
 }

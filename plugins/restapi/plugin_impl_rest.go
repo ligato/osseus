@@ -11,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 
 package restapi
 
@@ -29,19 +28,10 @@ import (
 
 // REST api methods
 const (
-	GET  = http.MethodGet
-	POST = http.MethodPost
+	GET    = http.MethodGet
+	POST   = http.MethodPost
 	DELETE = http.MethodDelete
 )
-
-// RegisterFlags registers command line flags.
-func RegisterFlags() {
-	// TODO: add command line flags here
-}
-
-func init() {
-	RegisterFlags()
-}
 
 // Plugin holds the internal data structures of the Rest Plugin
 type Plugin struct {
@@ -53,15 +43,11 @@ type Deps struct {
 	infra.PluginDeps
 	HTTPHandlers rest.HTTPHandlers
 	KVStore      keyval.KvProtoPlugin
-	watchCloser  chan string
 }
 
 // Init initializes the Rest Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
-	if p.KVStore.Disabled() {
-		p.Log.Error("KV store is disabled")
-	}
 	return nil
 }
 
