@@ -29,7 +29,7 @@ const (
 	redisInit = `Redis:    &redis.DefaultPlugin,`
 
 	// Cassandra
-	cassandraImport = `"github.com/ligato/cn-infra/db/keyval/cassandra"`
+	cassandraImport = `"github.com/ligato/cn-infra/db/sql/cassandra"`
 	cassandraDecl = `Cassandra    *cassandra.Plugin`
 	cassandraInit = `Cassandra:    &cassandra.DefaultPlugin,`
 
@@ -73,7 +73,7 @@ const (
 	idxMapImport = `"github.com/ligato/cn-infra/idxmap"
     "github.com/ligato/cn-infra/idxmap/mem"`
 	idxMapDecl = `mapping    idxmap.NamedMappingRW`
-	idxMapInit = `mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction)`
+	idxMapInit = `mapping:    mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction),`
 
 // Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`

@@ -6,6 +6,7 @@ const goCodeTemplate = `
 package main
 
 import (
+    "os"
     "github.com/ligato/cn-infra/agent"
     "github.com/ligato/cn-infra/logging"
     log "github.com/ligato/cn-infra/logging/logrus"
@@ -56,7 +57,7 @@ func (pr *{{.ProjectName}}) String() string {
 
 {{- if .IdxMapExists}}
 // IndexFunction is used in idx map, returns map field->values for a given item.
-type IndexFunction func(item interface{}) map[string][]string{
+func IndexFunction(item interface{}) map[string][]string{
     return nil
 }
 {{- end}}
