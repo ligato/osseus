@@ -25,13 +25,12 @@ type pluginAttr struct {
 
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
-	//encodedFile := d.createTar(val)
-	//temp
-	tempmain := d.fillTemplate(val)
+
+	genCodeFile := d.fillTemplate(val)
 	// Create template
 	data := &model.Template{
 		Name:    val.GetProjectName(),
-		TarFile: tempmain,
+		TarFile: genCodeFile,
 	}
 
 	// Put new value in etcd
@@ -56,6 +55,9 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 	return nil
 }
 
+// fillTemplate inserts plugin variables and contents into code template
+// Template code can be found in template_gencalls.go
+// Plugin variables can be referenced in template_vars_gencalls.go
 func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	// Write variables into template
 	var genCode bytes.Buffer
@@ -75,7 +77,7 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	data := struct {
 		ProjectName      string
 		PluginAttributes []pluginAttr
-		// special case plugins
+		// special case plugins (with extra attributes)
 		IdxMapExists bool
 	}{
 		ProjectName:      val.GetProjectName(),
@@ -91,7 +93,7 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	return genCode.String()
 }
 
-//create array of plugin structs [only imports for now]
+//create array of plugin structs
 func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAttr {
 	var PluginsList []pluginAttr
 
@@ -113,6 +115,7 @@ func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAt
 	return PluginsList
 }
 
+// generate creates the tar structure with file directory and contents
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	template := d.fillTemplate(val)
 
@@ -142,6 +145,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	return files
 }
 
+// createTar writes file contents into a tar file with base64 encoding
 func (d *ProjectHandler) createTar(val *model.Project) string {
 	// Get file generation
 	files := d.generate(val)
