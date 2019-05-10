@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"encoding/base64"
-	"fmt"
 	"log"
 	"strings"
 	"text/template"
@@ -55,23 +54,11 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 	return nil
 }
 
-// fillTemplate inserts plugin variables and contents into code template
-// Template code can be found in template_gencalls.go
-// Plugin variables can be referenced in template_vars_gencalls.go
-func (d *ProjectHandler) fillTemplate(val *model.Project) string {
-	// Write variables into template
-	var genCode bytes.Buffer
-	check := func(err error) {
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+// fillMain template inserts plugins in main.go into template
+func (d *ProjectHandler) fillMainTemplate(val *model.Project) string {
 
 	//get array of plugin structs
 	PluginsList := d.createPluginStructs(val.Plugin)
-
-	t, er := template.New("main.go_template").Parse(mainCodeTemplate)
-	check(er)
 
 	// Populate code template with variables
 	data := struct {
@@ -85,10 +72,56 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 		IdxMapExists:     contains(val.Plugin, "idx map"),
 	}
 
+	return d.fillTemplate("main.go_template", mainCodeTemplate, data)
+}
+
+func (d *ProjectHandler) fillDocTemplate(packageName string) string {
+	// Write variables into template
+	var genCode bytes.Buffer
+	check := func(err error) {
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	t, er := template.New("doc.go_template").Parse(docTemplate)
+	check(er)
+
+	// Populate code template with variables
+	data := struct {
+		packageName      string
+	}{
+		packageName:      packageName,
+	}
+
 	er = t.Execute(&genCode, data)
 	check(er)
 
-	fmt.Println("temp contents of main go file", genCode.String())
+	return genCode.String()
+}
+
+// todo: create a generic fillTemplate that takes name, template and data. Then in each individual fillXTemplate, all they have to define is the data to fill
+// todo: decide if I want to separate each template's stuff by go file?
+
+// todo: test to see if codeGen for main still works with this abstraction for interface{}
+// todo: make sure comment name matches refactored files
+// fillTemplate inserts plugin variables and contents into code template
+// Template code can be found in template_gencalls.go
+// Plugin variables can be referenced in template_vars_gencalls.go
+func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data interface{}) string {
+	// Write variables into template
+	var genCode bytes.Buffer
+	check := func(err error) {
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	 t, er := template.New(name).Parse(templateSkeleton)
+	check(er)
+
+	er = t.Execute(&genCode, data)
+	check(er)
 
 	return genCode.String()
 }
@@ -118,11 +151,14 @@ func (d *ProjectHandler) createPluginStructs(plugins []*model.Plugin) []pluginAt
 // generate creates the tar structure with file directory and contents
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	template := d.fillTemplate(val)
+	docTemplate := d.fillDocTemplate("main")
 
 	// Create tar structure
 	var files = []fileEntry{
 		{"/cmd/agent/main.go", template},
+		{"/cmd/agent/doc.go", docTemplate},
 	}
+	// todo: this is wrong -- should be appended for every custom plugin
 	//append a struct of name/body for every new plugin in project
 	for _, plugin := range val.Plugin {
 		pluginDirectoryName := plugin.PluginName
