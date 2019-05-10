@@ -68,7 +68,7 @@ func (d *ProjectHandler) fillTemplate(val *model.Project) string {
 	//get array of plugin structs
 	PluginsList := d.createPluginStructs(val.Plugin)
 
-	t, er := template.New("main.go_template").Parse(goCodeTemplate)
+	t, er := template.New("main.go_template").Parse(mainCodeTemplate)
 	check(er)
 
 	// Populate code template with variables
