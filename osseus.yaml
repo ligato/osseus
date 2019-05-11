@@ -1,0 +1,160 @@
+---
+
+# UI Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: osseus-ui-svc
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 32251
+  selector:
+    app: frontend
+
+---
+
+# Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: osseus-server-svc
+spec:
+  sessionAffinity: ClientIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: frontend
+
+---
+
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: osseus-frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers: 
+        - name: ui
+          image: anthonydevelops/front_end:dev
+          imagePullPolicy: Always
+          ports:
+            - name: ui-port
+              containerPort: 3000
+              protocol: TCP
+            - name: server-port
+              containerPort: 8000
+              protocol: TCP
+
+---
+
+# Agent Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: osseus-backend-svc
+  labels:
+    app: backend
+spec:
+  ports:
+  - port: 9191
+    targetPort: 9191
+  selector:
+    app: backend
+---
+# Agent Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: osseus-backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers: 
+        - name: agent
+          image: anthonydevelops/agent:dev
+          ports:
+            - containerPort: 9191
+
+---
+
+# KV Deployment
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: osseus-etcd
+spec:
+  serviceName: osseus-etcd
+  selector:
+    matchLabels:
+      app: osseus-etcd
+  template:
+    metadata:
+      labels:
+        app: osseus-etcd
+    spec:
+      containers:
+        - name: etcd
+          image: quay.io/coreos/etcd:v3.3.8
+          env:
+            - name: ETCDCTL_API
+              value: "3"
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - /usr/local/bin/etcd --name=osseus-etcd --data-dir=/var/etcd/osseus-data
+              --advertise-client-urls=http://0.0.0.0:2379 --listen-client-urls=http://0.0.0.0:2379
+          ports:
+            - containerPort: 2379
+              name: client
+              protocol: TCP
+
+---
+
+# KV Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: osseus-etcd-svc
+  labels:
+    app: osseus-etcd
+spec:
+  ports:
+  - port: 2379
+    protocol: TCP
+    targetPort: 2379
+  selector:
+    app: osseus-etcd
+
+---
+
+# This config map contains ETCD configuration for connecting to the contiv-etcd defined above.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: osseus-etcd-cfg
+data:
+  etcd.conf: |
+    insecure-transport: true
+    dial-timeout: 10000000000
+    allow-delayed-start: true
+    endpoints:
+      - "__HOST_IP__:2379"

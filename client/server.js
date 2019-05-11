@@ -15,14 +15,17 @@
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const cors = require('cors')
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
 const fs = require('fs')
 
+app.use(cors())
+
 io.on('connection', socket => {
     // Saves current project
     socket.on('SEND_SAVE_PROJECT', state => {
-        fetch("http://0.0.0.0:9191/v1/projects", {
+        fetch("http://localhost:9191/v1/projects", {
             method: "POST",
             body: JSON.stringify(state),
         })
@@ -31,7 +34,7 @@ io.on('connection', socket => {
     // Loads previous project
     socket.on('SEND_LOAD_PROJECT', state => {
         console.log(state)
-        fetch(`http://0.0.0.0:9191/v1/projects/${state}`)
+        fetch(`http://localhost:9191/v1/projects/${state}`)
             .then(res => console.log(res.body))
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
@@ -44,7 +47,7 @@ io.on('connection', socket => {
     //Deletes the selected project from the KV store
     socket.on('DELETE_PROJECT_FROM_KV', state => {
         console.log(state)
-        fetch(`http://0.0.0.0:9191/v1/projects/${state}`, {
+        fetch(`http://localhost:9191/v1/projects/${state}`, {
             method: "DELETE",
         })
     })
@@ -65,7 +68,7 @@ io.on('connection', socket => {
         state.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
+        const generate = await fetch(`http://localhost:9191/v1/templates/${state.projectName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

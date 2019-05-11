@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8000",
   "dependencies": {
     "concurrently": "^4.1.0",
     "cors": "^2.8.5",
@@ -42,6 +43,5 @@
     "chai": "*",
     "mocha": "^6.1.4",
     "redux": "^4.0.1"
-  },
-  "proxy": "http://localhost:8000"
+  }
 }
