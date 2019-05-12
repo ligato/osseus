@@ -53,28 +53,43 @@ func (d *ProjectHandler) GenDelProj(val *model.Project) error {
 	return nil
 }
 
-// todo: make sure comment name matches refactored files
-// fillTemplate inserts plugin variables and contents into code template
-// Template code can be found in respective X_template.go files
-// Plugin variables can be referenced in template_vars_gencalls.go
-func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data interface{}) string {
-	// Write variables into template
-	var genCode bytes.Buffer
-	check := func(err error) {
-		if err != nil {
+/*
+=========================
+Code Generation
+=========================
+*/
+
+// createTar writes file contents into a tar file with base64 encoding
+func (d *ProjectHandler) createTar(val *model.Project) string {
+	// Get file generation
+	files := d.generate(val)
+
+	var buf bytes.Buffer
+	tw := tar.NewWriter(&buf)
+
+	// Loop through files & write to tar
+	for _, file := range files {
+		hdr := &tar.Header{
+			Name: file.Name,
+			Mode: 0600,
+			Size: int64(len(file.Body)),
+		}
+		if err := tw.WriteHeader(hdr); err != nil {
+			log.Fatal(err)
+		}
+		if _, err := tw.Write([]byte(file.Body)); err != nil {
 			log.Fatal(err)
 		}
 	}
+	// Close once done & turn into []byte
+	if err := tw.Close(); err != nil {
+		log.Fatal(err)
+	}
 
-	 t, er := template.New(name).Parse(templateSkeleton)
-	check(er)
+	// Encode to base64 string
+	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
 
-	er = t.Execute(&genCode, data)
-	check(er)
-
-	d.log.Debugf("contents of generated file: ", genCode.String())
-
-	return genCode.String()
+	return encodedTar
 }
 
 // generate creates the tar structure with file directory and contents
@@ -111,35 +126,28 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	return files
 }
 
-// createTar writes file contents into a tar file with base64 encoding
-func (d *ProjectHandler) createTar(val *model.Project) string {
-	// Get file generation
-	files := d.generate(val)
-
-	var buf bytes.Buffer
-	tw := tar.NewWriter(&buf)
-
-	// Loop through files & write to tar
-	for _, file := range files {
-		hdr := &tar.Header{
-			Name: file.Name,
-			Mode: 0600,
-			Size: int64(len(file.Body)),
-		}
-		if err := tw.WriteHeader(hdr); err != nil {
-			log.Fatal(err)
-		}
-		if _, err := tw.Write([]byte(file.Body)); err != nil {
+// todo: make sure comment name matches refactored files
+// fillTemplate inserts plugin variables and contents into code template
+// Template code can be found in respective X_template.go files
+// Plugin variables can be referenced in template_vars_gencalls.go
+func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data interface{}) string {
+	// Write variables into template
+	var genCode bytes.Buffer
+	check := func(err error) {
+		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	// Close once done & turn into []byte
-	if err := tw.Close(); err != nil {
-		log.Fatal(err)
-	}
 
-	// Encode to base64 string
-	encodedTar := base64.StdEncoding.EncodeToString([]byte(buf.String()))
+	 t, er := template.New(name).Parse(templateSkeleton)
+	check(er)
 
-	return encodedTar
+	er = t.Execute(&genCode, data)
+	check(er)
+
+	d.log.Debugf("contents of generated file: ", genCode.String())
+
+	return genCode.String()
 }
+
+
