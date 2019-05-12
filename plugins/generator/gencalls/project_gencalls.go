@@ -96,7 +96,6 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	mainTemplate := d.FillMainTemplate(val)
 	readmeTemplate := d.FillReadmeTemplate(val.ProjectName)
-	//todo: un-hardcode packageString "main"
 	docTemplate := d.FillDocTemplate("main")
 
 	// Create tar structure
@@ -106,22 +105,25 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/cmd/agent/doc.go", docTemplate},
 	}
 
+	// todo: possibly add custom plugin-specific readme file/template
 	//append a struct of name/body for every custom plugin in project
 	for _, pluginName := range val.CustomPluginName{
 		pluginDirectoryName := pluginName
-		pluginDocTemplate := d.FillDocTemplate(pluginName)
+		pluginDocContents := d.FillDocTemplate(pluginName)
+		pluginOptionsContents := d.FillOptionsTemplate(pluginName)
+		pluginImplContents := d.FillImplTemplate(pluginName)
 
 		pluginDocEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/doc.go",
-			pluginDocTemplate, //"Doc file for package description",
+			pluginDocContents,
 		}
 		pluginOptionsEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/options.go",
-			"Config file for plugin",
+			pluginOptionsContents,
 		}
 		pluginImplEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/plugin_impl_test.go",
-			"Plugin file that holds main functions",
+			pluginImplContents,
 		}
 
 		files = append(files, pluginDocEntry, pluginOptionsEntry, pluginImplEntry)
@@ -130,7 +132,6 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	return files
 }
 
-// todo: make sure comment name matches refactored files
 // fillTemplate inserts plugin variables and contents into code template
 // Template code can be found in respective X_template.go files
 // Plugin variables can be referenced in template_vars_gencalls.go
