@@ -1,4 +1,4 @@
 package gencalls
 
-const docTemplate = `package {{.packageName}}`
+const docTemplate = `package {{.PackageName}}`
 

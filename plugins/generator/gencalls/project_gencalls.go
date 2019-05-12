@@ -94,14 +94,13 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 
 // generate creates the tar structure with file directory and contents
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
-	//todo: refactor template to mainTemplate (?)
-	template := d.FillMainTemplate(val)
-	//docTemplate := d.FillDocTemplate("main")
+	mainTemplate := d.FillMainTemplate(val)
+	docTemplate := d.FillDocTemplate("main")
 
 	// Create tar structure
 	var files = []fileEntry{
-		{"/cmd/agent/main.go", template},
-		//{"/cmd/agent/doc.go", docTemplate},
+		{"/cmd/agent/main.go", mainTemplate},
+		{"/cmd/agent/doc.go", docTemplate},
 	}
 	// todo: this is wrong -- should be appended for every custom plugin
 	//append a struct of name/body for every new plugin in project
@@ -144,8 +143,6 @@ func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data
 
 	er = t.Execute(&genCode, data)
 	check(er)
-
-	d.log.Debugf("contents of generated file: ", genCode.String())
 
 	return genCode.String()
 }

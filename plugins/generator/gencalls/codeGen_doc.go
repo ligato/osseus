@@ -3,10 +3,10 @@ package gencalls
 func (d *ProjectHandler) FillDocTemplate(packageString string) string {
 	// Populate code template with variables
 	data := struct {
-		packageName      string
+		PackageName      string
 	}{
-		packageName:      packageString,
+		PackageName:      packageString,
 	}
 
-	return d.fillTemplate("doc.go_template", docTemplate,data)
+	return d.fillTemplate("doc.go_template", docTemplate, data)
 }
