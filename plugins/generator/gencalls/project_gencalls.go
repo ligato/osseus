@@ -95,11 +95,14 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 // generate creates the tar structure with file directory and contents
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	mainTemplate := d.FillMainTemplate(val)
+	readmeTemplate := d.FillReadmeTemplate(val.ProjectName)
+	//todo: un-hardcode packageString "main"
 	docTemplate := d.FillDocTemplate("main")
 
 	// Create tar structure
 	var files = []fileEntry{
 		{"/cmd/agent/main.go", mainTemplate},
+		{"/cmd/agent/README.md", readmeTemplate},
 		{"/cmd/agent/doc.go", docTemplate},
 	}
 	// todo: this is wrong -- should be appended for every custom plugin
