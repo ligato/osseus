@@ -37,6 +37,7 @@ const (
 type Response struct {
 	ProjectName string
 	Plugins     []Plugins
+	CustomPlugins []string
 }
 
 // Plugins struct to marshal input
@@ -173,12 +174,12 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	var pluginsList []*model.Plugin
 
 	// Create a Plugins list that will be stored in etcd
-	for i := 0; i < len(response.Plugins); i++ {
+	for _, plugin :=  range response.Plugins{
 		pluginval = &model.Plugin{
-			PluginName: response.Plugins[i].PluginName,
-			Id:         response.Plugins[i].ID,
-			Selected:   response.Plugins[i].Selected,
-			Port:       response.Plugins[i].Port,
+			PluginName: plugin.PluginName,
+			Id:         plugin.ID,
+			Selected:   plugin.Selected,
+			Port:       plugin.Port,
 		}
 		pluginsList = append(pluginsList, pluginval)
 	}
@@ -186,6 +187,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	value = &model.Project{
 		ProjectName: response.ProjectName,
 		Plugin:      pluginsList,
+		CustomPluginName:	response.CustomPlugins,
 	}
 
 	// Update value in KV store
@@ -227,6 +229,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	project := Response{
 		ProjectName: value.ProjectName,
 		Plugins:     pluginsList,
+		CustomPlugins:	value.CustomPluginName,
 	}
 
 	return project

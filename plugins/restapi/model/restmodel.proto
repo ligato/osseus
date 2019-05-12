@@ -15,4 +15,5 @@ message Plugin {
 message Project {
     string projectName = 1;
     repeated Plugin plugin = 2;
+    repeated string customPluginName = 3;
 }

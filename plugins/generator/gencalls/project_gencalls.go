@@ -105,13 +105,15 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/cmd/agent/README.md", readmeTemplate},
 		{"/cmd/agent/doc.go", docTemplate},
 	}
-	// todo: this is wrong -- should be appended for every custom plugin
-	//append a struct of name/body for every new plugin in project
-	for _, plugin := range val.Plugin {
-		pluginDirectoryName := plugin.PluginName
+
+	//append a struct of name/body for every custom plugin in project
+	for _, pluginName := range val.CustomPluginName{
+		pluginDirectoryName := pluginName
+		pluginDocTemplate := d.FillDocTemplate(pluginName)
+
 		pluginDocEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/doc.go",
-			"Doc file for package description",
+			pluginDocTemplate, //"Doc file for package description",
 		}
 		pluginOptionsEntry := fileEntry{
 			"/plugins/" + pluginDirectoryName + "/options.go",
