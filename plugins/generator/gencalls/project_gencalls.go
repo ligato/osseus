@@ -122,11 +122,11 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 
 	// todo: possibly add custom plugin-specific readme file/template
 	//append a struct of name/body for every custom plugin in project
-	for _, pluginName := range val.CustomPluginName{
-		pluginDirectoryName := pluginName
-		pluginDocContents := d.FillDocTemplate(pluginName)
-		pluginOptionsContents := d.FillOptionsTemplate(pluginName)
-		pluginImplContents := d.FillImplTemplate(pluginName)
+	for _, customPlugin := range val.CustomPlugin{
+		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
+		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
+		pluginOptionsContents := d.FillOptionsTemplate(customPlugin)
+		pluginImplContents := d.FillImplTemplate(customPlugin)
 
 		pluginDocEntry := fileEntry{
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/doc.go",

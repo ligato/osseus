@@ -13,9 +13,15 @@ message Plugin {
   int32 port = 4;
 };
 
+// A custom plugin resource
+message CustomPlugin {
+  string customPluginName = 1;
+  string packageName = 2;
+};
+
 // Project holds the data fields stored
 message Project {
   string projectName = 1;
   repeated Plugin plugin = 2;
-  repeated string customPluginName = 3;
+  repeated CustomPlugin customPlugin = 3;
 }
