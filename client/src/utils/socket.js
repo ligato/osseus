@@ -1,6 +1,8 @@
 import io from 'socket.io-client'
 
-const socket = io('ws://localhost:8000', { transports: ['websocket'] });
+const serverConn = 'http://192.168.39.143:31101'
+
+const socket = io(`${serverConn}`);
 
 // Set socket actions
 const configureSocket = dispatch => {

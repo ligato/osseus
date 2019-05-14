@@ -22,10 +22,13 @@ const fs = require('fs')
 
 app.use(cors())
 
+const agent = 'http://192.168.39.143:31102'
+const etcd = 'http://192.168.39.143:31103'
+
 io.on('connection', socket => {
     // Saves current project
     socket.on('SEND_SAVE_PROJECT', state => {
-        fetch("http://localhost:9191/v1/projects", {
+        fetch(`http://${agent}/v1/projects`, {
             method: "POST",
             body: JSON.stringify(state),
         })
@@ -34,7 +37,7 @@ io.on('connection', socket => {
     // Loads previous project
     socket.on('SEND_LOAD_PROJECT', state => {
         console.log(state)
-        fetch(`http://localhost:9191/v1/projects/${state}`)
+        fetch(`http://${agent}/v1/projects/${state}`)
             .then(res => console.log(res.body))
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
@@ -47,7 +50,7 @@ io.on('connection', socket => {
     //Deletes the selected project from the KV store
     socket.on('DELETE_PROJECT_FROM_KV', state => {
         console.log(state)
-        fetch(`http://localhost:9191/v1/projects/${state}`, {
+        fetch(`http://${agent}/v1/projects/${state}`, {
             method: "DELETE",
         })
     })
@@ -68,7 +71,7 @@ io.on('connection', socket => {
         state.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        const generate = await fetch(`http://localhost:9191/v1/templates/${state.projectName}`, {
+        const generate = await fetch(`http://${agent}/v1/templates/${state.projectName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -88,7 +91,7 @@ io.on('connection', socket => {
 
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works
-        webHooks.add('etcd', 'http://localhost:2379/v3beta/kv/range')
+        webHooks.add('etcd', `http://${etcd}/v3beta/kv/range`)
 
         // Trigger webhook & send WATCH request
         webHooks.trigger('etcd', { key: base64Key })
@@ -139,7 +142,7 @@ io.on('connection', socket => {
     })
 })
 
-server.listen(8000, () => console.log('connected to port 8000!'))
+server.listen(8000, () => console.log(`Server listening on 8000`))
 
 // Removes first and last lines of file. These lines contain extra metadata created
 // by the generator, for display these tend to confuse the code highlighter

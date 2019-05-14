@@ -1,18 +1,20 @@
 ---
 
-# UI Service
+# Frontend Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: osseus-ui-svc
+  name: ui
 spec:
   type: NodePort
+  sessionAffinity: ClientIP
+  selector:
+    app: frontend
   ports:
   - port: 3000
     targetPort: 3000
-    nodePort: 32251
-  selector:
-    app: frontend
+    protocol: TCP
+    nodePort: 31100
 
 ---
 
@@ -20,14 +22,17 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: osseus-server-svc
+  name: server
 spec:
+  type: NodePort
   sessionAffinity: ClientIP
+  selector:
+    app: frontend
   ports:
   - port: 8000
     targetPort: 8000
-  selector:
-    app: frontend
+    protocol: TCP
+    nodePort: 31101
 
 ---
 
@@ -36,6 +41,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata: 
   name: osseus-frontend
+  labels:
+    app: frontend
 spec:
   selector:
     matchLabels:
@@ -46,16 +53,11 @@ spec:
         app: frontend
     spec:
       containers: 
-        - name: ui
+        - name: client
           image: anthonydevelops/front_end:dev
-          imagePullPolicy: Always
           ports:
-            - name: ui-port
-              containerPort: 3000
-              protocol: TCP
-            - name: server-port
-              containerPort: 8000
-              protocol: TCP
+            - containerPort: 3000
+            - containerPort: 8000
 
 ---
 
@@ -64,20 +66,24 @@ apiVersion: v1
 kind: Service
 metadata:
   name: osseus-backend-svc
-  labels:
-    app: backend
 spec:
+  type: NodePort
+  selector:
+    app: backend
   ports:
   - port: 9191
     targetPort: 9191
-  selector:
-    app: backend
+    protocol: TCP
+    nodePort: 31102
+
 ---
 # Agent Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
   name: osseus-backend
+  labels:
+    app: backend
 spec:
   selector:
     matchLabels:
@@ -124,7 +130,6 @@ spec:
               --advertise-client-urls=http://0.0.0.0:2379 --listen-client-urls=http://0.0.0.0:2379
           ports:
             - containerPort: 2379
-              name: client
               protocol: TCP
 
 ---
@@ -137,16 +142,18 @@ metadata:
   labels:
     app: osseus-etcd
 spec:
+  type: NodePort
   ports:
   - port: 2379
     protocol: TCP
     targetPort: 2379
+    nodePort: 31103
   selector:
     app: osseus-etcd
 
 ---
 
-# This config map contains ETCD configuration for connecting to the contiv-etcd defined above.
+# This config map contains ETCD configuration for connecting to the osseus-etcd defined above.
 apiVersion: v1
 kind: ConfigMap
 metadata:
