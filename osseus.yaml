@@ -7,7 +7,6 @@ metadata:
   name: ui
 spec:
   type: NodePort
-  sessionAffinity: ClientIP
   selector:
     app: frontend
   ports:
@@ -22,16 +21,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: server
+  name: node-server
 spec:
   type: NodePort
-  sessionAffinity: ClientIP
   selector:
     app: frontend
   ports:
   - port: 8000
     targetPort: 8000
-    protocol: TCP
     nodePort: 31101
 
 ---
@@ -65,7 +62,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: osseus-backend-svc
+  name: agent-svc
 spec:
   type: NodePort
   selector:
@@ -138,7 +135,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: osseus-etcd-svc
+  name: etcd-svc
   labels:
     app: osseus-etcd
 spec:
@@ -165,3 +162,34 @@ data:
     allow-delayed-start: true
     endpoints:
       - "__HOST_IP__:2379"
+
+---
+
+# Setup Ingress 
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: osseus-rules
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ui
+          servicePort: 3000
+      - path: /server/
+        backend:
+          serviceName: node-server
+          servicePort: 8000
+      - path: /agent/
+        backend:
+          serviceName: agent-svc
+          servicePort: 9191
+      - path: /etcd/
+        backend:
+          serviceName: etcd-svc
+          servicePort: 2379

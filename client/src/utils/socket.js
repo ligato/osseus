@@ -1,6 +1,6 @@
 import io from 'socket.io-client'
 
-const serverConn = 'http://192.168.39.143:31101'
+const serverConn = 'http://$(minikube ip)/server'
 
 const socket = io(`${serverConn}`);
 
