@@ -22,8 +22,8 @@ const fs = require('fs')
 
 app.use(cors())
 
-const agent = '192.168.99.100/agent'
-const etcd = '192.168.99.100/etcd'
+const agent = '192.168.99.102/agent'
+const etcd = '192.168.99.102/etcd'
 
 io.on('connection', socket => {
     // Saves current project
