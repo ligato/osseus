@@ -1,8 +1,8 @@
 import io from 'socket.io-client'
 
-const serverConn = 'http://$(minikube ip)/server'
+const serverConn = '192.168.99.100/server'
 
-const socket = io(`${serverConn}`);
+const socket = io(`http://${serverConn}`);
 
 // Set socket actions
 const configureSocket = dispatch => {

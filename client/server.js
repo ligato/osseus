@@ -22,8 +22,8 @@ const fs = require('fs')
 
 app.use(cors())
 
-const agent = '$(minikube ip)/agent'
-const etcd = '$(minikube ip)/etcd'
+const agent = '192.168.99.100/agent'
+const etcd = '192.168.99.100/etcd'
 
 io.on('connection', socket => {
     // Saves current project

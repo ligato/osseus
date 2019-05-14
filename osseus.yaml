@@ -181,15 +181,15 @@ spec:
         backend:
           serviceName: ui
           servicePort: 3000
-      - path: /server/
+      - path: /server
         backend:
           serviceName: node-server
           servicePort: 8000
-      - path: /agent/
+      - path: /agent
         backend:
           serviceName: agent-svc
           servicePort: 9191
-      - path: /etcd/
+      - path: /etcd
         backend:
           serviceName: etcd-svc
           servicePort: 2379
