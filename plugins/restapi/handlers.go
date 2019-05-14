@@ -37,7 +37,7 @@ const (
 type Response struct {
 	ProjectName string
 	Plugins     []Plugins
-	CustomPlugins []string
+	CustomPlugins []CustomPlugins
 }
 
 // Plugins struct to marshal input
@@ -46,6 +46,12 @@ type Plugins struct {
 	ID         int32
 	Selected   bool
 	Port       int32
+}
+
+// CustomPlugins struct to marshal input
+type CustomPlugins struct{
+	CustomPluginName  string
+	PackageName       string
 }
 
 // Registers REST handlers
@@ -160,6 +166,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	// Get value based on key
 	value := new(model.Project)
 	pluginval := new(model.Plugin)
+	custompluginval := new(model.CustomPlugin)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -172,6 +179,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 
 	// Prepare data
 	var pluginsList []*model.Plugin
+	var customPluginsList []*model.CustomPlugin
 
 	// Create a Plugins list that will be stored in etcd
 	for _, plugin :=  range response.Plugins{
@@ -184,10 +192,19 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 		pluginsList = append(pluginsList, pluginval)
 	}
 
+	//create CustomPlugins list that will be stored in etcd
+	for _, customPlugin := range response.CustomPlugins{
+		custompluginval = &model.CustomPlugin{
+			CustomPluginName:    customPlugin.CustomPluginName,
+			PackageName: 		 customPlugin.PackageName,
+		}
+		customPluginsList = append(customPluginsList, custompluginval)
+	}
+
 	value = &model.Project{
 		ProjectName: response.ProjectName,
 		Plugin:      pluginsList,
-		CustomPluginName:	response.CustomPlugins,
+		CustomPlugin: customPluginsList,
 	}
 
 	// Update value in KV store
@@ -214,22 +231,31 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	}
 
 	var pluginsList []Plugins
+	var customPluginsList []CustomPlugins
 
 	// Create a Plugins list that will be stored in etcd
-	for i := 0; i < len(value.Plugin); i++ {
+	for _, plugin := range value.Plugin{
 		pluginval := Plugins{
-			PluginName: value.Plugin[i].PluginName,
-			ID:         value.Plugin[i].Id,
-			Selected:   value.Plugin[i].Selected,
-			Port:       value.Plugin[i].Port,
+			PluginName: plugin.PluginName,
+			ID:         plugin.Id,
+			Selected:   plugin.Selected,
+			Port:       plugin.Port,
 		}
 		pluginsList = append(pluginsList, pluginval)
 	}
 
+	//create CustomPlugins list that will be stored in etcd
+	for _, customPlugin := range value.CustomPlugin{
+		custompluginval := CustomPlugins{
+			CustomPluginName:    customPlugin.CustomPluginName,
+			PackageName: 		 customPlugin.PackageName,
+		}
+		customPluginsList = append(customPluginsList, custompluginval)
+	}
 	project := Response{
 		ProjectName: value.ProjectName,
 		Plugins:     pluginsList,
-		CustomPlugins:	value.CustomPluginName,
+		CustomPlugins:	customPluginsList,
 	}
 
 	return project
