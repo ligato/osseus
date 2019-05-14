@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"log"
+	"strings"
 	"text/template"
 
 	"github.com/ligato/osseus/plugins/generator/model"
@@ -94,15 +95,16 @@ func (d *ProjectHandler) createTar(val *model.Project) string {
 
 // generate creates the tar structure with file directory and contents
 func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
+	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 	mainTemplate := d.FillMainTemplate(val)
 	readmeTemplate := d.FillReadmeTemplate(val.ProjectName)
 	docTemplate := d.FillDocTemplate("main")
 
 	// Create tar structure
 	var files = []fileEntry{
-		{"/cmd/agent/main.go", mainTemplate},
-		{"/cmd/agent/README.md", readmeTemplate},
-		{"/cmd/agent/doc.go", docTemplate},
+		{"/"+ projectName + "/cmd/agent/main.go", mainTemplate},
+		{"/"+ projectName + "/cmd/agent/README.md", readmeTemplate},
+		{"/"+ projectName + "/cmd/agent/doc.go", docTemplate},
 	}
 
 	// todo: possibly add custom plugin-specific readme file/template
@@ -114,15 +116,15 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		pluginImplContents := d.FillImplTemplate(pluginName)
 
 		pluginDocEntry := fileEntry{
-			"/plugins/" + pluginDirectoryName + "/doc.go",
+			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/doc.go",
 			pluginDocContents,
 		}
 		pluginOptionsEntry := fileEntry{
-			"/plugins/" + pluginDirectoryName + "/options.go",
+			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/options.go",
 			pluginOptionsContents,
 		}
 		pluginImplEntry := fileEntry{
-			"/plugins/" + pluginDirectoryName + "/plugin_impl_test.go",
+			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_test.go",
 			pluginImplContents,
 		}
 
