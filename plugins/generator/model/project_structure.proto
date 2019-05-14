@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package model;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+option (gogoproto.messagename_all) = true;
+
+// File holds the folder path, children, type, and etcdkey of the given file
+message File{
+    string name = 1;
+    string absolute_path = 2;
+    string type = 3;
+    string etcd_key = 4;
+    repeated string children = 5;
+};
+
+//ProjectStructure holds the directory and folder structure of the project
+message ProjectStructure{
+    repeated File file = 1;
+}

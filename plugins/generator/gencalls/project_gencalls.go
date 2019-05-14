@@ -22,6 +22,14 @@ type pluginAttr struct {
 	Initialization string
 }
 
+type projectStructureItem struct{
+	ItemName		string
+	AbsolutePath	string
+	Type			string
+	Etcd_key		string
+	Children		[]string
+}
+
 // GenAddProj creates a new generated template under the /template prefix
 func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	encodedFile := d.createTar(val)
@@ -39,6 +47,11 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 		return err
 	}
 
+	return nil
+}
+
+// GenAddProjStructure adds the file structure of the generated project
+func (d *ProjectHandler) GennAddProjStructure(key string, val *model.Project) error{
 	return nil
 }
 
@@ -155,4 +168,53 @@ func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data
 	return genCode.String()
 }
 
+/*
+=========================
+Project Folder Structure
+=========================
+*/
+
+// getFolderStructure returns path, type, children and etcd-key of each folder and file in generated project
+func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructureItem {
+
+	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
+
+	var projectStructure = []projectStructureItem{
+		{projectName,
+			"/" + projectName,
+			"folder",
+			"",
+			[]string{"/" + projectName + "/cmd","/" + projectName + "/plugins"}},
+		{
+			"cmd",
+			"/" + projectName + "/cmd",
+			"folder",
+			"",
+			[]string{"/" + projectName + "/cmd/agent"}},
+		{"agent",
+			"/" + projectName + "/cmd/agent",
+			"folder",
+			"",
+			[]string{"/" + projectName + "/cmd/agent/main.go"}},
+		{"main.go",
+			"/" + projectName + "/cmd/agent/main.go",
+			"file",
+			"todo: add etcdkey",
+			[]string{}},
+		{"README.md",
+			"/" + projectName + "/cmd/agent/README.md",
+			"file",
+			"todo: add etcdkey",
+			[]string{},
+		},
+		{"doc.go",
+			"/" + projectName + "/cmd/agent/doc.go",
+			"file",
+			"todo: add etcdkey",
+			[]string{},
+		},
+	}
+
+	return projectStructure
+}
 
