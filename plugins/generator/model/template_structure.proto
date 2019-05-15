@@ -14,7 +14,7 @@ message File{
     repeated string children = 5;
 };
 
-//ProjectStructure holds the directory and folder structure of the project
-message ProjectStructure{
+//TemplateStructure holds the directory and folder structure of the project
+message TemplateStructure{
     repeated File file = 1;
 }

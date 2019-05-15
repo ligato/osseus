@@ -22,7 +22,7 @@ type pluginAttr struct {
 	Initialization string
 }
 
-type projectStructureItem struct{
+type templateStructureItem struct{
 	ItemName		string
 	AbsolutePath	string
 	Type			string
@@ -170,17 +170,17 @@ func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data
 
 /*
 =========================
-Project Folder Structure
+Template Folder Structure
 =========================
 */
 
-// getFolderStructure returns path, type, children and etcd-key of each folder and file in generated project
-func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructureItem {
+// getFolderStructure returns path, type, children and etcd-key of each folder and file in generated template
+func (d *ProjectHandler) getFolderStructure(val *model.Project) []templateStructureItem {
 
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 
-	// create project structure with agent-level folders and files
-	var projectStructure = []projectStructureItem{
+	// create template structure with agent-level folders and files
+	var templateStructure = []templateStructureItem{
 		{projectName,
 			"/" + projectName,
 			"folder",
@@ -222,21 +222,21 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 		childPluginName := strings.ToLower(strings.Replace(child.CustomPluginName, " ", "_", -1))
 		pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
 	}
-	pluginFolder := projectStructureItem{
+	pluginFolder := templateStructureItem{
 		"plugins",
 		"/" + projectName + "/plugins",
 		"folder",
 		"",
 		pluginChildren,
 	}
-	projectStructure = append(projectStructure, pluginFolder)
+	templateStructure = append(templateStructure, pluginFolder)
 
 	// append plugin folder, doc, impl, options items
 	for _,customPlugin := range val.CustomPlugin{
 		pluginName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
 		pluginPath := "/" + projectName + "/plugins/" + pluginName
 
-		pluginFolder := projectStructureItem{
+		pluginFolder := templateStructureItem{
 			pluginName,
 			pluginPath,
 			"folder",
@@ -244,7 +244,7 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 			[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_"+ pluginName + ".go"},
 		}
 
-		docFile := projectStructureItem{
+		docFile := templateStructureItem{
 			"doc.go",
 			pluginPath + "/doc.go",
 			"file",
@@ -252,7 +252,7 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 			[]string{},
 		}
 
-		optionsFile := projectStructureItem{
+		optionsFile := templateStructureItem{
 			"options.go",
 			pluginPath + "/options.go",
 			"file",
@@ -260,7 +260,7 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 			[]string{},
 		}
 
-		implFile := projectStructureItem{
+		implFile := templateStructureItem{
 			"plugin_impl_" + pluginName + ".go",
 			pluginPath + "/plugin_impl_" + pluginName + ".go",
 			"file",
@@ -268,9 +268,9 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 			[]string{},
 		}
 
-		projectStructure = append(projectStructure, pluginFolder, docFile, optionsFile, implFile)
+		templateStructure = append(templateStructure, pluginFolder, docFile, optionsFile, implFile)
 	}
 
-	return projectStructure
+	return templateStructure
 }
 
