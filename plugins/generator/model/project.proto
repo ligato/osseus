@@ -23,5 +23,6 @@ message CustomPlugin {
 message Project {
   string projectName = 1;
   repeated Plugin plugin = 2;
-  repeated CustomPlugin customPlugin = 3;
+  string agentName = 3;
+  repeated CustomPlugin customPlugin = 4;
 }

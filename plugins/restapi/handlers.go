@@ -37,6 +37,7 @@ const (
 type Response struct {
 	ProjectName string
 	Plugins     []Plugins
+	AgentName   string
 	CustomPlugins []CustomPlugins
 }
 
@@ -204,6 +205,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	value = &model.Project{
 		ProjectName: response.ProjectName,
 		Plugin:      pluginsList,
+		AgentName:   response.AgentName,
 		CustomPlugin: customPluginsList,
 	}
 
@@ -255,6 +257,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	project := Response{
 		ProjectName: value.ProjectName,
 		Plugins:     pluginsList,
+		AgentName:   value.AgentName,
 		CustomPlugins:	customPluginsList,
 	}
 

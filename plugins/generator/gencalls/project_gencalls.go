@@ -51,7 +51,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 }
 
 // GenAddProjStructure adds the file structure of the generated project
-func (d *ProjectHandler) GennAddProjStructure(key string, val *model.Project) error{
+func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) error{
 	return nil
 }
 
