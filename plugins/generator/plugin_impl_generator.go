@@ -14,8 +14,10 @@
 
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/project.proto
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/template.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/project_structure.proto
 //go:generate descriptor-adapter --descriptor-name Project --value-type *model.Project --import "model" --output-dir "descriptor"
 //go:generate descriptor-adapter --descriptor-name Template --value-type *model.Template --import "model" --output-dir "descriptor"
+//go:generate descriptor-adapter --descriptor-name ProjectStructure --value-type *model.ProjectStructure --import "model" --output-dir "descriptor"
 
 package generator
 
