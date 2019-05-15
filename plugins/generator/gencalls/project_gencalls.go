@@ -149,7 +149,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 
 // fillTemplate inserts plugin variables and contents into code template
 // Template code can be found in respective X_template.go files
-// Plugin variables can be referenced in template_vars_gencalls.go
+// Agent-level plugin variables can be referenced in main_agent_template_vars.go
 func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data interface{}) string {
 	// Write variables into template
 	var genCode bytes.Buffer
