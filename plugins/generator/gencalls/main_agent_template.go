@@ -15,19 +15,19 @@ import (
 {{- end}}
 )
 
-// {{.ProjectName}} is a struct holding internal data for the {{.ProjectName}} Agent
-type {{.ProjectName}} struct {
+// {{.AgentName}} is a struct holding internal data for the {{.ProjectName}} Agent
+type {{.AgentName}} struct {
 {{- range .PluginAttributes}}
     {{.Declaration}}
 {{- end}}
 }
 
-// New creates new {{.ProjectName}} instance.
-func New() *{{.ProjectName}} {
-    return &{{.ProjectName}} {
+// New creates new {{.AgentName}} instance.
+func New() *{{.AgentName}} {
+    return &{{.AgentName}} {
 {{- range .PluginAttributes}}
 {{- if eq .Initialization "config"}}
-        PluginConfig: config.ForPlugin("{{$.ProjectName}}"),
+        PluginConfig: config.ForPlugin("{{$.AgentName}}"),
 {{- else}}
         {{.Initialization}}
 {{- end}}
@@ -36,23 +36,23 @@ func New() *{{.ProjectName}} {
 }
 
 // Init initializes main plugin.
-func (pr *{{.ProjectName}}) Init() error {
+func (pr *{{.AgentName}}) Init() error {
     return nil
 }
 
-func (pr *{{.ProjectName}}) AfterInit() error {
+func (pr *{{.AgentName}}) AfterInit() error {
     resync.DefaultPlugin.DoResync()
     return nil
 }
 
 // Close can be used to close used resources.
-func (pr *{{.ProjectName}}) Close() error {
+func (pr *{{.AgentName}}) Close() error {
     return nil
 }
 
 // String returns name of the plugin.
-func (pr *{{.ProjectName}}) String() string {
-    return "{{.ProjectName}}"
+func (pr *{{.AgentName}}) String() string {
+    return "{{.AgentName}}"
 }
 
 {{- if .IdxMapExists}}
@@ -63,9 +63,9 @@ func IndexFunction(item interface{}) map[string][]string{
 {{- end}}
 
 func main() {
-    {{.ProjectName}} := New()
+    {{.AgentName}} := New()
 
-    a := agent.NewAgent(agent.AllPlugins({{.ProjectName}}))
+    a := agent.NewAgent(agent.AllPlugins({{.AgentName}}))
 
     if err := a.Run(); err != nil {
         log.DefaultLogger().Fatal(err)

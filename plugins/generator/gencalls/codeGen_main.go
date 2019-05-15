@@ -15,11 +15,13 @@ func (d *ProjectHandler) FillMainTemplate(val *model.Project) string {
 	// Populate code template with variables
 	data := struct {
 		ProjectName      string
+		AgentName        string
 		PluginAttributes []pluginAttr
 		// special case plugins (with extra attributes)
 		IdxMapExists bool
 	}{
 		ProjectName:      val.GetProjectName(),
+		AgentName:        val.GetAgentName(),
 		PluginAttributes: PluginsList,
 		IdxMapExists:     contains(val.Plugin, "idx map"),
 	}
