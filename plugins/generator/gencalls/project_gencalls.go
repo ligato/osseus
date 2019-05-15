@@ -137,7 +137,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 			pluginOptionsContents,
 		}
 		pluginImplEntry := fileEntry{
-			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_test.go",
+			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_"+ pluginDirectoryName + ".go",
 			pluginImplContents,
 		}
 
@@ -179,6 +179,7 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 
+	// create project structure with agent-level folders and files
 	var projectStructure = []projectStructureItem{
 		{projectName,
 			"/" + projectName,
@@ -213,6 +214,61 @@ func (d *ProjectHandler) getFolderStructure(val *model.Project) []projectStructu
 			"todo: add etcdkey",
 			[]string{},
 		},
+	}
+
+	// append plugin folder item
+	var pluginChildren []string
+	for _, child := range val.CustomPlugin{
+		childPluginName := strings.ToLower(strings.Replace(child.CustomPluginName, " ", "_", -1))
+		pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
+	}
+	pluginFolder := projectStructureItem{
+		"plugins",
+		"/" + projectName + "/plugins",
+		"folder",
+		"",
+		pluginChildren,
+	}
+	projectStructure = append(projectStructure, pluginFolder)
+
+	// append plugin folder, doc, impl, options items
+	for _,customPlugin := range val.CustomPlugin{
+		pluginName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
+		pluginPath := "/" + projectName + "/plugins/" + pluginName
+
+		pluginFolder := projectStructureItem{
+			pluginName,
+			pluginPath,
+			"folder",
+			"",
+			[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_"+ pluginName + ".go"},
+		}
+
+		docFile := projectStructureItem{
+			"doc.go",
+			pluginPath + "/doc.go",
+			"file",
+			"todo: add etcdkey",
+			[]string{},
+		}
+
+		optionsFile := projectStructureItem{
+			"options.go",
+			pluginPath + "/options.go",
+			"file",
+			"todo: add etcdkey",
+			[]string{},
+		}
+
+		implFile := projectStructureItem{
+			"plugin_impl_" + pluginName + ".go",
+			pluginPath + "/plugin_impl_" + pluginName + ".go",
+			"file",
+			"todo: add etcdkey",
+			[]string{},
+		}
+
+		projectStructure = append(projectStructure, pluginFolder, docFile, optionsFile, implFile)
 	}
 
 	return projectStructure
