@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types'
+import Dropdown from './CustomPluginDropdown';
+import ContentEditable from 'react-contenteditable'
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Plugin/Splitright.css";
+
+
+let pluginModule = require('../Model');
+
+
 
 /*
 * This component represents the main workspace. Users will be able to 
@@ -18,10 +25,18 @@ const PluginPalette = (props) => {
     if(props.sentInArray[i] === 0 || props.sentInArray[i] === false) { pluginArray.splice(i,1); }
   }
 
+  function handleEditedProjectName(evt) {
+    let editedProjectName = evt.target.value;
+    pluginModule.project.agentName = editedProjectName;
+  }
+
   return (
     <div>
-      <div className="body">
+      <div >
         <div className="split right">
+          <div className="new-custom-plugin-div">
+            <Dropdown/>
+          </div>
           <div className="grid-container-right">
             {pluginArray}
           </div>
@@ -29,7 +44,16 @@ const PluginPalette = (props) => {
       </div>
       <div className="split right-bottom">
         <div className="rectangle">
-          <p className="rectangletext">Agent</p>
+          <div className="agent-text">
+            <p className="currentproject">Agent: </p>
+            <ContentEditable
+              spellCheck={false}
+              className="agent-name"
+              html={pluginModule.project.agentName} // innerHTML of the editable div
+              disabled={false} // use true to disable edition
+              onChange={handleEditedProjectName} // handle innerHTML change
+            />
+          </div>
         </div>
       </div>
     </div>
