@@ -28,6 +28,7 @@ type ProjectAPI interface {
 // ProjectWrite provides write methods for ETCD
 type ProjectWrite interface {
 	GenAddProj(key string, val *model.Project) error
+	GenAddProjStructure(key string, val *model.Project) error
 	GenDelProj(val *model.Project) error
 }
 

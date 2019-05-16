@@ -64,6 +64,10 @@ func (d *ProjectDescriptor) Create(key string, value *model.Project) (metadata i
 		d.log.Errorf("Put failed: %v", err)
 	}
 
+	if err := d.handlers.GenAddProjStructure(key, value); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+
 	return nil, nil
 }
 

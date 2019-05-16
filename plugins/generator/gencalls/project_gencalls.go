@@ -52,6 +52,35 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 
 // GenAddProjStructure adds the file structure of the generated project
 func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) error{
+	templateStructure := d.getTemplateStructure(val)
+
+	var templateItems []*model.File
+	templateItem := new(model.File)
+
+	// convert Template structure into model structure
+	for _, folder := range templateStructure{
+		templateItem = &model.File{
+			Name: folder.ItemName,
+			AbsolutePath: folder.AbsolutePath,
+			Type: folder.Type,
+			EtcdKey: folder.Etcd_key,
+			Children: folder.Children,
+		}
+		templateItems = append(templateItems, templateItem)
+	}
+
+	// Create template structure
+	data := &model.TemplateStructure{
+		File:    templateItems,
+	}
+
+	// Put new template structure in etcd
+	key = "structure/" + val.GetProjectName()
+	err := d.broker.Put(key, data)
+	if err != nil {
+		d.log.Errorf("Could not add template structure")
+		return err
+	}
 	return nil
 }
 
@@ -174,8 +203,8 @@ Template Folder Structure
 =========================
 */
 
-// getFolderStructure returns path, type, children and etcd-key of each folder and file in generated template
-func (d *ProjectHandler) getFolderStructure(val *model.Project) []templateStructureItem {
+// getTemplateStructure returns path, type, children and etcd-key of each folder and file in generated template
+func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStructureItem {
 
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 
