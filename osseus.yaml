@@ -6,11 +6,13 @@ kind: Service
 metadata:
   name: ui
 spec:
+  type: NodePort
   selector:
     app: frontend
   ports:
   - port: 3000
     targetPort: 3000
+    nodePort: 31100
 
 ---
 
@@ -20,11 +22,13 @@ kind: Service
 metadata:
   name: node-server
 spec:
+  type: NodePort
   selector:
     app: frontend
   ports:
   - port: 8000
     targetPort: 8000
+    nodePort: 31101
 
 ---
 
@@ -47,7 +51,6 @@ spec:
       containers: 
         - name: client
           image: anthonydevelops/front_end:dev
-          imagePullPolicy: Always
           ports:
             - containerPort: 3000
             - containerPort: 8000
@@ -60,13 +63,16 @@ kind: Service
 metadata:
   name: agent-svc
 spec:
+  type: NodePort
   selector:
     app: backend
   ports:
   - port: 9191
     targetPort: 9191
+    nodePort: 31102
 
 ---
+
 # Agent Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -86,9 +92,27 @@ spec:
       containers: 
         - name: agent
           image: anthonydevelops/agent:dev
-          imagePullPolicy: Always
           ports:
             - containerPort: 9191
+
+---
+
+# KV Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-svc
+  labels:
+    app: osseus-etcd
+spec:
+  type: NodePort
+  selector:
+    app: osseus-etcd
+  ports:
+  - port: 2379
+    protocol: TCP
+    targetPort: 2379
+    nodePort: 31103
 
 ---
 
@@ -125,23 +149,6 @@ spec:
 
 ---
 
-# KV Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: etcd-svc
-  labels:
-    app: osseus-etcd
-spec:
-  ports:
-  - port: 2379
-    protocol: TCP
-    targetPort: 2379
-  selector:
-    app: osseus-etcd
-
----
-
 # This config map contains ETCD configuration for connecting to the osseus-etcd defined above.
 apiVersion: v1
 kind: ConfigMap
@@ -155,33 +162,33 @@ data:
     endpoints:
       - "__HOST_IP__:2379"
 
----
+# ---
 
 # Setup Ingress 
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: osseus-rules
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  rules:
-  - http:
-      paths:
-      - path: /
-        backend:
-          serviceName: ui
-          servicePort: 3000
-      - path: /server
-        backend:
-          serviceName: node-server
-          servicePort: 8000
-      - path: /agent
-        backend:
-          serviceName: agent-svc
-          servicePort: 9191
-      - path: /etcd
-        backend:
-          serviceName: etcd-svc
-          servicePort: 2379
+# apiVersion: networking.k8s.io/v1beta1
+# kind: Ingress
+# metadata:
+#   name: osseus-rules
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+# spec:
+#   rules:
+#   - http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: ui
+#           servicePort: 3000
+#       - path: /server
+#         backend:
+#           serviceName: node-server
+#           servicePort: 8000
+#       - path: /agent
+#         backend:
+#           serviceName: agent-svc
+#           servicePort: 9191
+#       - path: /etcd
+#         backend:
+#           serviceName: etcd-svc
+#           servicePort: 2379

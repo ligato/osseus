@@ -1,8 +1,6 @@
 import io from 'socket.io-client'
 
-const serverConn = '192.168.99.102/server'
-
-const socket = io(`http://${serverConn}`);
+const socket = io('http://localhost:31101');
 
 // Set socket actions
 const configureSocket = dispatch => {
