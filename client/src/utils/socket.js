@@ -1,11 +1,17 @@
 import io from 'socket.io-client'
 
-const socket = io('http://localhost:31101');
+// , { transports: ['websocket'] }
+
+const socket = io('http://localhost:8000');
 
 // Set socket actions
 const configureSocket = dispatch => {
     socket.on('connect', () => {
         console.log('connected to server');
+    });
+
+    socket.on('reconnect_attempt', () => {
+        socket.io.opts.transports = ['polling', 'websocket'];
     });
 
     //Sockets will call the specified redux action
