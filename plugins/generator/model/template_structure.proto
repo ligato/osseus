@@ -5,6 +5,11 @@ package model;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.messagename_all) = true;
 
+// FileContent holds the content of the go file
+message FileContent{
+  string content = 1;
+};
+
 // File holds the folder path, children, type, and etcdkey of the given file
 message File{
     string name = 1;

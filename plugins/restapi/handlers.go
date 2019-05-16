@@ -38,7 +38,13 @@ type Response struct {
 	ProjectName string
 	Plugins     []Plugins
 	AgentName   string
-	CustomPlugins []CustomPlugins
+	CustomPlugins []CustomPlugin
+}
+
+// CustomPlugins struct to marshal input
+type CustomPlugin struct{
+	CustomPluginName string
+	PackageName string
 }
 
 // Plugins struct to marshal input
@@ -47,12 +53,6 @@ type Plugins struct {
 	ID         int32
 	Selected   bool
 	Port       int32
-}
-
-// CustomPlugins struct to marshal input
-type CustomPlugins struct{
-	CustomPluginName  string
-	PackageName       string
 }
 
 // Registers REST handlers
@@ -233,7 +233,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	}
 
 	var pluginsList []Plugins
-	var customPluginsList []CustomPlugins
+	var customPluginsList []CustomPlugin
 
 	// Create a Plugins list that will be stored in etcd
 	for _, plugin := range value.Plugin{
@@ -248,7 +248,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 
 	//create CustomPlugins list that will be stored in etcd
 	for _, customPlugin := range value.CustomPlugin{
-		custompluginval := CustomPlugins{
+		custompluginval := CustomPlugin{
 			CustomPluginName:    customPlugin.CustomPluginName,
 			PackageName: 		 customPlugin.PackageName,
 		}

@@ -149,10 +149,18 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/"+ projectName + "/cmd/agent/doc.go", docTemplate},
 	}
 
+	// add agent-level go file contents to database
+	d.putGoFile("structure/" + projectName + "/main", mainTemplate)
+	d.putGoFile("structure/" + projectName + "/readme", readmeTemplate)
+	d.putGoFile("structure/" + projectName + "/doc", docTemplate)
+
 	// todo: possibly add custom plugin-specific readme file/template
 	//append a struct of name/body for every custom plugin in project
 	for _, customPlugin := range val.CustomPlugin{
 		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
+		d.log.Debugf("custom plugin name is: %s", customPlugin.GetCustomPluginName())
+		d.log.Debugf("custom package name is: %s", customPlugin.PackageName)
+		d.log.Debugf("plugin directory name is :", pluginDirectoryName)
 		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
 		pluginOptionsContents := d.FillOptionsTemplate(customPlugin)
 		pluginImplContents := d.FillImplTemplate(customPlugin)
@@ -161,14 +169,20 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/doc.go",
 			pluginDocContents,
 		}
+		//d.putGoFile("structure/" + projectName + "/" + pluginDirectoryName +"/doc", pluginDocContents)
+		d.putGoFile("structure/" + projectName + "/" + customPlugin.CustomPluginName +"/doc", pluginDocContents)
+
 		pluginOptionsEntry := fileEntry{
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/options.go",
 			pluginOptionsContents,
 		}
+		d.putGoFile("structure/" + projectName + "/" + pluginDirectoryName +"/options", pluginOptionsContents)
+
 		pluginImplEntry := fileEntry{
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_"+ pluginDirectoryName + ".go",
 			pluginImplContents,
 		}
+		d.putGoFile("structure/" + projectName + "/" + pluginDirectoryName +"/plugin_impl", pluginImplContents)
 
 		files = append(files, pluginDocEntry, pluginOptionsEntry, pluginImplEntry)
 	}
@@ -229,18 +243,18 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{"main.go",
 			"/" + projectName + "/cmd/agent/main.go",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/main",
 			[]string{}},
 		{"README.md",
 			"/" + projectName + "/cmd/agent/README.md",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/readme",
 			[]string{},
 		},
 		{"doc.go",
 			"/" + projectName + "/cmd/agent/doc.go",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/doc",
 			[]string{},
 		},
 	}
@@ -277,7 +291,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"doc.go",
 			pluginPath + "/doc.go",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/doc",
 			[]string{},
 		}
 
@@ -285,7 +299,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"options.go",
 			pluginPath + "/options.go",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/options",
 			[]string{},
 		}
 
@@ -293,7 +307,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"plugin_impl_" + pluginName + ".go",
 			pluginPath + "/plugin_impl_" + pluginName + ".go",
 			"file",
-			"todo: add etcdkey",
+			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/plugin_impl",
 			[]string{},
 		}
 
@@ -303,3 +317,17 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 	return templateStructure
 }
 
+// putGoFile adds go file contents to etcd at the given key
+// key should be "structure/{projectName}/{fileName}
+func (d *ProjectHandler) putGoFile(key string, fileContents string) error{
+
+	goFile := &model.FileContent{
+		Content: fileContents,
+	}
+	err := d.broker.Put(key, goFile)
+	if err != nil {
+		d.log.Errorf("Could not add file contents")
+		return err
+	}
+	return nil
+}
