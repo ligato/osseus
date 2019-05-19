@@ -243,18 +243,18 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{"main.go",
 			"/" + projectName + "/cmd/agent/main.go",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/main",
+			"/main",
 			[]string{}},
 		{"README.md",
 			"/" + projectName + "/cmd/agent/README.md",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/readme",
+			"/readme",
 			[]string{},
 		},
 		{"doc.go",
 			"/" + projectName + "/cmd/agent/doc.go",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/doc",
+			"/doc",
 			[]string{},
 		},
 	}
@@ -291,7 +291,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"doc.go",
 			pluginPath + "/doc.go",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/doc",
+			"/" + pluginName +"/doc",
 			[]string{},
 		}
 
@@ -299,7 +299,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"options.go",
 			pluginPath + "/options.go",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/options",
+			"/" + pluginName +"/options",
 			[]string{},
 		}
 
@@ -307,7 +307,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"plugin_impl_" + pluginName + ".go",
 			pluginPath + "/plugin_impl_" + pluginName + ".go",
 			"file",
-			"/vnf-agent/vpp1/config/generator/v1/template/structure/" + projectName + "/" + pluginName +"/plugin_impl",
+			"/" + pluginName +"/plugin_impl",
 			[]string{},
 		}
 

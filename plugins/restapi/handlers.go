@@ -70,6 +70,17 @@ type File struct{
 	Children       []string
 }
 
+// FilePath struct used to specify file in template structure
+// can be "/{pluginName}/doc" or "/doc" if agent-level file
+type FilePath struct{
+	FilePath    string
+}
+
+// FileContents struct to return contents of generated code file
+type FileContents struct{
+	FileContents string
+}
+
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 	// save project state
@@ -83,7 +94,7 @@ func (p *Plugin) registerHandlersHere() {
 	// get template structure of generated code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.StructureHandler, GET)
 	// get contents of specified file
-	//p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, GET)
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, POST)
 
 }
 
@@ -202,13 +213,49 @@ func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
+// FileContentsHandler handles retrieving contents of a specific generated code file
+func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		// Retrieve value from etcd
+		vars := mux.Vars(req)
+		pID := vars["id"]
+
+		// Capture request body
+		body, err := ioutil.ReadAll(req.Body)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		var reqParam FilePath
+		// Store JSON into FilePathName struct
+		err = json.Unmarshal(body, &reqParam)
+		if err != nil {
+			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
+			p.Log.Error(errMsg)
+			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
+			return
+		}
+
+		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.FilePath)
+
+		// Send value back to client
+		w.Header().Set("Content-Type", "application/json")
+		contentsJson, _ := json.Marshal(fileContents)
+
+		p.logError(formatter.JSON(w, http.StatusOK, contentsJson))
+	}
+}
+
 /*
 =========================
  ETCD Functions
 =========================
 */
 
-// updates the prefix key with the given project information
+// updates the prefix key with the given project information for generation
 func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	broker := p.KVStore.NewBroker(prefix)
 
@@ -264,7 +311,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	p.Log.Debugf("kv store should have (key) %v at (prefix) %v", key, prefix)
 }
 
-// returns the value at specified key
+// returns the Project at specified key {projectName}
 func (p *Plugin) getProject(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
@@ -312,6 +359,7 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 	return project
 }
 
+// returns template structure as directory of files
 func (p *Plugin) getStructure(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
@@ -345,6 +393,29 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 
 	return structure
 }
+
+// returns contents of specified file
+func (p *Plugin) getFileContents(prefix string, key string) interface{} {
+	broker := p.KVStore.NewBroker(prefix)
+
+	// Get value based on key
+	value := new(model.FileContent)
+	found, _, err := broker.GetValue(key, value)
+
+	if err != nil {
+		p.Log.Errorf("GetValue failed: %v", err)
+	} else if !found {
+		p.Log.Info("No file contents found..")
+	} else {
+		p.Log.Infof("Found file contents: %+v", value)
+	}
+
+	contents := FileContents{
+		FileContents:    value.Content,
+	}
+	return contents
+}
+
 
 // returns true if value at key deleted, false otherwise
 func (p *Plugin) deleteValue(prefix string, key string) interface{} {
