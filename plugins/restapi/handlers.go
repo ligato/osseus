@@ -31,9 +31,10 @@ import (
 const (
 	genPrefix      = "/vnf-agent/vpp1/config/generator/v1/project/"
 	projectsPrefix = "/projects/v1/plugins/"
+	templatePrefix = "/vnf-agent/vpp1/config/generator/v1/template/"
 )
 
-// Response struct from etcd
+// Response struct from etcd for projects
 type Response struct {
 	ProjectName string
 	Plugins     []Plugins
@@ -55,6 +56,20 @@ type Plugins struct {
 	Port       int32
 }
 
+// Template Structure struct from etcd for code structure
+type TemplateStructure struct{
+	Directories    []File
+}
+
+// File struct in Template Structure
+type File struct{
+	Name           string
+	AbsolutePath   string
+	Type           string
+	Etcd_key       string
+	Children       []string
+}
+
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
 	// save project state
@@ -65,6 +80,11 @@ func (p *Plugin) registerHandlersHere() {
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
 	// save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
+	// get template structure of generated code
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.StructureHandler, GET)
+	// get contents of specified file
+	//p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, GET)
+
 }
 
 // SaveProjectHandler handles saving projects to etcd
@@ -108,7 +128,7 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
 		projectJSON, _ := json.Marshal(projectInfo)
-		// projectJson := json.NewEncoder(w).Encode(projectInfo)
+
 		p.logError(formatter.JSON(w, http.StatusOK, projectJSON))
 	}
 }
@@ -157,6 +177,22 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 		p.genUpdater(reqParam, genPrefix, pID)
 
 		p.logError(formatter.JSON(w, http.StatusOK, reqParam))
+	}
+}
+
+// StructureHandler handles retrieving generated code folder structure
+func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		// Retrieve value from etcd
+		vars := mux.Vars(req)
+		pID := vars["id"]
+		templateStructure := p.getStructure(templatePrefix, "structure/" + pID)
+
+		// Send value back to client
+		w.Header().Set("Content-Type", "application/json")
+		structureJson, _ := json.Marshal(templateStructure)
+
+		p.logError(formatter.JSON(w, http.StatusOK, structureJson))
 	}
 }
 
@@ -216,6 +252,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	p.Log.Debugf("kv store should have (key) %v at (prefix) %v", key, prefix)
 }
 
+// todo possibly refactor to be getPlugins because not a generic get()
 // returns the value at specified key
 func (p *Plugin) getValue(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
@@ -235,7 +272,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	var pluginsList []Plugins
 	var customPluginsList []CustomPlugin
 
-	// Create a Plugins list that will be stored in etcd
+	// Create a Plugins list to be returned
 	for _, plugin := range value.Plugin{
 		pluginval := Plugins{
 			PluginName: plugin.PluginName,
@@ -246,7 +283,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 		pluginsList = append(pluginsList, pluginval)
 	}
 
-	//create CustomPlugins list that will be stored in etcd
+	//create CustomPlugins list to be returned
 	for _, customPlugin := range value.CustomPlugin{
 		custompluginval := CustomPlugin{
 			CustomPluginName:    customPlugin.CustomPluginName,
@@ -262,6 +299,40 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 	}
 
 	return project
+}
+
+func (p *Plugin) getStructure(prefix string, key string) interface{} {
+	broker := p.KVStore.NewBroker(prefix)
+
+	// Get value based on key
+	value := new(model.TemplateStructure)
+	found, _, err := broker.GetValue(key, value)
+
+	if err != nil {
+		p.Log.Errorf("GetValue failed: %v", err)
+	} else if !found {
+		p.Log.Info("No template structure found..")
+	} else {
+		p.Log.Infof("Found template structure: %+v", value)
+	}
+
+	var directoriesList []File
+	for _, file := range value.File{
+		fileEntry := File{
+			Name:    file.Name,
+			AbsolutePath: file.AbsolutePath,
+			Type:     file.Type,
+			Etcd_key:   file.EtcdKey,
+			Children:   file.Children,
+		}
+		directoriesList = append(directoriesList, fileEntry)
+	}
+
+	structure := TemplateStructure{
+		Directories: directoriesList,
+	}
+
+	return structure
 }
 
 // returns true if value at key deleted, false otherwise
