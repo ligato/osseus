@@ -135,6 +135,10 @@ var images = [
 /*MISC*/    '/images/misc.png',    '/images/misc.png',    '/images/misc.png', '/images/misc.png', '/images/misc.png',
 ]
 
+var projectName = 'untitled';
+
+var agentName = 'untitled'
+
 var plugins = [
 /*RPC*/      REST_API,   GRPC,      PROMETHEUS,   
 /*DS*/       ETCD,       REDIS,     CASSANDRA,  CONSUL,  
@@ -143,21 +147,19 @@ var plugins = [
 /*MISC*/     KAFKA,      DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG
 ];
 
-var projectName = 'untitled';
+var customPlugins = [];
 
 var project = {
     projectName,
-    plugins
+    plugins,
+    agentName,
+    customPlugins
 };
-
-var generatedCode = 'Code Viewer'
-
 
 module.exports = {
     project: project,
     images: images,
-    generatedCode: generatedCode,
-    categories: categories
+    categories: categories,
 }
 
 

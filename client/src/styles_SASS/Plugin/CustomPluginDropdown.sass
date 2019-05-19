@@ -1,0 +1,128 @@
+@import ../_colors.sass
+  
+.plugin-dropdown 
+  position: absolute
+  display: inline-block
+  right: 82.5%
+  margin-top: 1px
+  width: 140.38px
+ 
+
+.plugin-ul 
+  list-style-type: none
+  margin: 0
+  padding: 0
+  top: 20px
+  min-width: 140.38px
+  width: auto
+  background-color: white
+  font-weight: bold
+  box-shadow: 0px 8px 16px 0px $light_gray
+  text-decoration: none
+  position: absolute
+  cursor: pointer
+
+.list-text
+  padding: 8px 6px 8px 16px
+  margin-right: 35px
+  overflow: hidden
+  &:hover 
+    cursor: pointer
+    background-color: $whitish
+    color: #3C73B7
+
+.new-plugin-text
+  padding: 8px 6px 8px 4px
+  overflow: hidden
+  color: #3C73B7
+  width: 100%
+  border: 1px solid
+  border-color: #DFDFDF transparent transparent transparent
+  &:hover 
+    cursor: pointer
+    background-color: $whitish
+    
+li a 
+  color: #00BCEB
+  text-decoration: none
+  position: relative
+  cursor: pointer
+
+li 
+  border-bottom: 1px solid $whitish
+  position: relative
+  cursor: pointer
+  color: #00BCEB
+
+li:last-child 
+  border-bottom: none
+  position: relative
+  cursor: pointer
+
+.plugin-dropdown-button
+  letter-spacing: -1.3px
+  font-size: 14px
+  font-family: Arial, Helvetica, sans-serif
+  width: 140.38px
+  height: 20px
+  background-color: #FFFFFF
+  padding: 2px 0px 0px 8px
+  color: #3C73B7
+  text-overflow: ellipsis
+  text-transform: uppercase
+  cursor: pointer
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  position: relative
+  &:hover 
+    cursor: pointer
+    text-decoration: underline 
+  &:active 
+    box-shadow: none
+  &:focus 
+    outline: none
+
+.plugin-dropdown-button:before
+  content: ""
+  position: absolute
+  width: 0px
+  height: 10px
+  border: 10px solid
+  border-color: #3C73B7 transparent transparent transparent
+  right: 0px
+  top: 6px
+
+.add-img 
+  width: 25px
+  height: auto
+  z-index: 5
+  right: 5px
+  top: 5px
+  position: absolute
+
+.delete-img 
+  width: 60%
+  height: auto
+  z-index: -5
+  transform: rotate(45deg)
+  margin-top: 8.5px
+
+.delete-img-container
+  display: table-cell
+  height: 35px
+  text-align: center
+  width: 35px
+  vertical-align: middle
+  right: 0
+  top: 0
+  position: absolute
+  border-left: 1px solid #DFDFDF
+  &:hover 
+    cursor: pointer
+    background-color: #FFCCCB
+
+

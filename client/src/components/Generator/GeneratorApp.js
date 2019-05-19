@@ -5,16 +5,16 @@ import Header from './Header/Header';
 import store from '../../redux/store/index';
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
-let pluginModule = require('../Model');
-
 //This describes the format of the GeneratorApp
 class GeneratorApp extends React.Component {
   constructor() {
     super();
     this.state = {
-      currentProjectName: store.getState().currProject.projectName
+      currentProjectName: store.getState().currProject.projectName,
+      selectedFile: 'main.go',
     };
     this.newProjectName = this.newProjectName.bind(this);
+    this.onSelectParent = this.onSelectParent.bind(this);
   }
 
   //Function saves the retrieved new name from the children
@@ -25,6 +25,12 @@ class GeneratorApp extends React.Component {
     });
   }
 
+  onSelectParent = (file) => { 
+    if(file.type === 'file') {
+      this.setState({ selectedFile: file.content })
+    }
+  }
+
   render() {
     return (
       <div>
@@ -32,8 +38,8 @@ class GeneratorApp extends React.Component {
           newProjectNameHandler={this.newProjectName}
           currentProjectName={this.state.currentProjectName}
         />
-        <CodeStructure/>
-        <CodeViewer generatedCode={pluginModule.generatedCode} />
+        <CodeStructure onSelect_3={this.onSelectParent}/>
+        <CodeViewer generatedCode={this.state.selectedFile} />
       </div>
     )
   }

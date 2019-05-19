@@ -20,7 +20,8 @@
   top: 40px;
   left: 0;
   width: 17.5%;
-  background-color: #FFFFFF; }
+  background-color: #FFFFFF; 
+  z-index: 200;}
 
 .right-viewer {
   height: 100%;
@@ -37,6 +38,41 @@
   overflow: scroll;}
 
 .gencode {
-  font: 16px; }
+  font: 16px;
+  padding: 40px;
+  position: absolute;  }
+
+.filestructure {
+  margin-top: 20px;
+  position: absolute;
+}
+
+.current-file-div {
+  border-bottom: 5px solid #CECECE;
+  height: 35px;
+}
+
+.current-file-heading {
+  padding-left: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  color: #959FAE;
+  font-size: 17px;
+}
+
+.current-file-text {
+  padding-left: 10px;
+  color: #00BCEB;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  font-size: 17px;
+}
+
+.node-name {
+  color: #3C73B7;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  font-size: 17px;
+}
 
 /*# sourceMappingURL=GeneratorApp.css.map */

@@ -7,7 +7,8 @@
   flex-direction: column;
   flex-basis: 100%;
   background-color: #FFFFFF;
-  z-index: 5; }
+  z-index: -2;
+}
 
 .grid-container {
   display: inline-grid;
@@ -16,7 +17,8 @@
   flex-wrap: wrap;
   background-color: #FFFFFF;
   padding: 18px;
-  border-bottom: 5px solid #CECECE; }
+  border-bottom: 5px solid #CECECE;
+}
 
 .pluginheadingtext {
   margin-top: 2px;
@@ -25,7 +27,8 @@
   font-size: 16px;
   padding: 3px;
   letter-spacing: -1.5px;
-  font-family: Arial, Helvetica, sans-serif; }
+  font-family: Arial, Helvetica, sans-serif;
+}
 
 .left-column-background {
   left: 0;
@@ -34,4 +37,5 @@
   height: 100%;
   z-index: -1;
   position: fixed;
-  background-color: #FFFFFF; }
+  background-color: #FFFFFF;
+}

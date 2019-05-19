@@ -25,7 +25,6 @@ class Dropdown extends React.Component {
     event.preventDefault();
     store.dispatch(setCurrProject(loadProjectState(event.currentTarget.dataset.id)));
     this.props.loadedProjectHandlerFromHeader(store.getState().projects[event.currentTarget.dataset.id].projectName);
-    console.log(store.getState().currProject)
     flip = false;
   }
 
@@ -50,7 +49,6 @@ class Dropdown extends React.Component {
   deleteProject = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log(event.currentTarget.dataset.id)
     store.dispatch( deleteProject(store.getState().projects[event.currentTarget.dataset.id].projectName) )
     store.getState().projects.splice(event.currentTarget.dataset.id,1);
     this.forceUpdate()

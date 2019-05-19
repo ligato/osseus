@@ -49,3 +49,43 @@
   background-color: #DFDFDF;
   padding: 20px;
 }
+
+.new-custom-plugin-div {
+  left: 146px;
+  top: 23px;
+  position: absolute;
+}
+
+.new-custom-plugin-image {
+  background: white;
+  padding: 5px;
+}
+
+.agent-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -85px;
+}
+
+.agent {
+  color: #959FAE;
+  font-size: 18px;
+  cursor: default;
+  margin-left: 153px;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.agent-name {
+  color: #00BCEB;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  margin-top: -19px;
+  margin-left: 10px;
+  cursor: text;
+  font-size: 18px;
+}
+.agent-name:hover {
+  color: #3C73B7;
+}
