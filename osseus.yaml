@@ -92,6 +92,10 @@ spec:
         app: backend
     spec:
       hostNetwork: true
+      initContainers: 
+        - name: init-service
+          image: busybox
+          command: ['sh', '-c', 'until nslookup etcd-svc; do echo waiting for etcd-svc; sleep 2; done;']
       containers: 
         - name: agent
           image: anthonydevelops/agent:dev
@@ -158,52 +162,3 @@ spec:
         - name: var-etcd
           hostPath:
             path: /var/etcd
-
----
-
-# This config map contains ETCD configuration for connecting to the osseus-etcd defined above.
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: osseus-etcd-cfg
-  namespace: kube-system
-data:
-  etcd.conf: |
-    insecure-transport: true
-    dial-timeout: 10000000000
-    allow-delayed-start: true
-    endpoints:
-      - "__HOST_IP__:12379"
-
-##########################################
-# Ingress Resource Setup
-##########################################
-
-# Setup Ingress 
-# apiVersion: networking.k8s.io/v1beta1
-# kind: Ingress
-# metadata:
-#   name: osseus-rules
-#   annotations:
-#     nginx.ingress.kubernetes.io/rewrite-target: /
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-# spec:
-#   rules:
-#   - http:
-#       paths:
-#       - path: /
-#         backend:
-#           serviceName: ui
-#           servicePort: 3000
-#       - path: /server
-#         backend:
-#           serviceName: node-server
-#           servicePort: 8000
-#       - path: /agent
-#         backend:
-#           serviceName: agent-svc
-#           servicePort: 9191
-#       - path: /etcd
-#         backend:
-#           serviceName: etcd-svc
-#           servicePort: 2379
