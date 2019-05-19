@@ -34,8 +34,8 @@ const (
 	templatePrefix = "/vnf-agent/vpp1/config/generator/v1/template/"
 )
 
-// Response struct from etcd for projects
-type Response struct {
+// Project struct from etcd for projects
+type Project struct {
 	ProjectName string
 	Plugins     []Plugins
 	AgentName   string
@@ -96,7 +96,7 @@ func (p *Plugin) registerHandlersHere() {
 // SaveProjectHandler handles saving projects to etcd
 func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		var reqParam Response
+		var reqParam Project
 
 		// Capture request body
 		body, err := ioutil.ReadAll(req.Body)
@@ -107,7 +107,7 @@ func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		// Store JSON into Response struct
+		// Store JSON into Project struct
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -129,7 +129,7 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		// Retrieve value from etcd
 		vars := mux.Vars(req)
 		pID := vars["id"]
-		projectInfo := p.getValue(projectsPrefix, pID)
+		projectInfo := p.getProject(projectsPrefix, pID)
 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
@@ -157,7 +157,7 @@ func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc
 // GenerateHandler handles generating a new template project
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		var reqParam Response
+		var reqParam Project
 
 		// Capture request body
 		body, err := ioutil.ReadAll(req.Body)
@@ -168,7 +168,7 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 			return
 		}
 
-		// Store JSON into Response struct
+		// Store JSON into Project struct
 		err = json.Unmarshal(body, &reqParam)
 		if err != nil {
 			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
@@ -208,8 +208,8 @@ func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
 =========================
 */
 
-// updates the prefix key with the given response
-func (p *Plugin) genUpdater(response Response, prefix string, key string) {
+// updates the prefix key with the given project information
+func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
@@ -231,7 +231,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	var customPluginsList []*model.CustomPlugin
 
 	// Create a Plugins list that will be stored in etcd
-	for _, plugin :=  range response.Plugins{
+	for _, plugin :=  range proj.Plugins{
 		pluginval = &model.Plugin{
 			PluginName: plugin.PluginName,
 			Id:         plugin.ID,
@@ -242,7 +242,7 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	}
 
 	//create CustomPlugins list that will be stored in etcd
-	for _, customPlugin := range response.CustomPlugins{
+	for _, customPlugin := range proj.CustomPlugins{
 		custompluginval = &model.CustomPlugin{
 			CustomPluginName:    customPlugin.CustomPluginName,
 			PackageName: 		 customPlugin.PackageName,
@@ -251,9 +251,9 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	}
 
 	value = &model.Project{
-		ProjectName: response.ProjectName,
+		ProjectName: proj.ProjectName,
 		Plugin:      pluginsList,
-		AgentName:   response.AgentName,
+		AgentName:   proj.AgentName,
 		CustomPlugin: customPluginsList,
 	}
 
@@ -264,9 +264,8 @@ func (p *Plugin) genUpdater(response Response, prefix string, key string) {
 	p.Log.Debugf("kv store should have (key) %v at (prefix) %v", key, prefix)
 }
 
-// todo possibly refactor to be getPlugins because not a generic get()
 // returns the value at specified key
-func (p *Plugin) getValue(prefix string, key string) interface{} {
+func (p *Plugin) getProject(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
@@ -303,7 +302,7 @@ func (p *Plugin) getValue(prefix string, key string) interface{} {
 		}
 		customPluginsList = append(customPluginsList, custompluginval)
 	}
-	project := Response{
+	project := Project{
 		ProjectName: value.ProjectName,
 		Plugins:     pluginsList,
 		AgentName:   value.AgentName,
