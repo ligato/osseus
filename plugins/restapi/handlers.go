@@ -87,6 +87,12 @@ func (p *Plugin) registerHandlersHere() {
 
 }
 
+/*
+=========================
+ REST Handler Functions
+=========================
+*/
+
 // SaveProjectHandler handles saving projects to etcd
 func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -195,6 +201,12 @@ func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
 		p.logError(formatter.JSON(w, http.StatusOK, structureJson))
 	}
 }
+
+/*
+=========================
+ ETCD Functions
+=========================
+*/
 
 // updates the prefix key with the given response
 func (p *Plugin) genUpdater(response Response, prefix string, key string) {
