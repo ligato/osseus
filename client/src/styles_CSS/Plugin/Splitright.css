@@ -8,6 +8,7 @@
   display: flex;
   justify-content: center;
   opacity: 1;
+  overflow: hidden;
 }
 
 .right-bottom {
@@ -19,6 +20,7 @@
   background: #DFDFDF;
   justify-content: center;
   display: flex;
+  overflow: hidden;
 }
 
 .rectangle {
@@ -30,15 +32,7 @@
   border-radius: 15px;
   text-align: center;
   color: #75BAEC;
-}
-
-.rectangletext {
-  color: #3C73B7;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  opacity: 1;
-  font-size: 30px;
+  position: relative;
 }
 
 .grid-container-right {
@@ -48,6 +42,7 @@
   flex-wrap: wrap;
   background-color: #DFDFDF;
   padding: 20px;
+  overflow: hidden;
 }
 
 .new-custom-plugin-div {
@@ -65,27 +60,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -85px;
-}
-
-.agent {
-  color: #959FAE;
-  font-size: 18px;
-  cursor: default;
-  margin-left: 153px;
-  font-family: Arial, Helvetica, sans-serif;
-  letter-spacing: -0.5px;
+  vertical-align: middle;
 }
 
 .agent-name {
   color: #00BCEB;
+  font-size: calc(0.90vw + 0.90vh);
   font-family: Arial, Helvetica, sans-serif;
   letter-spacing: -0.5px;
-  margin-top: -19px;
-  margin-left: 10px;
-  cursor: text;
-  font-size: 18px;
 }
-.agent-name:hover {
-  color: #3C73B7;
+
+.settings-image {
+  position: absolute;
+  padding-left: 10px;
+  width: auto;
+  height: 50%;
+  left: 1%;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+.settings-image:active {
+  top: 6px;
+}
+.settings-image:hover {
+  cursor: pointer;
 }

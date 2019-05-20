@@ -124,7 +124,8 @@ var categories = [
 /*DS*/      [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
 /*LOGGING*/ [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
 /*HEALTH*/  [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
-/*MISC*/    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']]
+/*MISC*/    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']],
+/*CUSTOM*/  [['untitled', 'CUSTOM']],
 ]
 
 var images = [

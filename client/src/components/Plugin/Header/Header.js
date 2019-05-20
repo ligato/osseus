@@ -36,6 +36,7 @@ class Header extends React.Component {
   }
 
   saveProject() {
+    store.getState().currProject.plugins.length = 16;
     const projectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
     let projectCopyName = projectCopy.projectName;
     let isDuplicateName = determineIfDuplicate(projectCopyName);  
@@ -56,6 +57,7 @@ class Header extends React.Component {
     //
     this.props.newProjectNameHandler(projectCopyName)
     store.dispatch( saveProjectToKV(store.getState().currProject) )
+    console.log(store.getState().projects)
   }
 
   loadProject() {

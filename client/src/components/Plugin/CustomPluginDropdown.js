@@ -11,8 +11,10 @@ let clicked = false;
 let pluginModule = require('../Model');
 
 let customPlugin = {
-  customPluginName: 'untitled',
-  package: 'untitled'
+  CustomPluginName: 'untitled',
+  PackageName: 'untitled',
+  selected: false,
+  id: 11,
 }
 
 class Dropdown extends React.Component {

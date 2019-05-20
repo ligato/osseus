@@ -11,15 +11,23 @@ import { setCurrProject, loadAllProjects } from "../../redux/actions/index";
 
 let pluginModule = require('../Model');
 let visiblityArray;
-const OFFSET = buildOFFSET();
+let OFFSET = buildOFFSET();
 let loaded = false;
 store.dispatch( setCurrProject(pluginModule.project) );
+
+/////////////////////
+let customPlugin = {
+  pluginName: 'UNTITLED',
+  PackageName: 'untitled',
+  selected: false,
+}
+////////////////////
 
 class PluginApp extends React.Component {
   constructor() {
     super();
     this.state = {
-      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.'], 
+      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.', 'Custom'], 
       pluginPickedArray: getPluginPickedArray(),
       currentProjectName: store.getState().currProject.projectName
     };
@@ -27,6 +35,7 @@ class PluginApp extends React.Component {
     this.handleNewProject = this.handleNewProject.bind(this);
     this.handleLoadedProject = this.handleLoadedProject.bind(this);
     this.newProjectName = this.newProjectName.bind(this);
+    this.handleCustomPlugin = this.handleCustomPlugin.bind(this);
     visiblityArray = buildVisiblityArray(this.state.pluginPickedArray)
     if(!loaded) {
       store.dispatch( loadAllProjects() );
@@ -51,12 +60,8 @@ class PluginApp extends React.Component {
 
   handleNewProject = () => {
     (async () => {
-      let nameCapture = await getName();
+      let nameCapture = await getProjectName();
       if(!nameCapture) return;
-      if(nameCapture.length > 20){ 
-        nameCapture = nameCapture.substring(0, 19) + '...'
-        Swal.fire("Project names larger than 20 characters will be truncated!")
-      }
       this.setState({
         currentProjectName: nameCapture
       });
@@ -83,6 +88,17 @@ class PluginApp extends React.Component {
     });
   }
 
+  handleCustomPlugin(name) {
+    let plugin = JSON.parse(JSON.stringify(customPlugin));
+    plugin.pluginName = name[0];
+    plugin.PackageName = name[1];
+    buildCustomPlugin(plugin);
+    this.setState({
+      pluginPickedArray: getPluginPickedArray()
+    });
+    OFFSET = buildOFFSET();
+  }
+
   render() {
     return (
       <div>
@@ -100,6 +116,7 @@ class PluginApp extends React.Component {
                   key={outerIndex} 
                   sentInCategory={sentInCategory} 
                   sentInArray={this.state.pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
+                  sendCustomPlugin={this.handleCustomPlugin}
                 >
                   {pluginModule.project.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
                     return (
@@ -137,7 +154,7 @@ class PluginApp extends React.Component {
 }
 export default PluginApp;
 
-async function getName () {
+async function getProjectName () {
   const {value: text} = await Swal.fire({
     title: 'CN-infra Generator App',
     input: 'textarea',
@@ -149,6 +166,8 @@ async function getName () {
 }
 
 function resetState() {
+  pluginModule.project.plugins.length = 16;
+  pluginModule.project.customPlugins = [];
   for(let i = 0; i < pluginModule.project.plugins.length; i++) {
     pluginModule.project.plugins[i].selected = false;
     pluginModule.project.plugins[i].port = 0;
@@ -188,6 +207,15 @@ function buildOFFSET() {
     previouslength = Number(array[i+1]);
   }
   return array;
+}
+
+function buildCustomPlugin(data) {
+  visiblityArray.push('hidden');
+  pluginModule.images.push('/images/custom.png');
+  pluginModule.project.customPlugins.push(data)
+  pluginModule.project.plugins.push(data)
+  pluginModule.categories[5].push([data.pluginName, 'CUSTOM'])
+  store.dispatch( setCurrProject(pluginModule.project));
 }
 
 
