@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import ReactTooltip from 'react-tooltip'
 
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV, generateCurrProject } from "../../../redux/actions/index";
+import { addCurrProject, saveProjectToKV, loadProjectFromKV, generateCurrProject, downloadTemplate } from "../../../redux/actions/index";
 
 
 import '../../../styles_CSS/Plugin/Header/Header.css';
@@ -66,6 +66,13 @@ class Header extends React.Component {
 
   generateProject() {
     store.dispatch(generateCurrProject(store.getState().currProject))
+    store.dispatch( downloadTemplate() );
+    let template = store.getState().template;
+    for(let i = 0; i < template.length; i++) {
+      if(template[i].type === file) {
+        store.dispatch( dowloadGO(template[i].etcdKey) );
+      }
+    }
   }
 
   //Function communicates if user edited the project name
