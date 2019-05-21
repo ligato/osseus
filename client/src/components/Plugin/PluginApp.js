@@ -18,8 +18,8 @@ store.dispatch( setCurrProject(pluginModule.project) );
 /////////////////////
 let customPlugin = {
   pluginName: 'UNTITLED',
-  PackageName: 'untitled',
   selected: false,
+  packageName: 'untitled',
 }
 ////////////////////
 
