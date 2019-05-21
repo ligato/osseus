@@ -8,11 +8,11 @@ Osseus is full-stack web application for generating configurable plugin template
 
 ### Requirements:
 
-| Prereq.  | Version  |
-| -------- |: ------ :|
-| NodeJS   | 10.15^ |
-| Go       | 1.10 |
-| Docker   | 18.09^ |
+| Prereq. | Version |
+| ------- | :-----: |
+| NodeJS  | 10.15^  |
+| Go      |  1.10   |
+| Docker  | 18.09^  |
 
 ### First, clone the repo:
 ```
