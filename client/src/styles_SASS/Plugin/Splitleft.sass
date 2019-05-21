@@ -9,32 +9,46 @@
   flex-direction: column
   flex-basis: 100%
   background-color: #FFFFFF
-  z-index: 5
-
-
+  z-index: -2
 
 .grid-container 
   display: inline-grid
-  grid-gap: 5% 10%
+  grid-gap: 3% 1%
   grid-template-columns: repeat(auto-fill, 24%)
   flex-wrap: wrap
   background-color: #FFFFFF
-  padding: 18px
+  padding: 4px
   border-bottom: 5px solid #CECECE
-
-  
-
 
 .pluginheadingtext 
   margin-top: 2px
   margin-bottom: 1px
   color: #3C73B7  
-  font-size: 16px
-  padding: 3px
+  font-size: calc(0.65vw + 0.65vh)
+  padding-left: 3px
   letter-spacing: -1.5px
   font-family: Arial, Helvetica, sans-serif
 
-
+.custom-heading
+  margin-top: 2px
+  margin-bottom: 1px
+  float: left
+  position: relative
+  width: 20%
+  color: #3C73B7  
+  font-size: calc(0.65vw + 0.65vh)
+  padding-left: 3px
+  letter-spacing: -1.5px
+  font-family: Arial, Helvetica, sans-serif
+  -webkit-touch-callout: none
+  -webkit-user-select: none
+  -khtml-user-select: none
+  -moz-user-select: none
+  -ms-user-select: none
+  user-select: none
+  &:hover 
+    cursor: pointer
+    text-decoration: underline
 
 .left-column-background 
   left: 0
@@ -44,3 +58,15 @@
   z-index: -1
   position: fixed
   background-color: #FFFFFF
+
+.add-plugin-image
+  width: 6%
+  height: auto
+  float: right
+  margin-top: 5px
+  margin-right: 5px
+  z-index: 205
+  &:active 
+    margin-top: 7px
+  &:hover 
+    cursor: pointer

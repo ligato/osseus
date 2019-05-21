@@ -1,0 +1,164 @@
+---
+##########################################
+# Osseus Frontend Setup
+##########################################
+
+# Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+spec:
+  type: NodePort
+  selector:
+    app: frontend
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 31100
+
+---
+
+# Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-server
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 8000
+    targetPort: 8000
+
+---
+
+# Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: osseus-frontend
+  labels:
+    app: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      hostNetwork: true
+      containers: 
+        - name: client
+          image: anthonydevelops/front_end:dev
+          ports:
+            - containerPort: 3000
+            - containerPort: 8000
+---
+##########################################
+# Osseus Agent Setup
+##########################################
+
+# Agent Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-svc
+spec:
+  selector:
+    app: backend
+  ports:
+  - port: 9191
+    targetPort: 9191
+
+---
+
+# Agent Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: osseus-backend
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      hostNetwork: true
+      initContainers: 
+        - name: init-service
+          image: busybox
+          command: ['sh', '-c', 'until nslookup etcd-svc; do echo waiting for etcd-svc; sleep 2; done;']
+      containers: 
+        - name: agent
+          image: anthonydevelops/agent:dev
+          ports:
+            - containerPort: 9191
+---
+##########################################
+# Osseus ETCD Setup
+##########################################
+
+# ETCD Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-svc
+  namespace: kube-system
+  labels:
+    app: osseus-etcd
+spec:
+  selector:
+    app: osseus-etcd
+  ports:
+  - port: 12379
+
+---
+
+# ETCD Deployment
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: osseus-etcd
+  namespace: kube-system
+spec:
+  serviceName: osseus-etcd
+  selector:
+    matchLabels:
+      app: osseus-etcd
+  template:
+    metadata:
+      labels:
+        app: osseus-etcd
+    spec:
+      hostNetwork: true
+      containers:
+        - name: etcd
+          image: quay.io/coreos/etcd:v3.3.8
+          env:
+            - name: ETCDCTL_API
+              value: "3"
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - /usr/local/bin/etcd --name=osseus-etcd --data-dir=/var/etcd/osseus-data
+              --advertise-client-urls=http://0.0.0.0:12379 --listen-client-urls=http://0.0.0.0:12379 --listen-peer-urls=http://0.0.0.0:12380
+          volumeMounts:
+            - name: var-etcd
+              mountPath: /var/etcd
+      volumes:
+        - name: var-etcd
+          hostPath:
+            path: /var/etcd

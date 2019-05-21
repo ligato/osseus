@@ -15,44 +15,50 @@
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
+const cors = require('cors')
 const fetch = require('node-fetch');
 const Webhooks = require('node-webhooks');
 const fs = require('fs')
 
+app.use(cors())
+
+const agent = 'localhost:9191'
+const etcd = 'localhost:12379'
+
 io.on('connection', socket => {
     // Saves current project
-    socket.on('SEND_SAVE_PROJECT', state => {
-        fetch("http://0.0.0.0:9191/v1/projects", {
+    socket.on('SEND_SAVE_PROJECT', project => {
+        fetch(`http://${agent}/v1/projects`, {
             method: "POST",
-            body: JSON.stringify(state),
+            body: JSON.stringify(project),
         })
     });
 
     // Loads previous project
-    socket.on('SEND_LOAD_PROJECT', state => {
-        console.log(state)
-        fetch(`http://0.0.0.0:9191/v1/projects/${state}`)
+    socket.on('SEND_LOAD_PROJECT', project => {
+        console.log(project)
+        fetch(`http://${agent}/v1/projects/${project}`)
             .then(res => console.log(res.body))
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
 
     //Loads all the existing projects
-    socket.on('LOAD_ALL_FROM_KV', state => {
+    socket.on('LOAD_ALL_FROM_KV', projects => {
         console.log('load all')
     })
 
     //Deletes the selected project from the KV store
-    socket.on('DELETE_PROJECT_FROM_KV', state => {
-        console.log(state)
-        fetch(`http://0.0.0.0:9191/v1/projects/${state}`, {
+    socket.on('DELETE_PROJECT_FROM_KV', project => {
+        console.log(project)
+        fetch(`http://${agent}/v1/projects/${project}`, {
             method: "DELETE",
         })
     })
 
     // Generates current project
-    socket.on('GENERATE_PROJECT', async state => {
+    socket.on('GENERATE_PROJECT', async project => {
         const selected = []
-        const allPlugins = state.plugins
+        const allPlugins = project.plugins
 
         // Filter out selected plugins
         allPlugins.map(plugin => {
@@ -62,15 +68,15 @@ io.on('connection', socket => {
         })
 
         // Set selected plugins for generation
-        state.plugins = selected
+        project.plugins = selected
 
         // Send project to API /v1/templates/{id}
-        const generate = await fetch(`http://0.0.0.0:9191/v1/templates/${state.projectName}`, {
+        const generate = await fetch(`http://${agent}/v1/templates/${project.projectName}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(state)
+            body: JSON.stringify(project)
         })
         const result = await generate
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
@@ -81,11 +87,11 @@ io.on('connection', socket => {
         })
 
         // Encode key to base64
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${state.projectName}`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
 
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works
-        webHooks.add('etcd', 'http://localhost:2379/v3beta/kv/range')
+        webHooks.add('etcd', `http://${etcd}/v3beta/kv/range`)
 
         // Trigger webhook & send WATCH request
         webHooks.trigger('etcd', { key: base64Key })
@@ -134,9 +140,26 @@ io.on('connection', socket => {
             console.log("Tar file generation complete")
         })
     })
+
+    // Downloads the template
+    socket.on('DOWNLOAD_TEMPLATE', project => {
+        console.log(project)
+        fetch(`http://${agent}/v1/templates/structure/${project}`)
+            .then(res => console.log(res.body))
+            .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
+    })
+
+    // Downloads a GO file
+    socket.on('DOWNLOAD_GO', path, project => {
+        fetch(`http://${agent}/v1/templates/structure/${project}`, {
+            method: "POST",
+            body: JSON.stringify(path),
+        })
+            .then(res => console.log(res.body))
+            .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
 })
 
-server.listen(8000, () => console.log('connected to port 8000!'))
+server.listen(8000, () => console.log(`Server listening on 8000`))
 
 // Removes first and last lines of file. These lines contain extra metadata created
 // by the generator, for display these tend to confuse the code highlighter

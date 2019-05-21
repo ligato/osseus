@@ -18,7 +18,7 @@ curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 # checkout agent code
 mkdir -p $GOPATH/src/github.com/ligato
 cd $GOPATH/src/github.com/ligato
-git clone --single-branch --branch dev https://github.com/ligato/osseus.git
+git clone --single-branch --branch demo https://github.com/anthonydevelops/osseus.git
 
 # install dependencies
 cd $GOPATH/src/github.com/ligato/osseus

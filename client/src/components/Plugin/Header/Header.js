@@ -5,9 +5,10 @@ import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
 import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import ReactTooltip from 'react-tooltip'
 
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV, generateCurrProject } from "../../../redux/actions/index";
+import { addCurrProject, saveProjectToKV, loadProjectFromKV, generateCurrProject, downloadTemplate, downloadGO } from "../../../redux/actions/index";
 
 
 import '../../../styles_CSS/Plugin/Header/Header.css';
@@ -35,6 +36,7 @@ class Header extends React.Component {
   }
 
   saveProject() {
+    store.getState().currProject.plugins.length = 16;
     const projectCopy = JSON.parse(JSON.stringify( store.getState().currProject ));
     let projectCopyName = projectCopy.projectName;
     let isDuplicateName = determineIfDuplicate(projectCopyName);  
@@ -55,6 +57,7 @@ class Header extends React.Component {
     //
     this.props.newProjectNameHandler(projectCopyName)
     store.dispatch( saveProjectToKV(store.getState().currProject) )
+    console.log(store.getState().projects)
   }
 
   loadProject() {
@@ -63,6 +66,13 @@ class Header extends React.Component {
 
   generateProject() {
     store.dispatch(generateCurrProject(store.getState().currProject))
+    store.dispatch( downloadTemplate() );
+    let template = store.getState().template;
+    for(let i = 0; i < template.length; i++) {
+      if(template[i].fileType === 'file') {
+        store.dispatch( downloadGO(template[i].etcdKey) );
+      }
+    }
   }
 
   //Function communicates if user edited the project name
@@ -102,7 +112,8 @@ class Header extends React.Component {
                 className="new-project-image"
                 src='/images/new-project.png'
                 alt='oops'
-                onClick={this.resetPalette}>
+                onClick={this.resetPalette}
+                data-tip="New Project">
               </img>
               <div className="header-text">
                 <p className="currentproject">Current Project: </p>
@@ -115,16 +126,23 @@ class Header extends React.Component {
                 />
               </div>
               <Link className="generatorlink" onClick={this.generateProject} to="/GeneratorApp">Generate</Link>
-              <img
-                className="upload-image"
-                src='/images/upload.png'
-                alt='oops'
-                onClick={this.saveProject}>
-              </img>
+              <div>
+                <img
+                  className="upload-image"
+                  src='/images/upload.png'
+                  alt='oops'
+                  onClick={this.saveProject}
+                  data-tip="Upload Project">
+                </img>
+              </div>
             </Grid.Column>
           </Grid>
           <Divider vertical></Divider>
         </Segment>
+        <ReactTooltip
+          place="bottom"
+          effect="solid"
+        />
       </div>
     );
   }

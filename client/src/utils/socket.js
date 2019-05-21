@@ -1,4 +1,5 @@
 import io from 'socket.io-client'
+import { template } from '@babel/core';
 
 const socket = io('http://localhost:8000');
 
@@ -12,9 +13,12 @@ const configureSocket = dispatch => {
     socket.on('SEND_PROJECT_TO_CLIENT', project => {
         dispatch({ type: 'RETURN_LOAD_PROJECT', project })
     });
-    socket.on('GENERATED_TAR', state => {
-        dispatch({ type: 'DELIVER_GENERATED_TAR', state })
+    socket.on('SEND_TEMPLATE_TO_CLIENT', template => {
+        dispatch({ type: 'RETURN_TEMPLATE', template });
     });
+    socket.on('SEND_GO_TO_CLIENT', GO => {
+        dispatch({ type: 'RETURN_GO', GO });
+    })
 
     return socket
 }

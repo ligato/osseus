@@ -21,34 +21,19 @@ function FileHelper(path) {
   return returnValue;
 }
 
+const CodeViewer = (props) => {
+  let codeString = FileHelper(props.generatedCode);
+  return (
+    <div className="body">
+      <div className="split right-viewer">
+        <div className="gencode">
+          <SyntaxHighlighter language="go" style={coy}>{codeString}</SyntaxHighlighter>
 
-
-let codeString = FileHelper("code.txt");
-//console.log('before\n' + codeString.substr(0, 40))
-//console.log(codeString.substr(0,40).replace(/[^\x20-\x7F]/g, ""));
-//console.log(codeString.substr(0,40).replace(/[\x00]/g, ""));
-//codeString = codeString.replace(/[\x00]/g, "");
-console.log(codeString)
-//console.log('after' + codeString)
-
-class CodeViewer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      text: null
-    };
-  }
-
-  render() {
-    return (
-      <div className="body">
-        <div className="split right-viewer">
-          <SyntaxHighlighter className="gencode" language="go" style={coy}>{codeString}</SyntaxHighlighter>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 export default CodeViewer;
 
 //CodeViewer.propTypes = {}
