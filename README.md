@@ -46,7 +46,7 @@ Osseus was built using the [CN-Infra](https://github.com/ligato/cn-infra) framew
 The architecture of the Osseus web application is shown below:
 
 <p align="center">
-    <img src="docs/img/ColorArchitecture.png" alt="Osseus Architecture">
+    <img src="docs/img/Architecture.png" alt="Osseus Architecture">
 </p>
 
 We use React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with CN-Infra, where we are able to use packages that are built for ease-of-use in the design of our generator and restapi plugins. Lastly, ETCD allows for multiversion persistent key-value storage and was chosen for its integration with various plugins/libraries through CN-Infra.
