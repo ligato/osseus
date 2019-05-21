@@ -6,10 +6,13 @@ Osseus is full-stack web application for generating configurable plugin template
 
 ## :rocket: Quickstart
 
-### Prerequisites:
+### Requirements:
 
-- [NodeJS](https://nodejs.org/en/) 10.15^
-- [Go](https://golang.org/) 1.10^
+| Prereq.  | Version  |
+| -------- |: ------ :|
+| NodeJS   | 10.15^ |
+| Go       | 1.10 |
+| Docker   | 18.09^ |
 
 ### First, clone the repo:
 ```
