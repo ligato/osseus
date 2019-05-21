@@ -20,7 +20,10 @@ class DraggablePlugins extends React.Component {
   handleClick = (event) => { 
     event.preventDefault();
     store.dispatch( setCurrPopupID(event.currentTarget.dataset.id) );
-    if(this.props.visibility === 'hidden') {
+    if(this.props.image === '/images/custom.png' && this.props.visibility === 'visible') {
+      console.log('custom')
+      customPluginPopup(this.props.pluginName)
+    } else if(this.props.visibility === 'hidden'){
       this.props.handleClickedPlugin(event.currentTarget.dataset.id);
     } else {
       setPort(event);
@@ -63,11 +66,11 @@ class DraggablePlugins extends React.Component {
 export default DraggablePlugins;
 
 DraggablePlugins.propTypes = {
-  pluginName:         PropTypes.string.isRequired,
-  image:              PropTypes.string.isRequired,
+  pluginName:           PropTypes.string.isRequired,
+  image:                PropTypes.string.isRequired,
   handleClickedPlugin:  PropTypes.func.isRequired,
-  id:                 PropTypes.number.isRequired,
-  visibility:         PropTypes.string.isRequired
+  id:                   PropTypes.number.isRequired,
+  visibility:           PropTypes.string.isRequired
 }
 
 //Function load the port for the specific plugin the user clicked
@@ -93,4 +96,30 @@ function setPort(event) {
     }
     pluginModule.project.plugins[store.getState().currPopupID].port = port;
   })()
+}
+
+function customPluginPopup(name) {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: 'btn btn-success',
+      cancelButton: 'btn btn-danger'
+    },
+    buttonsStyling: false,
+  })
+  
+  swalWithBootstrapButtons.fire({
+    title: '"' + name + '" Plugin Information',
+    text: "You won't be able to revert this!",
+    confirmButtonText: 'Delete Plugin',
+    showCloseButton: true,
+    reverseButtons: true
+  }).then((result) => {
+    if (result.value) {
+      swalWithBootstrapButtons.fire(
+        'Deleted!',
+        'Your file has been deleted.',
+        'success'
+      )
+    } 
+  })
 }

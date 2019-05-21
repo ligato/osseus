@@ -92,7 +92,7 @@ function rootReducer(state = initialState, action) {
   }
   //Emits the server to call DOWNLOAD_GO
   else if (action.type === DOWNLOAD_GO) {
-    socket && socket.emit('DOWNLOAD_GO', action.payload, state.currProject)
+    socket && socket.emit('DOWNLOAD_GO', action.payload)
   }
   return state;
 }

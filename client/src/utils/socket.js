@@ -1,5 +1,4 @@
 import io from 'socket.io-client'
-import { template } from '@babel/core';
 
 const socket = io('http://localhost:8000');
 

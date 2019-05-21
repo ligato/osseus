@@ -150,13 +150,15 @@ io.on('connection', socket => {
     })
 
     // Downloads a GO file
-    socket.on('DOWNLOAD_GO', path, project => {
-        fetch(`http://${agent}/v1/templates/structure/${project}`, {
+    socket.on('DOWNLOAD_GO', path => {
+        let pluginModule = require('../Model');
+        fetch(`http://${agent}/v1/templates/structure/${pluginModule.project.projectName}`, {
             method: "POST",
             body: JSON.stringify(path),
         })
             .then(res => console.log(res.body))
             .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
+    })
 })
 
 server.listen(8000, () => console.log(`Server listening on 8000`))

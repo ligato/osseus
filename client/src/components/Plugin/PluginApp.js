@@ -15,13 +15,11 @@ let OFFSET = buildOFFSET();
 let loaded = false;
 store.dispatch( setCurrProject(pluginModule.project) );
 
-/////////////////////
 let customPlugin = {
   pluginName: 'UNTITLED',
   selected: false,
   packageName: 'untitled',
 }
-////////////////////
 
 class PluginApp extends React.Component {
   constructor() {
