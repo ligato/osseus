@@ -14,8 +14,10 @@
 
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/project.proto
 //go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/template.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/template_structure.proto
 //go:generate descriptor-adapter --descriptor-name Project --value-type *model.Project --import "model" --output-dir "descriptor"
 //go:generate descriptor-adapter --descriptor-name Template --value-type *model.Template --import "model" --output-dir "descriptor"
+//go:generate descriptor-adapter --descriptor-name TemplateStructure --value-type *model.TemplateStructure --import "model" --output-dir "descriptor"
 
 package generator
 
@@ -51,20 +53,13 @@ func (p *Plugin) Init() error {
 	// Init handlers
 	p.genHandler = gencalls.NewProjectHandler(p.Log, p.KVStore)
 
-	// Init & register descriptors
+	// Init & register descriptor
 	pluginDescriptor := descriptor.NewProjectDescriptor(p.Log, p.genHandler)
 	err := p.KVScheduler.RegisterKVDescriptor(pluginDescriptor)
 	if err != nil {
 		return err
 	}
 	p.Log.Info("Project descriptor registered")
-
-	templateDescriptor := descriptor.NewTemplateDescriptor(p.Log)
-	err = p.KVScheduler.RegisterKVDescriptor(templateDescriptor)
-	if err != nil {
-		return err
-	}
-	p.Log.Info("Template descriptor registered")
 
 	return nil
 }
