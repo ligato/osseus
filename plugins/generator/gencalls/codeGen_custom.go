@@ -10,7 +10,7 @@ func (d *ProjectHandler) FillOptionsTemplate(customPlugin *model.CustomPlugin) s
 		PluginName      string
 	}{
 		PackageName:     customPlugin.PackageName,
-		PluginName:      customPlugin.CustomPluginName,
+		PluginName:      customPlugin.PluginName,
 	}
 
 	return d.fillTemplate("options.go_template", pluginOptionsTemplate, data)
@@ -24,7 +24,7 @@ func (d *ProjectHandler) FillImplTemplate(customPlugin *model.CustomPlugin) stri
 		PluginName      string
 	}{
 		PackageName:     customPlugin.PackageName,
-		PluginName:      customPlugin.CustomPluginName,
+		PluginName:      customPlugin.PluginName,
 	}
 
 	return d.fillTemplate("impl.go_template", pluginImplTemplate, data)

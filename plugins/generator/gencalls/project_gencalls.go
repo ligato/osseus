@@ -23,11 +23,11 @@ type pluginAttr struct {
 }
 
 type templateStructureItem struct{
-	ItemName		string
-	AbsolutePath	string
-	Type			string
-	Etcd_key		string
-	Children		[]string
+	itemName		string
+	absolutePath	string
+	fileType			string
+	etcdKey		string
+	children		[]string
 }
 
 // GenAddProj creates a new generated template under the /template prefix
@@ -60,11 +60,11 @@ func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) err
 	// convert Template structure into model structure
 	for _, folder := range templateStructure{
 		templateItem = &model.File{
-			Name: folder.ItemName,
-			AbsolutePath: folder.AbsolutePath,
-			Type: folder.Type,
-			EtcdKey: folder.Etcd_key,
-			Children: folder.Children,
+			Name: folder.itemName,
+			AbsolutePath: folder.absolutePath,
+			FileType: folder.fileType,
+			EtcdKey: folder.etcdKey,
+			Children: folder.children,
 		}
 		templateItems = append(templateItems, templateItem)
 	}
@@ -157,8 +157,8 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	// todo: possibly add custom plugin-specific readme file/template
 	//append a struct of name/body for every custom plugin in project
 	for _, customPlugin := range val.CustomPlugin{
-		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
-		d.log.Debugf("custom plugin name is: %s", customPlugin.GetCustomPluginName())
+		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
+		d.log.Debugf("custom plugin name is: %s", customPlugin.GetPluginName())
 		d.log.Debugf("custom package name is: %s", customPlugin.PackageName)
 		d.log.Debugf("plugin directory name is :", pluginDirectoryName)
 		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
@@ -170,7 +170,7 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 			pluginDocContents,
 		}
 		//d.putGoFile("structure/" + projectName + "/" + pluginDirectoryName +"/doc", pluginDocContents)
-		d.putGoFile("structure/" + projectName + "/" + customPlugin.CustomPluginName +"/doc", pluginDocContents)
+		d.putGoFile("structure/" + projectName + "/" + customPlugin.PluginName +"/doc", pluginDocContents)
 
 		pluginOptionsEntry := fileEntry{
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/options.go",
@@ -262,7 +262,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 	// append plugin folder item
 	var pluginChildren []string
 	for _, child := range val.CustomPlugin{
-		childPluginName := strings.ToLower(strings.Replace(child.CustomPluginName, " ", "_", -1))
+		childPluginName := strings.ToLower(strings.Replace(child.PluginName, " ", "_", -1))
 		pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
 	}
 	pluginFolder := templateStructureItem{
@@ -276,7 +276,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 
 	// append plugin folder, doc, impl, options items
 	for _,customPlugin := range val.CustomPlugin{
-		pluginName := strings.ToLower(strings.Replace(customPlugin.CustomPluginName, " ", "_", -1))
+		pluginName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
 		pluginPath := "/" + projectName + "/plugins/" + pluginName
 
 		pluginFolder := templateStructureItem{

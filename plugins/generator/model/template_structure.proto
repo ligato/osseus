@@ -13,9 +13,9 @@ message FileContent{
 // File holds the folder path, children, type, and etcdkey of the given file
 message File{
     string name = 1;
-    string absolute_path = 2;
-    string type = 3;
-    string etcd_key = 4;
+    string absolutePath = 2;
+    string fileType = 3;
+    string etcdKey = 4;
     repeated string children = 5;
 };
 

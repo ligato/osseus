@@ -44,41 +44,41 @@ type Project struct {
 
 // CustomPlugins struct to marshal input
 type CustomPlugin struct{
-	CustomPluginName string
+	PluginName string
 	PackageName string
 }
 
 // Plugins struct to marshal input
 type Plugins struct {
 	PluginName string
-	ID         int32
 	Selected   bool
+	Id         int32
 	Port       int32
 }
 
 // Template Structure struct from etcd for code structure
 type TemplateStructure struct{
-	Directories    []File
+	directories    []File
 }
 
 // File struct in Template Structure
 type File struct{
-	Name           string
-	AbsolutePath   string
-	Type           string
-	Etcd_key       string
-	Children       []string
+	name           string
+	absolutePath   string
+	fileType       string
+	etcdKey       string
+	children      []string
 }
 
 // FilePath struct used to specify file in template structure
 // can be "/{pluginName}/doc" or "/doc" if agent-level file
 type FilePath struct{
-	FilePath    string
+	filePath    string
 }
 
 // FileContents struct to return contents of generated code file
 type FileContents struct{
-	FileContents string
+	fileContents string
 }
 
 // Registers REST handlers
@@ -239,7 +239,7 @@ func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc 
 			return
 		}
 
-		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.FilePath)
+		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.filePath)
 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
@@ -281,7 +281,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	for _, plugin :=  range proj.Plugins{
 		pluginval = &model.Plugin{
 			PluginName: plugin.PluginName,
-			Id:         plugin.ID,
+			Id:         plugin.Id,
 			Selected:   plugin.Selected,
 			Port:       plugin.Port,
 		}
@@ -291,7 +291,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	//create CustomPlugins list that will be stored in etcd
 	for _, customPlugin := range proj.CustomPlugins{
 		custompluginval = &model.CustomPlugin{
-			CustomPluginName:    customPlugin.CustomPluginName,
+			PluginName:    customPlugin.PluginName,
 			PackageName: 		 customPlugin.PackageName,
 		}
 		customPluginsList = append(customPluginsList, custompluginval)
@@ -334,7 +334,7 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 	for _, plugin := range value.Plugin{
 		pluginval := Plugins{
 			PluginName: plugin.PluginName,
-			ID:         plugin.Id,
+			Id:         plugin.Id,
 			Selected:   plugin.Selected,
 			Port:       plugin.Port,
 		}
@@ -344,7 +344,7 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 	//create CustomPlugins list to be returned
 	for _, customPlugin := range value.CustomPlugin{
 		custompluginval := CustomPlugin{
-			CustomPluginName:    customPlugin.CustomPluginName,
+			PluginName:    customPlugin.PluginName,
 			PackageName: 		 customPlugin.PackageName,
 		}
 		customPluginsList = append(customPluginsList, custompluginval)
@@ -378,17 +378,17 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 	var directoriesList []File
 	for _, file := range value.File{
 		fileEntry := File{
-			Name:    file.Name,
-			AbsolutePath: file.AbsolutePath,
-			Type:     file.Type,
-			Etcd_key:   file.EtcdKey,
-			Children:   file.Children,
+			name:    file.Name,
+			absolutePath: file.AbsolutePath,
+			fileType:     file.FileType,
+			etcdKey:   file.EtcdKey,
+			children:   file.Children,
 		}
 		directoriesList = append(directoriesList, fileEntry)
 	}
 
 	structure := TemplateStructure{
-		Directories: directoriesList,
+		directories: directoriesList,
 	}
 
 	return structure
@@ -411,7 +411,7 @@ func (p *Plugin) getFileContents(prefix string, key string) interface{} {
 	}
 
 	contents := FileContents{
-		FileContents:    value.Content,
+		fileContents:    value.Content,
 	}
 	return contents
 }

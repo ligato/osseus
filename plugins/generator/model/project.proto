@@ -15,7 +15,7 @@ message Plugin {
 
 // A custom plugin resource
 message CustomPlugin {
-  string customPluginName = 1;
+  string pluginName = 1;
   string packageName = 2;
 };
 

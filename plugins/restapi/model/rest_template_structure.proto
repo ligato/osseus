@@ -14,8 +14,8 @@ message FileContent{
 message File{
     string name = 1;
     string absolute_path = 2;
-    string type = 3;
-    string etcd_key = 4;
+    string fileType = 3;
+    string etcdKey = 4;
     repeated string children = 5;
 };
 
