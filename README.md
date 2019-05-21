@@ -37,11 +37,11 @@ http://localhost:3000
 
 ## Documentation
 
-Detailed documentation can be found [here](https://github.com/ligato/osseus/tree/master/docs).
+Detailed documentation for each component of the application can be found [here](https://github.com/ligato/osseus/tree/dev/docs).
 
 ## Architecture
 
-Osseus is built utilizing the CN-Infra framework, which provides plugin/library support and a plugin lifecycle management platform. We have each part of our application broken up into a microservice of it's own: Frontend, Agent, and Key-Value Store (ETCD). By taking advantage of containerization with Docker, we are able to improve scalability, resiliency from failing components, maintainability, and many more aspects as opposed to monolithic design.
+Osseus was built using the [CN-Infra](https://github.com/ligato/cn-infra) framework, which provides component/library support and plugin lifecycle management to our application. Our development strategy was to split its production into separate efforts: building a user interface (UI), REST API and a code generator. The UI provides a way for the user to configure an agent setup consisting of chosen plugins. The REST API facilitates the communication between the UI and our data store (Etcd), which takes the user selected plugins and stores them under a certain key. The Generator then produces skeleton code for the user’s configuration and stores this back in Etcd where the UI webhook can retrieve this configuration in a tar file format.
 
 The architecture of the Osseus web application is shown below:
 
@@ -49,7 +49,7 @@ The architecture of the Osseus web application is shown below:
     <img src="docs/img/ColorArchitecture.png" alt="Osseus Architecture">
 </p>
 
-Osseus uses React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with the CN-Infra platform, where we are able to use packages that are built for ease-of-use in the design of our generator and restapi plugins. Lastly, ETCD allows for multiversion persistent key-value storage & is commonly used for data that is not frequently updated; there is also many plugins/libraries that support ETCD through the CN-Infra framework.
+We use React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with CN-Infra, where we are able to use packages that are built for ease-of-use in the design of our generator and restapi plugins. Lastly, ETCD allows for multiversion persistent key-value storage and was chosen for its integration with various plugins/libraries through CN-Infra.
 
 ## Contributing
 

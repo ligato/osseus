@@ -1,4 +1,8 @@
-## Development Installation
+---
+title: "Understanding how to run the application using Docker"
+---
+
+# :cyclone: Getting Started: Docker
 
 ### First, clone the repo:
 ```
@@ -16,7 +20,7 @@ docker build --force-rm=true -t agent --build-arg AGENT_COMMIT=2c2b0df32201c9bc8
 
 ### Build and run ETCD **before** running the Agent container:
 ```bash
-docker run -p 2379:2379 --name etcd --rm quay.io/coreos/etcd:latest /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379
+docker run -p 12379:12379 --name etcd --rm quay.io/coreos/etcd:v3.3.8 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:12379 -listen-client-urls http://0.0.0.0:12379
 ```
 
 ### Lastly, run the UI and Agent:
