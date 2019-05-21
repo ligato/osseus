@@ -11,7 +11,7 @@ Osseus is full-stack web application for generating configurable plugin template
 | Prereq. | Version |
 | ------- | :-----: |
 | NodeJS  | 10.15^  |
-| Go      |  1.10   |
+| Go      |  1.10^  |
 | Docker  | 18.09^  |
 
 ### First, clone the repo:
@@ -33,7 +33,10 @@ npm install
 ### Run Application in three separate terminals
 ```bash
 # Run Etcd
-docker run -p 12379:12379 --name etcd --rm quay.io/coreos/etcd:v3.3.8 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:12379 -listen-client-urls http://0.0.0.0:12379
+sudo docker run -p 12379:12379 --name etcd --rm \ 
+    quay.io/coreos/etcd:v3.3.8 /usr/local/bin/etcd \ 
+    -advertise-client-urls http://0.0.0.0:12379 \ 
+    -listen-client-urls http://0.0.0.0:12379
 
 # Run Agent
 cd cmd/agent/
@@ -60,7 +63,7 @@ The architecture of the Osseus web application is shown below:
 
 We use React & SASS for our frontend, which is a component-based JavaScript library and a feature-rich CSS extension language. Go was chosen as our backend language due to the consistency of developing with CN-Infra, where we are able to use packages that are built for ease-of-use in the design of our generator and restapi plugins. Lastly, ETCD allows for multiversion persistent key-value storage and was chosen for its integration with various plugins/libraries through CN-Infra.
 
-## :pencil: Contributing
+## :bulb: Contributing
 
 Contributions to Osseus are welcome. We use the standard pull request model. You can 
 either pick an open issue and assign it to yourself or open a new issue and discuss your feature.
@@ -68,3 +71,6 @@ either pick an open issue and assign it to yourself or open a new issue and disc
 The tool used for managing third-party dependencies is [dep](https://github.com/golang/dep).
 After adding or updating a dependency in `Gopkg.toml` run `dep ensure` to download
 specified dependencies into the vendor folder.
+
+## :memo: License
+Licensed under the [Apache License](https://github.com/ligato/osseus/blob/master/LICENSE.md)
