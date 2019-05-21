@@ -2,7 +2,7 @@
 title: "Understanding key parts of the Client"
 ---
 
-# :cyclone: Getting started: Client
+# :zap: Getting started: Client
 
 ## Resources
 

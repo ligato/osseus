@@ -2,7 +2,7 @@
 title: "Understanding how to run the application using Docker"
 ---
 
-# :cyclone: Getting Started: Docker
+# :zap: Getting Started: Docker
 
 ### First, clone the repo:
 ```
