@@ -158,9 +158,6 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	//append a struct of name/body for every custom plugin in project
 	for _, customPlugin := range val.CustomPlugin{
 		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
-		d.log.Debugf("custom plugin name is: %s", customPlugin.GetPluginName())
-		d.log.Debugf("custom package name is: %s", customPlugin.PackageName)
-		d.log.Debugf("plugin directory name is :", pluginDirectoryName)
 		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
 		pluginOptionsContents := d.FillOptionsTemplate(customPlugin)
 		pluginImplContents := d.FillImplTemplate(customPlugin)

@@ -73,12 +73,12 @@ type File struct{
 // FilePath struct used to specify file in template structure
 // can be "/{pluginName}/doc" or "/doc" if agent-level file
 type FilePath struct{
-	filePath    string
+	FilePath    string
 }
 
 // FileContents struct to return contents of generated code file
 type FileContents struct{
-	fileContents string
+	FileContents string
 }
 
 // Registers REST handlers
@@ -145,7 +145,8 @@ func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 		projectJSON, _ := json.Marshal(projectInfo)
 
-		p.logError(formatter.JSON(w, http.StatusOK, projectJSON))
+		w.WriteHeader(http.StatusOK)
+		w.Write(projectJSON)
 	}
 }
 
@@ -239,12 +240,13 @@ func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc 
 			return
 		}
 
-		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.filePath)
+		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.FilePath)
 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
 		contentsJson, _ := json.Marshal(fileContents)
-		p.logError(formatter.JSON(w, http.StatusOK, contentsJson))
+		w.WriteHeader(http.StatusOK)
+		w.Write(contentsJson)
 	}
 }
 
@@ -307,7 +309,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	if err := broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
-	p.Log.Debugf("kv store should have (key) %v at (prefix) %v", key, prefix)
+	p.Log.Debugf("kv store should have (key): %v at (prefix): %v", key, prefix)
 }
 
 // returns the Project at specified key {projectName}
@@ -410,7 +412,7 @@ func (p *Plugin) getFileContents(prefix string, key string) interface{} {
 	}
 
 	contents := FileContents{
-		fileContents:    value.Content,
+		FileContents:    value.Content,
 	}
 	return contents
 }
