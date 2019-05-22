@@ -10,6 +10,7 @@ import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
 import { DOWNLOAD_TEMPLATE } from "../constants/action-types";
 import { DOWNLOAD_GO } from "../constants/action-types";
+import { DOWNLOAD_TAR } from "../constants/action-types";
 // Returned from server
 import { RETURN_LOAD_PROJECT } from "../constants/action-types";
 import { RETURN_TEMPLATE } from "../constants/action-types";
@@ -45,6 +46,9 @@ export function downloadTemplate(payload) {
 }
 export function downloadGO(payload) {
   return { type: DOWNLOAD_GO, payload }; 
+}
+export function downloadTar(payload) {
+  return { type: DOWNLOAD_TAR, payload };
 }
 
 

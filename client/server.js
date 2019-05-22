@@ -28,6 +28,21 @@ const etcd = 'localhost:12379'
 io.on('connection', socket => {
     // Saves current project
     socket.on('SEND_SAVE_PROJECT', project => {
+        project.plugins.length = 16;
+        const selected = []
+        const allPlugins = project.plugins
+
+        // Filter out selected plugins
+        allPlugins.map(plugin => {
+            if (plugin.selected) {
+                selected.push(plugin)
+            }
+        })
+
+        // Set selected plugins for generation
+        project.plugins = selected
+
+        console.log(project)
         fetch(`http://${agent}/v1/projects`, {
             method: "POST",
             body: JSON.stringify(project),
@@ -57,6 +72,7 @@ io.on('connection', socket => {
 
     // Generates current project
     socket.on('GENERATE_PROJECT', async project => {
+        project.plugins.length = 16;
         const selected = []
         const allPlugins = project.plugins
 
@@ -81,6 +97,34 @@ io.on('connection', socket => {
         const result = await generate
         console.debug(`Generate Request Status: ${result.status} ${result.statusText}`)
 
+        
+    })
+
+    // Downloads the template
+    socket.on('DOWNLOAD_TEMPLATE', project => {
+        fetch(`http://${agent}/v1/templates/structure/${project.projectName}`)
+            .then(response => response.json())
+            .then(data => {
+            console.log(data)
+            })
+            .catch(err => console.log(err))
+    })
+    //socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data)
+
+    // Downloads a GO file
+    socket.on('DOWNLOAD_GO', path => {
+        let pluginModule = require('../Model');
+        fetch(`http://${agent}/v1/templates/structure/${pluginModule.project.projectName}`, {
+            method: "POST",
+            body: JSON.stringify(path),
+        })
+            .then(res => console.log(res.body))
+            .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
+    })
+
+    // Downloads the tar file
+    socket.on('DOWNLOAD_TAR', project => {
+        console.log("DOWNLOAD_TAR\n" + project)
         // Initialize webhook
         const webHooks = new Webhooks({
             db: '../webhookDB.json',
@@ -140,25 +184,6 @@ io.on('connection', socket => {
             console.log("Tar file generation complete")
         })
     })
-
-    // Downloads the template
-    socket.on('DOWNLOAD_TEMPLATE', project => {
-        console.log(project)
-        fetch(`http://${agent}/v1/templates/structure/${project}`)
-            .then(res => console.log(res.body))
-            .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
-    })
-
-    // Downloads a GO file
-    socket.on('DOWNLOAD_GO', path => {
-        let pluginModule = require('../Model');
-        fetch(`http://${agent}/v1/templates/structure/${pluginModule.project.projectName}`, {
-            method: "POST",
-            body: JSON.stringify(path),
-        })
-            .then(res => console.log(res.body))
-            .then(data => socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data))
-    })
 })
 
 server.listen(8000, () => console.log(`Server listening on 8000`))
@@ -173,3 +198,64 @@ function removeMetadata(file) {
     fileByLines.push('}');
     return fileByLines;
 }
+
+/*
+// Initialize webhook
+        const webHooks = new Webhooks({
+            db: '../webhookDB.json',
+        })
+
+        // Encode key to base64
+        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
+
+        // Add webhook to get value from specified project key
+        // (TODO) Figure out why /v3beta/watch no longer works
+        webHooks.add('etcd', `http://${etcd}/v3beta/kv/range`)
+
+        // Trigger webhook & send WATCH request
+        webHooks.trigger('etcd', { key: base64Key })
+
+        // Shows emitted events
+        const emitter = webHooks.getEmitter()
+        emitter.once('etcd.success', (name, statusCode, body) => {
+            // Create object from string response
+            const data = JSON.parse(body)
+
+            // Decode value
+            let value = data.kvs[0].value.toString()
+            value = Buffer.from(value, 'base64')
+
+            // Decode tar
+            let buffer = JSON.parse(value)
+            buffer = Buffer.from(buffer.tar_file, 'base64')
+
+            // Displays code to frontend
+            fs.writeFile('public/code.txt', buffer.toString(), function (err) {
+                if (err) throw err;
+            });
+
+            // Deletes out-of-range ascii characters from file
+            fs.readFile('public/code.txt', 'utf8', function (err, data) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                // Removal of anything not ascii
+                var withoutNull = data.replace(/[\x00]/g, "");
+                var withoutMetadata = removeMetadata(withoutNull);
+
+                // Captures results and writes it back to file
+                let result = withoutMetadata.join('\n');
+                fs.writeFile('public/code.txt', result, 'utf8', function (err) {
+                    if (err) return console.log(err);
+                });
+            });
+
+            // Create tar folder
+            fs.writeFile('public/template.tgz', buffer, function (err) {
+                if (err) throw err;
+            });
+
+            console.log("Tar file generation complete")
+        })
+*/

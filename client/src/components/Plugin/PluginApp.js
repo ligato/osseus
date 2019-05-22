@@ -89,7 +89,7 @@ class PluginApp extends React.Component {
   handleCustomPlugin(name) {
     let plugin = JSON.parse(JSON.stringify(customPlugin));
     plugin.pluginName = name[0];
-    plugin.PackageName = name[1];
+    plugin.packageName = name[1];
     buildCustomPlugin(plugin);
     this.setState({
       pluginPickedArray: getPluginPickedArray()

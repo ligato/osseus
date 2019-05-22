@@ -11,6 +11,7 @@ import { loadProjectFromKV } from "../redux/actions/index";
 import { saveProjectToKV } from "../redux/actions/index";
 import { downloadTemplate } from "../redux/actions/index";
 import { downloadGO } from "../redux/actions/index";
+import { downloadTar } from "../redux/actions/index";
 // Returned from server
 import { returnLoadProject } from "../redux/actions/index";
 import { returnTemplate } from "../redux/actions/index";
@@ -29,6 +30,7 @@ window.loadProjectFromKV = loadProjectFromKV;
 window.saveProjectToKV = saveProjectToKV;
 window.downloadTemplate = downloadTemplate;
 window.downloadGO = downloadGO;
+window.downloadTar = downloadTar;
 
 window.returnLoadProject = returnLoadProject;
 window.returnTemplate = returnTemplate;
