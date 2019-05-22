@@ -58,16 +58,16 @@ type Plugins struct {
 
 // Template Structure struct from etcd for code structure
 type TemplateStructure struct{
-	directories    []File
+	Directories    []File
 }
 
 // File struct in Template Structure
 type File struct{
-	name           string
-	absolutePath   string
-	fileType       string
-	etcdKey       string
-	children      []string
+	Name           string
+	AbsolutePath   string
+	FileType       string
+	EtcdKey       string
+	Children      []string
 }
 
 // FilePath struct used to specify file in template structure
@@ -95,7 +95,6 @@ func (p *Plugin) registerHandlersHere() {
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.StructureHandler, GET)
 	// get contents of specified file
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, POST)
-
 }
 
 /*
@@ -207,9 +206,10 @@ func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
-		structureJson, _ := json.Marshal(templateStructure)
+		structureJson, _ := json.Marshal(&templateStructure)
 
-		p.logError(formatter.JSON(w, http.StatusOK, structureJson))
+		w.WriteHeader(http.StatusOK)
+		w.Write(structureJson)
 	}
 }
 
@@ -244,7 +244,6 @@ func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
 		contentsJson, _ := json.Marshal(fileContents)
-
 		p.logError(formatter.JSON(w, http.StatusOK, contentsJson))
 	}
 }
@@ -378,17 +377,17 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 	var directoriesList []File
 	for _, file := range value.File{
 		fileEntry := File{
-			name:    file.Name,
-			absolutePath: file.AbsolutePath,
-			fileType:     file.FileType,
-			etcdKey:   file.EtcdKey,
-			children:   file.Children,
+			Name:    file.Name,
+			AbsolutePath: file.AbsolutePath,
+			FileType:     file.FileType,
+			EtcdKey:   file.EtcdKey,
+			Children:   file.Children,
 		}
 		directoriesList = append(directoriesList, fileEntry)
 	}
 
 	structure := TemplateStructure{
-		directories: directoriesList,
+		Directories: directoriesList,
 	}
 
 	return structure

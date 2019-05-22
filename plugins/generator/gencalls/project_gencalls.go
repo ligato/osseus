@@ -169,7 +169,6 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/doc.go",
 			pluginDocContents,
 		}
-		//d.putGoFile("structure/" + projectName + "/" + pluginDirectoryName +"/doc", pluginDocContents)
 		d.putGoFile("structure/" + projectName + "/" + customPlugin.PluginName +"/doc", pluginDocContents)
 
 		pluginOptionsEntry := fileEntry{
