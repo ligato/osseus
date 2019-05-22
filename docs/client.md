@@ -18,7 +18,7 @@ If you're not familiar with what React is or how to get started with it, refer t
 
 ## Key Files in Client
 
-There are many key files that play a major role within client, but for now we'll look at _four_ select files to go over and understand what they do. 
+There are many files that play a big role within client, but for now we'll look at a few which handle the core processes and connections.
 
 1. `/client/package.json` is where we list all our dependencies for both our server and client side code, but also where we specify our proxy between the two, using:
 ```javascript 

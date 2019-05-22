@@ -25,12 +25,12 @@ cd /osseus
 # Install dependencies for the agent
 dep ensure
 
-# Install dependencies for the frontend
+# Install dependencies for the client
 cd client/
 npm install
 ```
 
-### Run Application in three separate terminals
+### Run each component in a separate terminal
 ```bash
 # Run Etcd
 sudo docker run -p 12379:12379 --name etcd --rm \ 
@@ -38,11 +38,11 @@ sudo docker run -p 12379:12379 --name etcd --rm \
     -advertise-client-urls http://0.0.0.0:12379 \ 
     -listen-client-urls http://0.0.0.0:12379
 
-# Run Agent
+# Run agent
 cd cmd/agent/
 go run main.go
 
-# Run Frontend
+# Run client
 cd client/
 npm start
 ```

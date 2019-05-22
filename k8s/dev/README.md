@@ -1,6 +1,10 @@
-# Deploying Osseus Docker Images Using Kubernetes
+---
+title: "Understanding how to run the application using Kubernetes"
+---
 
-This document describes how the development Docker images can be deployed on a single-node development Kubernetes (k8s) cluster using MicroK8s on Linux. Each component of our application has a service and uses host networking to be available through localhost. We use an initContainer to check that Etcd is running properly before running our Agent to ensure no errors.
+# :zap: Getting Started: Kubernetes
+
+This document describes how the development Docker images can be deployed on a single-node development Kubernetes (k8s) cluster using MicroK8s on Linux. Each component of our application has a service and uses host networking to be available through localhost. We use an initContainer to check that Etcd is running properly before running our Agent to ensure no connection errors.
 
 ## First, clone the repo:
 ```
