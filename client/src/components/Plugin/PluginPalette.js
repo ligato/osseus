@@ -7,6 +7,14 @@ import "../../styles_CSS/Plugin/Splitright.css";
 
 let pluginModule = require('../Model');
 
+const toolText = {
+  generate: 'Once finished, generate a template.',
+  header: 'Configure and save projects. Once finished, generate a template.',
+  pluginPicker: 'Pick from a set of plugins or make your own.',
+  agent: 'Choose agent settings.'
+}
+let textVisibilty = 'visible';
+
 /*
 * This component represents the main workspace. Users will be able to 
 * Drag and Drop into the area that this component represents.
@@ -21,11 +29,21 @@ const PluginPalette = (props) => {
   for(let i = props.sentInArray.length; i >= 0; i--) {
     if(props.sentInArray[i] === 0 || props.sentInArray[i] === false) { pluginArray.splice(i,1); }
   }
+  if(props.sentInArray.includes(1)) textVisibilty = 'hidden';
+  else textVisibilty = 'visible';
 
   return (
     <div>
       <div >
         <div className="split right">
+          <div className="tool-text-container" style={{visibility: textVisibilty}}>
+            <p className="tool-text-header">{toolText.generate}&nbsp;<i className="up-arrow"></i></p>
+            <div className="tool-text-div">
+              <p className="tool-text"><i className="up-arrow"></i>&nbsp;{toolText.header}</p><br></br>
+              <p className="tool-text"><i className="left-arrow"></i>&nbsp;{toolText.pluginPicker}</p><br></br>
+              <p className="tool-text"><i className="down-arrow"></i>&nbsp;{toolText.agent}</p>
+            </div>
+          </div>
           <div className="grid-container-right">
             {pluginArray}
           </div>

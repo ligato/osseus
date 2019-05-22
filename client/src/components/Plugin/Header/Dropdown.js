@@ -63,7 +63,7 @@ class Dropdown extends React.Component {
       <div className="dropdown" onClick={this.showDropdownMenu} onMouseLeave={this.closeDropdownMenu}>
         <div className="dropdown-button" > Saved Projects </div>
         {this.state.displayMenu ? (
-          <ul >
+          <ul>
             {store.getState().projects.map((plugin, index) => {
               return (
                 <li

@@ -27,7 +27,7 @@ class PluginApp extends React.Component {
     this.state = {
       sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.', 'Custom'], 
       pluginPickedArray: getPluginPickedArray(),
-      currentProjectName: store.getState().currProject.projectName
+      currentProjectName: store.getState().currProject.projectName,
     };
     this.handlePluginData = this.handlePluginData.bind(this);
     this.handleNewProject = this.handleNewProject.bind(this);
@@ -132,7 +132,9 @@ class PluginApp extends React.Component {
               )
             })}
           </div>
-          <PluginPalette sentInArray={this.state.pluginPickedArray}>
+          <PluginPalette 
+            sentInArray={this.state.pluginPickedArray}
+          >
             {pluginModule.project.plugins.map((i, index) => {
               return (
                 <DraggablePlugins
