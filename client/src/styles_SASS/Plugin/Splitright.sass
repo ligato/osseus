@@ -7,8 +7,6 @@
   z-index: 1
   background-color: #DFDFDF
   width: 82.5%
-  display: flex
-  justify-content: center
   opacity: 1
   overflow: hidden
 
@@ -34,13 +32,20 @@
   color: #75BAEC
   position: relative
 
+.grid-div
+  display: flex
+  justify-content: center
+  height: 100%
+  width: 100%
+
 .grid-container-right 
+  width: 60%
   display: inline-grid
-  grid-gap: 5% 10%
+  grid-gap: 5% 14%
   grid-template-columns: repeat(auto-fill, 24%)
   flex-wrap: wrap
   background-color: #DFDFDF
-  padding: 20px
+  padding: 40px
   overflow: hidden
 
 .new-custom-plugin-div 
@@ -129,3 +134,14 @@ i
   transform: rotate(45deg)
   -webkit-transform: rotate(45deg)
 
+.cisco-logo-gray 
+  position: absolute
+  right: 7px
+  bottom: 7px
+  width: 8%
+  height: auto;
+
+@media only screen and (min-width: 1400px) 
+  .cisco-logo-gray 
+    visibility: hidden
+  

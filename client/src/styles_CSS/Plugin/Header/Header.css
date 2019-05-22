@@ -111,13 +111,26 @@
   cursor: pointer;
 }
 
+.cisco-logo-div {
+  position: absolute;
+  height: 100%;
+  width: 6%;
+}
+
 .cisco-logo {
   position: absolute;
-  width: 85px;
+  left: 0;
+  top: -8px;
+  left: -10px;
+  width: 90px;
   height: auto;
-  margin-top: -12px;
-  margin-left: -10px;
 }
 .cisco-logo:active {
   top: 18px;
+}
+
+@media only screen and (max-width: 1400px) {
+  .cisco-logo {
+    visibility: hidden;
+  }
 }

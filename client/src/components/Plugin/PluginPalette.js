@@ -36,6 +36,11 @@ const PluginPalette = (props) => {
     <div>
       <div >
         <div className="split right">
+          <div className="grid-div">
+            <div className="grid-container-right">
+              {pluginArray}
+            </div>
+          </div>
           <div className="tool-text-container" style={{visibility: textVisibilty}}>
             <p className="tool-text-header">{toolText.generate}&nbsp;<i className="up-arrow"></i></p>
             <div className="tool-text-div">
@@ -43,9 +48,6 @@ const PluginPalette = (props) => {
               <p className="tool-text"><i className="left-arrow"></i>&nbsp;{toolText.pluginPicker}</p><br></br>
               <p className="tool-text"><i className="down-arrow"></i>&nbsp;{toolText.agent}</p>
             </div>
-          </div>
-          <div className="grid-container-right">
-            {pluginArray}
           </div>
         </div>
       </div>
@@ -62,6 +64,11 @@ const PluginPalette = (props) => {
             <p className="agent-name">Agent</p>
           </div>
         </div>
+        <img
+          className="cisco-logo-gray"
+          src='/images/cisco-logo.png'
+          alt='oops'>
+        </img>
       </div>
     </div>
   );

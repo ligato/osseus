@@ -46,7 +46,7 @@ io.on('connection', socket => {
         fetch(`http://${agent}/v1/projects`, {
             method: "POST",
             body: JSON.stringify(project),
-        })
+        }).then(res => console.log(res.statusCode))
     });
 
     // Loads previous project
@@ -100,18 +100,39 @@ io.on('connection', socket => {
         
     })
 
+
+
+
+
+
+
+
+
+
+
     // Downloads the template
     socket.on('DOWNLOAD_TEMPLATE', project => {
         fetch(`http://${agent}/v1/templates/structure/${project.projectName}`)
             .then(response => { 
-                return response.buffer().catch(err => console.error(err))
+                return response.json().catch(err => console.error(err))
             })
-            .then(buffer => {
-                console.log(buffer.data.toString('utf8'))
+            .then(json => {
+                console.log("template data: " + json)
             })
             .catch(type => console.log(type))
     })
     //socket.broadcast.emit('SEND_TEMPLATE_TO_CLIENT', data)
+
+
+
+
+
+
+
+
+
+
+
 
     // Downloads a GO file
     socket.on('DOWNLOAD_GO', path => {

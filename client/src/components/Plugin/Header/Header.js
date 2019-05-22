@@ -98,12 +98,14 @@ class Header extends React.Component {
         <Segment>
           <Grid columns={1} relaxed='very'>
             <Grid.Column className="header-column-plugin"  >
-              <img
-                className="cisco-logo"
-                src='/images/cisco-logo.png'
-                alt='oops'
-                onClick={this.resetPalette}>
-              </img>
+              <div className="cisco-logo-div">
+                <img
+                  className="cisco-logo"
+                  src='/images/cisco-logo.png'
+                  alt='oops'
+                  onClick={this.resetPalette}>
+                </img>
+              </div>
               <Dropdown
                 className="new-project-link"
                 loadedProjectHandlerFromHeader={this.bubbleUpLoadedProjectToParent}
