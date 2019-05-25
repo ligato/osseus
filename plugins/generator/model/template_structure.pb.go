@@ -23,6 +23,7 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // FileContent holds the content of the go file
 type FileContent struct {
+	// Content of the generated code file
 	Content              string   `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -66,10 +67,15 @@ func (*FileContent) XXX_MessageName() string {
 
 // File holds the folder path, children, type, and etcdkey of the given file
 type File struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	AbsolutePath         string   `protobuf:"bytes,2,opt,name=absolutePath,proto3" json:"absolutePath,omitempty"`
-	FileType             string   `protobuf:"bytes,3,opt,name=fileType,proto3" json:"fileType,omitempty"`
-	EtcdKey              string   `protobuf:"bytes,4,opt,name=etcdKey,proto3" json:"etcdKey,omitempty"`
+	// Name of generated code file or folder
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Path of generated code file
+	AbsolutePath string `protobuf:"bytes,2,opt,name=absolutePath,proto3" json:"absolutePath,omitempty"`
+	// "Folder" if a folder in the directory or "File" if code file
+	FileType string `protobuf:"bytes,3,opt,name=fileType,proto3" json:"fileType,omitempty"`
+	// Key the file is stored under in etcd
+	EtcdKey string `protobuf:"bytes,4,opt,name=etcdKey,proto3" json:"etcdKey,omitempty"`
+	// Absolute path(s) of direct children folders of the file, empty list if no children
 	Children             []string `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -141,6 +147,7 @@ func (*File) XXX_MessageName() string {
 
 //TemplateStructure holds the directory and folder structure of the project
 type TemplateStructure struct {
+	// List of file objects describing directory structure of generated files
 	File                 []*File  `protobuf:"bytes,1,rep,name=file,proto3" json:"file,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

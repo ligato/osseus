@@ -23,9 +23,13 @@ const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // A plugin resource
 type Plugin struct {
-	PluginName           string   `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
-	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Selected             bool     `protobuf:"varint,3,opt,name=selected,proto3" json:"selected,omitempty"`
+	// Name or type of cn-infra plugin; i.e. kafka, etcd
+	PluginName string `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Frontend-assigned ID for the plugin
+	Id int32 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	// True if plugin is selected in the frontend, false if not
+	Selected bool `protobuf:"varint,3,opt,name=selected,proto3" json:"selected,omitempty"`
+	// IP port plugin uses for connection
 	Port                 int32    `protobuf:"varint,4,opt,name=port,proto3" json:"port,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -90,7 +94,9 @@ func (*Plugin) XXX_MessageName() string {
 
 // A custom plugin resource
 type CustomPlugin struct {
-	PluginName           string   `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Name of custom plugin provided by user
+	PluginName string `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Name of package for custom plugin provided by user
 	PackageName          string   `protobuf:"bytes,2,opt,name=packageName,proto3" json:"packageName,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -141,9 +147,13 @@ func (*CustomPlugin) XXX_MessageName() string {
 
 // Project holds the data fields stored
 type Project struct {
-	ProjectName          string          `protobuf:"bytes,1,opt,name=projectName,proto3" json:"projectName,omitempty"`
-	Plugin               []*Plugin       `protobuf:"bytes,2,rep,name=plugin,proto3" json:"plugin,omitempty"`
-	AgentName            string          `protobuf:"bytes,3,opt,name=agentName,proto3" json:"agentName,omitempty"`
+	// Name of project provided by user
+	ProjectName string `protobuf:"bytes,1,opt,name=projectName,proto3" json:"projectName,omitempty"`
+	// List of cn-infra plugins
+	Plugin []*Plugin `protobuf:"bytes,2,rep,name=plugin,proto3" json:"plugin,omitempty"`
+	// Name of agent that runs cn-infra plugins provided by user
+	AgentName string `protobuf:"bytes,3,opt,name=agentName,proto3" json:"agentName,omitempty"`
+	// List of custom plugins
 	CustomPlugin         []*CustomPlugin `protobuf:"bytes,4,rep,name=customPlugin,proto3" json:"customPlugin,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
