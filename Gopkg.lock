@@ -20,7 +20,7 @@
     "etcdserver/etcdserverpb",
     "mvcc/mvccpb",
     "pkg/tlsutil",
-    "pkg/types",
+    "pkg/types"
   ]
   pruneopts = "UT"
   revision = "27fc7e2296f506182f58ce846e48f36b34fe6842"
@@ -75,7 +75,7 @@
     "proto",
     "protoc-gen-gogo/descriptor",
     "sortkeys",
-    "types",
+    "types"
   ]
   pruneopts = "UT"
   revision = "4cbf7e384e768b4e01799441fdf2a706a5635ae7"
@@ -103,7 +103,7 @@
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
-    "ptypes/timestamp",
+    "ptypes/timestamp"
   ]
   pruneopts = "UT"
   revision = "aa810b61a9c79d51363740d207bb46cf8e620ed5"
@@ -123,7 +123,7 @@
   packages = [
     ".",
     "auth",
-    "util/metautils",
+    "util/metautils"
   ]
   pruneopts = "UT"
   revision = "c250d6563d4d4c20252cd865923440e829844f4e"
@@ -168,7 +168,7 @@
     "rpc/rest/security/model/access-security",
     "servicelabel",
     "utils/once",
-    "utils/safeclose",
+    "utils/safeclose"
   ]
   pruneopts = "UT"
   revision = "02ff3e3fb6fe48b59be09a61de87972921f3dbaa"
@@ -185,7 +185,7 @@
     "plugins/kvscheduler/internal/graph",
     "plugins/kvscheduler/internal/registry",
     "plugins/kvscheduler/internal/utils",
-    "plugins/orchestrator",
+    "plugins/orchestrator"
   ]
   pruneopts = "UT"
   revision = "dd3fc4e6c1a6f67d71ae8a155effc25755516c03"
@@ -227,7 +227,7 @@
   name = "github.com/sirupsen/logrus"
   packages = [
     ".",
-    "hooks/syslog",
+    "hooks/syslog"
   ]
   pruneopts = "UT"
   revision = "e1e72e9de974bd926e5c56f83753fba2df402ce5"
@@ -256,7 +256,7 @@
   packages = [
     "bcrypt",
     "blowfish",
-    "ssh/terminal",
+    "ssh/terminal"
   ]
   pruneopts = "UT"
   revision = "74369b46fc6756741c016591724fd1cb8e26845f"
@@ -272,7 +272,7 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
-    "trace",
+    "trace"
   ]
   pruneopts = "UT"
   revision = "3a22650c66bd7f4fb6d1e8072ffd7b75c8a27898"
@@ -283,7 +283,7 @@
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows",
+    "windows"
   ]
   pruneopts = "UT"
   revision = "d0b11bdaac8adb652bff00e49bcacf992835621a"
@@ -305,7 +305,7 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable",
+    "unicode/rangetable"
   ]
   pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
@@ -354,7 +354,7 @@
     "resolver/passthrough",
     "stats",
     "status",
-    "tap",
+    "tap"
   ]
   pruneopts = "UT"
   revision = "a02b0774206b209466313a0b525d2c738fe407eb"
@@ -375,10 +375,12 @@
     "github.com/gogo/protobuf/gogoproto",
     "github.com/gogo/protobuf/proto",
     "github.com/golang/protobuf/protoc-gen-go",
+    "github.com/gorilla/mux",
     "github.com/ligato/cn-infra/agent",
     "github.com/ligato/cn-infra/datasync",
     "github.com/ligato/cn-infra/datasync/kvdbsync",
     "github.com/ligato/cn-infra/datasync/kvdbsync/local",
+    "github.com/ligato/cn-infra/datasync/resync",
     "github.com/ligato/cn-infra/db/keyval",
     "github.com/ligato/cn-infra/db/keyval/etcd",
     "github.com/ligato/cn-infra/health/statuscheck",
@@ -391,7 +393,7 @@
     "github.com/ligato/vpp-agent/plugins/kvscheduler",
     "github.com/ligato/vpp-agent/plugins/kvscheduler/api",
     "github.com/ligato/vpp-agent/plugins/orchestrator",
-    "github.com/unrolled/render",
+    "github.com/unrolled/render"
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

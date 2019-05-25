@@ -1,78 +1,130 @@
 import React from 'react'
+import 'chai/register-expect';
+import Swal from 'sweetalert2'
+
 import PluginPicker from './PluginPicker';
 import DraggablePlugins from './DraggablePlugins';
 import PluginPalette from './PluginPalette';
+import Header from './Header/Header';
+import store from '../../redux/store/index';
+import { setCurrProject, loadAllProjects } from "../../redux/actions/index";
 
-/*
-* Offsets allows me to differentiate between categories of plugins
-* while looping through the unique components, the first 3 plugins
-* are their own category, the next 4 their own and so on.
-*/ 
-const offsets = [[0],[3],[7],[9],[11],[17]];
-let pluginPickedArray =  new Uint8Array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+let pluginModule = require('../Model');
+let visiblityArray;
+let OFFSET = buildOFFSET();
+let loaded = false;
+store.dispatch( setCurrProject(pluginModule.project) );
+
+let customPlugin = {
+  pluginName: 'UNTITLED',
+  selected: false,
+  packageName: 'untitled',
+}
 
 class PluginApp extends React.Component {
   constructor() {
     super();
-    this.handleData = this.handleData.bind(this);
-
-    //Defining all important plugin data for looping.
     this.state = {
-      clickedIndex: null,
-      pluginNames: ['REST API',  'GRPC',       'PROMETHEUS',   'ETCD',      
-                    'REDIS',     'CASSANDRA',  'CONSUL',       'LOGRUS',     
-                    'LOG MNGR',  'STTS CHECK', 'PROBE',        'KAFKA',     
-                    'DATASYNC',  'IDX MAP',    'SRVC LABEL',   'CONFIG'],
-
-      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.']
+      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.', 'Custom'], 
+      pluginPickedArray: getPluginPickedArray(),
+      currentProjectName: store.getState().currProject.projectName,
     };
+    this.handlePluginData = this.handlePluginData.bind(this);
+    this.handleNewProject = this.handleNewProject.bind(this);
+    this.handleLoadedProject = this.handleLoadedProject.bind(this);
+    this.newProjectName = this.newProjectName.bind(this);
+    this.handleCustomPlugin = this.handleCustomPlugin.bind(this);
+    visiblityArray = buildVisiblityArray(this.state.pluginPickedArray)
+    if(!loaded) {
+      store.dispatch( loadAllProjects() );
+      loaded = true;
+    }
   }
     
-  //Captures incoming id from DraggablePlugins.js for use as an index
-  //to flip the value at that index of pluginPickedArray.
-  handleData = (index) => {
+  handlePluginData = (index) => {
+    let tempArray = this.state.pluginPickedArray;
+    tempArray[index] = !tempArray[index]*1;
     this.setState({
-      clickedIndex: index
+      pluginPickedArray: tempArray
     });
-    pluginPickedArray[index] = !pluginPickedArray[index];
+    pluginModule.project.plugins[index].selected = !pluginModule.project.plugins[index].selected;
+    if(this.state.pluginPickedArray[index] === 0) {
+      visiblityArray[index] = 'hidden';
+    } else {
+      visiblityArray[index] = 'visible';
+    }
+    store.dispatch( setCurrProject(pluginModule.project));
+  }
+
+  handleNewProject = () => {
+    (async () => {
+      let nameCapture = await getProjectName();
+      if(!nameCapture) return;
+      this.setState({
+        currentProjectName: nameCapture
+      });
+      pluginModule.project.projectName = nameCapture;
+    })()
+    resetState();
+    this.setState({
+      pluginPickedArray: getPluginPickedArray()
+    });
+  }
+
+  handleLoadedProject(name) {
+    var selectedArray = getPluginPickedArray()
+    this.setState({
+      pluginPickedArray: selectedArray,
+      currentProjectName: name
+    });
+    visiblityArray = buildVisiblityArray(selectedArray)
+  }
+
+  newProjectName(name) {
+    this.setState({
+      currentProjectName: name
+    });
+  }
+
+  handleCustomPlugin(name) {
+    let plugin = JSON.parse(JSON.stringify(customPlugin));
+    plugin.pluginName = name[0];
+    plugin.packageName = name[1];
+    buildCustomPlugin(plugin);
+    this.setState({
+      pluginPickedArray: getPluginPickedArray()
+    });
+    OFFSET = buildOFFSET();
   }
 
   render() {
     return (
       <div>
+        <Header
+          newProjectHandlerFromParent={this.handleNewProject}
+          newProjectNameHandler={this.newProjectName}
+          loadedProjectHandlerFromParent={this.handleLoadedProject}
+          currentProjectName={this.state.currentProjectName}
+        />
         <div className="left-column-background"></div>
           <div className="plugin-column">
-            {
-              //Starting here is the outer loop defining each PluginPicker. 
-              //.map will loop for the length of sentInCategories with 
-              //index as the counter. Index is used to reference 
-              //different values within offsets which are themselves used
-              //to define which pluginPickedArray subarray is sent as a prop 
-              //to each PluginPicker  
-            }
-            {this.state.sentInCategories.map((sentInCategory, index) => {
+            {this.state.sentInCategories.map((sentInCategory, outerIndex) => {
               return (
                 <PluginPicker 
-                  key={index} 
+                  key={outerIndex} 
                   sentInCategory={sentInCategory} 
-                  sentInArrayObject={pluginPickedArray.subarray(Number(offsets[index]),Number(offsets[index+1]))}
+                  sentInArray={this.state.pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
+                  sendCustomPlugin={this.handleCustomPlugin}
                 >
-                  {
-                    //Starting here is the inner loop defining each DraggablePlugin
-                    //within each PluginPicker. Which DraggablePlugins are apart
-                    //of which PluginPicker is manipulated again by the different
-                    //values within offsets. In this case, referenced by pluginNameIndex.
-                    //to define which pluginPickedArray subarray is sent as a prop 
-                    //to each PluginPicker  
-                  }
-                  {this.state.pluginNames.slice(Number(offsets[index]), Number(offsets[index+1])).map((pluginName, pluginNameIndex) => {
+                  {pluginModule.project.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
                     return (
                       <DraggablePlugins
-                        pluginName={pluginName}
-                        image={'/images/walrus.png'}
-                        handlerFromParent={this.handleData}
-                        id={pluginNameIndex+Number(offsets[index])}
-                        key={pluginNameIndex+Number(offsets[index])} 
+                        pluginName={pluginModule.project.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
+                        image={pluginModule.images[Number(OFFSET[outerIndex]) + innerIndex]}
+                        handleClickedPlugin={this.handlePluginData}
+                        id={Number(OFFSET[outerIndex]) + innerIndex}
+                        key={Number(OFFSET[outerIndex]) + innerIndex} 
+                        visibility={visiblityArray[Number(OFFSET[outerIndex]) + innerIndex]}
                       />
                     )
                   })}     
@@ -80,22 +132,18 @@ class PluginApp extends React.Component {
               )
             })}
           </div>
-          <PluginPalette sentInArrayObject={pluginPickedArray}>
-            {
-              //Similiar to the previous PluginPicker definition however,
-              //since theres only one PluginPalette, all DraggablePlugins
-              //are rendered within one component: PluginPalette. Therefore 
-              //the loop isnt broken up into subarrays using offsets. The whole
-              //pluginNames array is sent in.
-            }
-            {this.state.pluginNames.map((pluginName, pluginNameIndex) => {
+          <PluginPalette 
+            sentInArray={this.state.pluginPickedArray}
+          >
+            {pluginModule.project.plugins.map((i, index) => {
               return (
                 <DraggablePlugins
-                  pluginName={pluginName}
-                  image={'/images/walrus.png'}
-                  handlerFromParent={this.handleData}
-                  id={pluginNameIndex}
-                  key={pluginNameIndex}
+                  pluginName={pluginModule.project.plugins[index].pluginName}
+                  image={pluginModule.images[index]}
+                  handleClickedPlugin={this.handlePluginData}
+                  id={index}
+                  key={index}
+                  visibility={visiblityArray[index]}
                 />
               )
             })}   
@@ -105,3 +153,72 @@ class PluginApp extends React.Component {
   }
 }
 export default PluginApp;
+
+async function getProjectName () {
+  const {value: text} = await Swal.fire({
+    title: 'CN-infra Generator App',
+    input: 'textarea',
+    inputPlaceholder: 'New Project Name',
+    showCancelButton: true,
+    allowEnterKey:	true,
+  })
+  return text;
+}
+
+function resetState() {
+  pluginModule.project.plugins.length = 16;
+  pluginModule.project.customPlugins = [];
+  for(let i = 0; i < pluginModule.project.plugins.length; i++) {
+    pluginModule.project.plugins[i].selected = false;
+    pluginModule.project.plugins[i].port = 0;
+  }
+  store.dispatch( setCurrProject(pluginModule.project));
+  visiblityArray = buildVisiblityArray(getPluginPickedArray())
+}
+
+function getPluginPickedArray() {
+  let selectedArray = store.getState().currProject.plugins;
+  let array = [];
+  for(let i = 0; i < selectedArray.length; i++) {
+    if(selectedArray[i].selected) array.push(Number(1))
+    else array.push(Number(0)) 
+  }
+  return array;
+}
+
+function buildVisiblityArray(sentInArray) {
+  var array = [];
+  for(let i = 0; i < sentInArray.length; i++) {
+    if(sentInArray[i] === 0) {
+      array[i] = 'hidden';
+    } else {
+      array[i] = 'visible';
+    }
+  }
+  return array;
+}
+
+function buildOFFSET() {
+  let array = [[0]];
+  var previouslength = 0;
+  for(let i = 0; i < pluginModule.categories.length; i++) {
+    let subarray = [pluginModule.categories[i].length + previouslength]
+    array.push(subarray)
+    previouslength = Number(array[i+1]);
+  }
+  return array;
+}
+
+function buildCustomPlugin(data) {
+  visiblityArray.push('hidden');
+  pluginModule.images.push('/images/custom.png');
+  pluginModule.project.customPlugins.push(data)
+  pluginModule.project.plugins.push(data)
+  pluginModule.categories[5].push([data.pluginName, 'CUSTOM'])
+  store.dispatch( setCurrProject(pluginModule.project));
+}
+
+
+
+
+

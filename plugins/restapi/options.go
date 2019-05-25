@@ -17,6 +17,9 @@ package restapi
 import (
 	"log"
 
+	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/cn-infra/rpc/rest"
+
 	"github.com/ligato/cn-infra/logging"
 )
 
@@ -28,6 +31,8 @@ func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
 	p.PluginName = "restapi"
+	p.HTTPHandlers = &rest.DefaultPlugin
+	p.KVStore = &etcd.DefaultPlugin
 
 	for _, o := range opts {
 		o(p)

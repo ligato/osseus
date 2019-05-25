@@ -1,0 +1,17 @@
+// Used by UI
+export const ADD_CURR_PROJECT = "ADD_CURR_PROJECT";
+export const SET_CURR_PROJECT = "SET_CURR_PROJECT";
+export const SET_CURR_POPUP_ID = "SET_CURR_POPUP_ID";
+// Sent to server
+export const GENERATE_CURR_PROJECT = "GENERATE_CURR_PROJECT";
+export const DELETE_PROJECT = "DELETE_PROJECT";
+export const LOAD_ALL_PROJECTS = "LOAD_ALL_PROJECTS";
+export const LOAD_PROJECT_FROM_KV = "LOAD_PROJECT_FROM_KV";
+export const SAVE_PROJECT_TO_KV = "SAVE_PROJECT_TO_KV";
+export const DOWNLOAD_TEMPLATE = "DOWNLOAD_TEMPLATE";
+export const DOWNLOAD_GO = "DOWNLOAD_GO";
+export const DOWNLOAD_TAR = "DOWNLOAD_TAR";
+// Returned from server
+export const RETURN_LOAD_PROJECT = "RETURN_LOAD_PROJECT";
+export const RETURN_TEMPLATE = "RETURN_TEMPLATE";
+export const RETURN_GO = "RETURN_GO";

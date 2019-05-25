@@ -16,52 +16,66 @@ package descriptor
 
 import (
 	"github.com/ligato/cn-infra/logging"
-
 	"github.com/ligato/osseus/plugins/generator/descriptor/adapter"
+	"github.com/ligato/osseus/plugins/generator/gencalls"
 	"github.com/ligato/osseus/plugins/generator/model"
 	kvs "github.com/ligato/vpp-agent/plugins/kvscheduler/api"
 )
 
 const (
-	// TemplateDescriptorName is the name of the descriptor plugin
-	TemplateDescriptorName = "template"
+	// ProjectDescriptorName is the name of the descriptor project
+	ProjectDescriptorName = "project"
 )
 
-// TemplateDescriptor is our descriptor
-type TemplateDescriptor struct {
-	log logging.Logger
+// ProjectDescriptor is our descriptor
+type ProjectDescriptor struct {
+	log      logging.Logger
+	handlers gencalls.ProjectAPI
 }
 
-// NewTemplateDescriptor creates a new instance of the descriptor.
-func NewTemplateDescriptor(log logging.PluginLogger) *kvs.KVDescriptor {
-	// Set plugin descriptor init values
-	descCtx := &TemplateDescriptor{
-		log: log.NewLogger("template-descriptor"),
+// NewProjectDescriptor creates a new instance of the descriptor.
+func NewProjectDescriptor(log logging.PluginLogger, handlers gencalls.ProjectAPI) *kvs.KVDescriptor {
+	// Set project descriptor init values
+	descCtx := &ProjectDescriptor{
+		log:      log,
+		handlers: handlers,
 	}
 
-	typedDescr := &adapter.TemplateDescriptor{
-		Name:          TemplateDescriptorName,
-		NBKeyPrefix:   model.ModelTemplate.KeyPrefix(),
-		ValueTypeName: model.ModelTemplate.ProtoName(),
-		KeySelector:   model.ModelTemplate.IsKeyValid,
-		KeyLabel:      model.ModelTemplate.StripKeyPrefix,
+	typedDescr := &adapter.ProjectDescriptor{
+		Name:          ProjectDescriptorName,
+		NBKeyPrefix:   model.ModelProject.KeyPrefix(),
+		ValueTypeName: model.ModelProject.ProtoName(),
+		KeySelector:   model.ModelProject.IsKeyValid,
+		KeyLabel:      model.ModelProject.StripKeyPrefix,
 		Create:        descCtx.Create,
 		Delete:        descCtx.Delete,
-		UpdateWithRecreate: func(key string, oldValue, newValue *model.Template, metadata interface{}) bool {
+		UpdateWithRecreate: func(key string, oldValue, newValue *model.Project, metadata interface{}) bool {
 			// Modify always performed via re-creation
 			return true
 		},
 	}
-	return adapter.NewTemplateDescriptor(typedDescr)
+
+	return adapter.NewProjectDescriptor(typedDescr)
 }
 
 // Create creates new value.
-func (d *TemplateDescriptor) Create(key string, value *model.Template) (metadata interface{}, err error) {
-	d.log.Infof("New Data, Key: %q Value: %+v", key, value)
+func (d *ProjectDescriptor) Create(key string, value *model.Project) (metadata interface{}, err error) {
+	if err := d.handlers.GenAddProj(key, value); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+
+	if err := d.handlers.GenAddProjStructure(key, value); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+
 	return nil, nil
 }
 
 // Delete removes an existing value.
-func (d *TemplateDescriptor) Delete(key string, value *model.Template, metadata interface{}) error {
+func (d *ProjectDescriptor) Delete(key string, value *model.Project, metadata interface{}) error {
+	if err := d.handlers.GenDelProj(value); err != nil {
+		d.log.Errorf("Delete failed: %v", err)
+	}
+
 	return nil
 }

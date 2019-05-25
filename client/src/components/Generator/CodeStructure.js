@@ -2,21 +2,29 @@ import React from 'react';
 //import PropTypes from 'prop-types'
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Generator/GeneratorApp.css";
+import FileExplorer from './FileExplorer';
 
 /*
 * This component represents the left webpage division. This will
 * contain the file structure of the generated code.
 */
-const CodeStructure = (props) => {
-  return (
-    <div className="body">
-      <div className="split left">
-        <p className="whitetextgen">Code Structure</p>
+ 
+class CodeStructure extends React.Component {
+  onSelect_2 = (file) => { 
+    this.props.onSelect_3(file);
+  };
+  render() {
+    return (
+      <div className="body">
+        <div className="split left">
+          <div className="filestructure"> 
+            <FileExplorer onSelect_1={this.onSelect_2} />
+          </div>
+        </div>
       </div>
-    </div>
-  );
-};
-
+    );
+  }
+}
 export default CodeStructure;
 
 //CodeStructure.propTypes = {}

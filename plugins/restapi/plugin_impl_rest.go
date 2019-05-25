@@ -11,32 +11,28 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 
 package restapi
 
 import (
 	"net/http"
 
+	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
 	"github.com/ligato/cn-infra/rpc/rest"
 )
 
+//Generate model:
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/rest_project.proto
+//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/rest_template_structure.proto
+
 // REST api methods
 const (
-	GET  = http.MethodGet
-	POST = http.MethodPost
+	GET    = http.MethodGet
+	POST   = http.MethodPost
+	DELETE = http.MethodDelete
 )
-
-// RegisterFlags registers command line flags.
-func RegisterFlags() {
-	// TODO: add command line flags here
-}
-
-func init() {
-	RegisterFlags()
-}
 
 // Plugin holds the internal data structures of the Rest Plugin
 type Plugin struct {
@@ -47,6 +43,7 @@ type Plugin struct {
 type Deps struct {
 	infra.PluginDeps
 	HTTPHandlers rest.HTTPHandlers
+	KVStore      keyval.KvProtoPlugin
 }
 
 // Init initializes the Rest Plugin
@@ -57,10 +54,8 @@ func (p *Plugin) Init() error {
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
-	p.Log.Debug("REST API Plugin should be up and running ;) ")
-	// you would want to register your handlers here
+	p.Log.Debug("REST API Plugin started ")
 	p.registerHandlersHere()
-
 	return nil
 }
 

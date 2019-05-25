@@ -5,9 +5,12 @@ package model;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.messagename_all) = true;
 
-// A plugin resource
+// Template holds the data that will be generated
 message Template {
   string name = 1;
-  string result = 2;
+  int32 id = 2;
+  float version = 3;
+  string category = 4;
+  repeated string dependencies = 5;
+  string tar_file = 6;
 };
-
