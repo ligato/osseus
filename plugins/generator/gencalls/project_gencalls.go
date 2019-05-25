@@ -39,8 +39,8 @@ type pluginAttr struct {
 type templateStructureItem struct{
 	itemName		string
 	absolutePath	string
-	fileType			string
-	etcdKey		string
+	fileType		string
+	etcdKey			string
 	children		[]string
 }
 
