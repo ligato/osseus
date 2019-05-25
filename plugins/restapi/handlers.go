@@ -23,7 +23,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/ligato/osseus/plugins/restapi/model"
+	"github.com/ligato/osseus/plugins/restapi/restmodel"
 
 	"github.com/unrolled/render"
 )
@@ -261,9 +261,9 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
-	value := new(model.Project)
-	pluginval := new(model.Plugin)
-	custompluginval := new(model.CustomPlugin)
+	value := new(restmodel.Project)
+	pluginval := new(restmodel.Plugin)
+	custompluginval := new(restmodel.CustomPlugin)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -275,12 +275,12 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	}
 
 	// Prepare data
-	var pluginsList []*model.Plugin
-	var customPluginsList []*model.CustomPlugin
+	var pluginsList []*restmodel.Plugin
+	var customPluginsList []*restmodel.CustomPlugin
 
 	// Create a Plugins list that will be stored in etcd
 	for _, plugin :=  range proj.Plugins{
-		pluginval = &model.Plugin{
+		pluginval = &restmodel.Plugin{
 			PluginName: plugin.PluginName,
 			Id:         plugin.Id,
 			Selected:   plugin.Selected,
@@ -291,14 +291,14 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 
 	//create CustomPlugins list that will be stored in etcd
 	for _, customPlugin := range proj.CustomPlugins{
-		custompluginval = &model.CustomPlugin{
+		custompluginval = &restmodel.CustomPlugin{
 			PluginName:    customPlugin.PluginName,
 			PackageName: 		 customPlugin.PackageName,
 		}
 		customPluginsList = append(customPluginsList, custompluginval)
 	}
 
-	value = &model.Project{
+	value = &restmodel.Project{
 		ProjectName: proj.ProjectName,
 		Plugin:      pluginsList,
 		AgentName:   proj.AgentName,
@@ -317,7 +317,7 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
-	value := new(model.Project)
+	value := new(restmodel.Project)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -365,7 +365,7 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
-	value := new(model.TemplateStructure)
+	value := new(restmodel.TemplateStructure)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {
@@ -400,7 +400,7 @@ func (p *Plugin) getFileContents(prefix string, key string) interface{} {
 	broker := p.KVStore.NewBroker(prefix)
 
 	// Get value based on key
-	value := new(model.FileContent)
+	value := new(restmodel.FileContent)
 	found, _, err := broker.GetValue(key, value)
 
 	if err != nil {

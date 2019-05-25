@@ -24,8 +24,8 @@ import (
 )
 
 //Generate model:
-//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/rest_project.proto
-//go:generate protoc --proto_path=model --proto_path=$GOPATH/src --gogo_out=model ./model/rest_template_structure.proto
+//go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_project.proto
+//go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_template_structure.proto
 
 // REST api methods
 const (

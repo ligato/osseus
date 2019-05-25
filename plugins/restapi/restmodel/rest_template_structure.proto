@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package model;
+package restmodel;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.messagename_all) = true;
