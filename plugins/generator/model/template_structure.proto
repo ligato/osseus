@@ -5,12 +5,12 @@ package model;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 option (gogoproto.messagename_all) = true;
 
-// FileContent holds the content of the go file
-message FileContent{
+//TemplateStructure holds the directory and folder structure of the project
+message TemplateStructure{
 
-    // Content of the generated code file
-    string content = 1;
-};
+    // List of file objects describing directory structure of generated files
+    repeated File file = 1;
+}
 
 // File holds the folder path, children, type, and etcdkey of the given file
 message File{
@@ -31,9 +31,9 @@ message File{
     repeated string children = 5;
 };
 
-//TemplateStructure holds the directory and folder structure of the project
-message TemplateStructure{
+// FileContent holds the content of the go file
+message FileContent{
 
-    // List of file objects describing directory structure of generated files
-    repeated File file = 1;
-}
+    // Content of the generated code file
+    string content = 1;
+};
