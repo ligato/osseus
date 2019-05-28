@@ -20,7 +20,8 @@
   top: 40px;
   left: 0;
   width: 17.5%;
-  background-color: #FFFFFF; 
+  background-color: #FFFFFF;
+  border-right: 5px solid #CECECE; 
   z-index: 200;}
 
 .right-viewer {
@@ -29,7 +30,7 @@
   right: 0;
   color: #00BCEB;
   background-color: blue;
-  background: #DFDFDF;
+  background: #FDFDFD;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   display: flex;
@@ -40,7 +41,9 @@
 .gencode {
   font: 16px;
   padding: 40px;
-  position: absolute;  }
+  position: absolute; 
+  left: 10px;
+ }
 
 .filestructure {
   margin-top: 20px;

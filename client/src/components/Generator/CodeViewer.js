@@ -11,18 +11,8 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 * contain the generated code.
 */
 
-function FileHelper(path) {
-  let pathOfFileToReadFrom = path
-  FileHelper.readStringFromFileAtPath = pathOfFileToReadFrom
-  let request = new XMLHttpRequest();
-  request.open("GET", pathOfFileToReadFrom, false);
-  request.send(null);
-  let returnValue = request.responseText;
-  return returnValue;
-}
-
 const CodeViewer = (props) => {
-  let codeString = FileHelper(props.generatedCode);
+  let codeString = props.generatedCode
   return (
     <div className="body">
       <div className="split right-viewer">

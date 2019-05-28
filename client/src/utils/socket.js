@@ -15,9 +15,6 @@ const configureSocket = dispatch => {
     socket.on('SEND_TEMPLATE_TO_CLIENT', template => {
         dispatch({ type: 'RETURN_TEMPLATE', template });
     });
-    socket.on('SEND_GO_TO_CLIENT', GO => {
-        dispatch({ type: 'RETURN_GO', GO });
-    })
 
     return socket
 }

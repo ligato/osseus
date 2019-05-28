@@ -5,65 +5,29 @@ import PropTypes from 'prop-types';
 
 import TreeNode from './TreeNode';
 
-let i = 0;
+let pluginModule = require('../Model');
+let i = 0
 
-const data = {
-  '/project': {
-    path: '/project',
-    type: 'folder',
-    isRoot: true,
-    isOpen: true,
-    children: ['/project/cmd', '/project/plugins'],
-  },
-  '/project/cmd': {
-    path: '/project/cmd',
-    type: 'folder',
-    isOpen: true,
-    children: ['/project/cmd/agent'],
-  },
-  '/project/cmd/agent': {
-    path: '/project/cmd/agent',
-    type: 'folder',
-    isOpen: true,
-    children: ['/project/cmd/agent/main.go'],
-  },
-  '/project/cmd/agent/main.go': {
-    path: '/project/cmd/agent/main.go',
-    type: 'file',
-    isOpen: true,
-    content: 'main.go'
-  },
-  '/project/plugins': {
-    path: '/project/plugins',
-    type: 'folder',
-    isOpen: true,
-    children: ['/project/plugins/REDIS'],
-  },
-  '/project/plugins/REDIS': {
-    path: '/project/plugins/REDIS',
-    type: 'folder',
-    isOpen: true,
-    children: ['/project/plugins/REDIS/doc.go', '/project/plugins/REDIS/options.go', '/project/plugins/REDIS/plugin_impl_test.go'],
-  },
-  '/project/plugins/REDIS/doc.go': {
-    path: '/project/plugins/REDIS/doc.go',
-    type: 'file',
-    isOpen: true,
-    content: 'doc.go'
-  },
-  '/project/plugins/REDIS/options.go': {
-    path: '/project/plugins/REDIS/options.go',
-    type: 'file',
-    isOpen: true,
-    content: 'options.go'
-  },
-  '/project/plugins/REDIS/plugin_impl_test.go': {
-    path: '/project/plugins/REDIS/plugin_impl_test.go',
-    type: 'file',
-    isOpen: true,
-    content: 'plugin_impl_test.go'
-  },
-};
+let data = {};
+
+for(let i = 0; i < pluginModule.structure.length; i++) {
+  let template = pluginModule.structure[i].absolutePath;
+  let templateNode = {
+    [template]: {
+      path: pluginModule.structure[i].absolutePath,
+      type: pluginModule.structure[i].fileType,
+      isRoot: i === 0 ? true : false,
+      isOpen: true,
+      children: pluginModule.structure[i].children,
+      content: pluginModule.files.find(x => x.fileName === pluginModule.structure[i].name)
+    }    
+  }
+  //templateNode.template.content = pluginModule.files.find(x => x.fileName === pluginModule.structure[i].name);
+  if(typeof templateNode[template].content === 'undefined') templateNode[template].content = '';
+  data[template] = templateNode[template];
+}
+
+console.log(data)
 
 class Tree extends Component {
 

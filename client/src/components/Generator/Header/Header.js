@@ -6,7 +6,7 @@ import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV, downloadTemplate } from "../../../redux/actions/index";
+import { addCurrProject, saveProjectToKV, loadProjectFromKV } from "../../../redux/actions/index";
 
 import '../../../styles_CSS/Generator/Header/Header.css';
 
@@ -57,8 +57,6 @@ class Header extends React.Component {
 
   downloadTar() {
     console.log('download')
-    //store.dispatch( downloadTar(store.getState().currProject) );
-    store.dispatch( downloadTemplate(store.getState().currProject) );
   }
 
   //Function will communicate if user edited the project name

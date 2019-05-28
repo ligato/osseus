@@ -24,7 +24,7 @@ class FileExplorer extends Component {
   }
   onSelect = (file) => { 
     this.setState({
-      currentFile: file.content
+      currentFile: file.content.fileName
     });
     this.props.onSelect_1(file);
   };

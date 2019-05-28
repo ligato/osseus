@@ -9,13 +9,10 @@ import { deleteProject } from "../redux/actions/index";
 import { loadAllProjects } from "../redux/actions/index";
 import { loadProjectFromKV } from "../redux/actions/index";
 import { saveProjectToKV } from "../redux/actions/index";
-import { downloadTemplate } from "../redux/actions/index";
-import { downloadGO } from "../redux/actions/index";
 import { downloadTar } from "../redux/actions/index";
 // Returned from server
 import { returnLoadProject } from "../redux/actions/index";
 import { returnTemplate } from "../redux/actions/index";
-import { returnGO } from "../redux/actions/index";
 
 window.store = store;
 
@@ -28,11 +25,8 @@ window.deleteProject = deleteProject;
 window.loadAllProjects = loadAllProjects;
 window.loadProjectFromKV = loadProjectFromKV;
 window.saveProjectToKV = saveProjectToKV;
-window.downloadTemplate = downloadTemplate;
-window.downloadGO = downloadGO;
 window.downloadTar = downloadTar;
 
 window.returnLoadProject = returnLoadProject;
 window.returnTemplate = returnTemplate;
-window.returnGO = returnGO;
 

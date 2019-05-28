@@ -8,13 +8,10 @@ import { DELETE_PROJECT } from "../constants/action-types";
 import { LOAD_ALL_PROJECTS } from "../constants/action-types";
 import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
-import { DOWNLOAD_TEMPLATE } from "../constants/action-types";
-import { DOWNLOAD_GO } from "../constants/action-types";
 import { DOWNLOAD_TAR } from "../constants/action-types";
 // Returned from server
 import { RETURN_LOAD_PROJECT } from "../constants/action-types";
 import { RETURN_TEMPLATE } from "../constants/action-types";
-import { RETURN_GO } from "../constants/action-types";
 
 export function addCurrProject(payload) {
   return { type: ADD_CURR_PROJECT, payload };
@@ -41,12 +38,6 @@ export function loadProjectFromKV(payload) {
 export function saveProjectToKV(payload) {
   return { type: SAVE_PROJECT_TO_KV, payload }
 }
-export function downloadTemplate(payload) {
-  return { type: DOWNLOAD_TEMPLATE, payload };
-}
-export function downloadGO(payload) {
-  return { type: DOWNLOAD_GO, payload }; 
-}
 export function downloadTar(payload) {
   return { type: DOWNLOAD_TAR, payload };
 }
@@ -58,6 +49,4 @@ export function returnLoadProject(payload) {
 export function returnTemplate(payload) {
   return { type: RETURN_TEMPLATE, payload }; 
 }
-export function returnGO(payload) {
-  return { type: RETURN_GO, payload }; 
-}
+

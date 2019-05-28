@@ -26,8 +26,9 @@ class GeneratorApp extends React.Component {
   }
 
   onSelectParent = (file) => { 
+    console.log(file.content)
     if(file.type === 'file') {
-      this.setState({ selectedFile: file.content })
+      this.setState({ selectedFile: file.content.content })
     }
   }
 

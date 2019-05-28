@@ -9,14 +9,11 @@ import { DELETE_PROJECT } from "../constants/action-types";
 import { LOAD_ALL_PROJECTS } from "../constants/action-types";
 import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
-import { DOWNLOAD_TEMPLATE } from "../constants/action-types";
-import { DOWNLOAD_GO } from "../constants/action-types";
 import { DOWNLOAD_TAR } from "../constants/action-types";
 
 // Returned from server
 import { RETURN_LOAD_PROJECT } from "../constants/action-types";
 import { RETURN_TEMPLATE } from "../constants/action-types";
-import { RETURN_GO } from "../constants/action-types";
 
 import { socket } from '../../index';
 
@@ -27,7 +24,6 @@ const initialState = {
   currProject: null,
   tar: null,
   template: null,
-  goFiles: []
 };
 function rootReducer(state = initialState, action) {
   //Add the current project to the array of saved projects
@@ -61,12 +57,6 @@ function rootReducer(state = initialState, action) {
       template: action.payload
     })
   }
-  //Retreives the GO file from the server
-  else if (action.type === RETURN_GO) {
-    return Object.assign({}, state, {
-      goFiles: state.goFiles.concat(action.payload)
-    })
-  }
   //Emits the server to call GENERATE_PROJECT
   else if (action.type === GENERATE_CURR_PROJECT) {
     socket && socket.emit('GENERATE_PROJECT', action.payload);
@@ -86,14 +76,6 @@ function rootReducer(state = initialState, action) {
   //Emits the server to call SEND_SAVE_PROJECT
   else if (action.type === SAVE_PROJECT_TO_KV) {
     socket && socket.emit('SEND_SAVE_PROJECT', action.payload)
-  }
-  //Emits the server to call DOWNLOAD_TEMPLATE
-  else if (action.type === DOWNLOAD_TEMPLATE) {
-    socket && socket.emit('DOWNLOAD_TEMPLATE', action.payload)
-  }
-  //Emits the server to call DOWNLOAD_GO
-  else if (action.type === DOWNLOAD_GO) {
-    socket && socket.emit('DOWNLOAD_GO', action.payload)
   }
   //Emits the server to call DOWNLOAD_TAR
   else if (action.type === DOWNLOAD_TAR) {

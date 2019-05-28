@@ -9,7 +9,7 @@ let pluginModule = require('../Model');
 
 const toolText = {
   generate: 'Once finished, generate a template.',
-  header: 'Configure and save projects. Once finished, generate a template.',
+  header: 'Configure and save projects.',
   pluginPicker: 'Pick from a set of plugins or make your own.',
   agent: 'Choose agent settings.'
 }
@@ -42,11 +42,11 @@ const PluginPalette = (props) => {
             </div>
           </div>
           <div className="tool-text-container" style={{visibility: textVisibilty}}>
-            <p className="tool-text-header">{toolText.generate}&nbsp;<i className="up-arrow"></i></p>
+            <p className="tool-text-header">{toolText.generate}&emsp;<i className="up-arrow"></i></p>
             <div className="tool-text-div">
-              <p className="tool-text"><i className="up-arrow"></i>&nbsp;{toolText.header}</p><br></br>
-              <p className="tool-text"><i className="left-arrow"></i>&nbsp;{toolText.pluginPicker}</p><br></br>
-              <p className="tool-text"><i className="down-arrow"></i>&nbsp;{toolText.agent}</p>
+              <p className="tool-text"><i className="up-arrow"></i>&emsp;{toolText.header}</p><br></br>
+              <p className="tool-text"><i className="left-arrow"></i>&emsp;{toolText.pluginPicker}</p><br></br>
+              <p className="tool-text"><i className="down-arrow"></i>&emsp;{toolText.agent}</p>
             </div>
           </div>
         </div>
