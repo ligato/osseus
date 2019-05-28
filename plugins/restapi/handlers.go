@@ -29,9 +29,12 @@ import (
 )
 
 var (
-	genPrefix      = "/vnf-agent/" + LABEL + "/config/generator/v1/generate_template/"
+	// genPrefix has the generator's watcher watching on this key for changes to generate
+	genPrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/generate_template/"
+	// projectsPrefix has all the saved projects
 	projectsPrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/projects/"
-	templatePrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/templates/"
+	// templatePrefix has the stored structure and zip files
+	templatePrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/template/"
 )
 
 // Project struct from etcd for projects
