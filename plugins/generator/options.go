@@ -16,6 +16,7 @@ package generator
 
 import (
 	"github.com/ligato/cn-infra/db/keyval/etcd"
+	"github.com/ligato/cn-infra/servicelabel"
 	"github.com/ligato/vpp-agent/plugins/kvscheduler"
 )
 
@@ -27,6 +28,7 @@ func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
 	p.SetName("generator")
+	p.ServiceLabel = &servicelabel.DefaultPlugin
 	p.KVStore = &etcd.DefaultPlugin
 	p.KVScheduler = &kvscheduler.DefaultPlugin
 

@@ -15,8 +15,9 @@
 package gencalls
 
 import (
-	"github.com/ligato/osseus/plugins/generator/model"
 	"strings"
+
+	"github.com/ligato/osseus/plugins/generator/model"
 )
 
 // Syntax of how a plugin is imported, declared and initialized
@@ -26,7 +27,7 @@ type pluginAttr struct {
 	Initialization string
 }
 
-// fillMain template inserts plugins in main.go into template
+// FillMainTemplate inserts plugins in main.go into template
 func (d *ProjectHandler) FillMainTemplate(val *model.Project) string {
 
 	//get array of plugin structs

@@ -99,6 +99,11 @@ spec:
       containers: 
         - name: agent
           image: anthonydevelops/agent:dev
+          env:
+            - name: MICROSERVICE_LABEL
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           ports:
             - containerPort: 9191
 ---
