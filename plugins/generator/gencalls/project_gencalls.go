@@ -172,8 +172,8 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 	// Create tar structure
 	var files = []fileEntry{
 		{"/"+ projectName + "/cmd/agent/main.go", mainTemplate},
-		{"/"+ projectName + "/cmd/agent/README.md", readmeTemplate},
 		{"/"+ projectName + "/cmd/agent/doc.go", docTemplate},
+		{"/"+ projectName + "/README.md", readmeTemplate},
 	}
 
 	// todo: possibly add custom plugin-specific readme file/template
@@ -239,7 +239,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{projectName,
 			"/" + projectName,
 			"folder",
-			[]string{"/" + projectName + "/cmd","/" + projectName + "/plugins"}},
+			[]string{"/" + projectName + "/cmd","/" + projectName + "/plugins","/" + projectName + "/README.md"}},
 		{
 			"cmd",
 			"/" + projectName + "/cmd",
@@ -248,16 +248,11 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{"agent",
 			"/" + projectName + "/cmd/agent",
 			"folder",
-			[]string{"/" + projectName + "/cmd/agent/main.go"}},
+			[]string{"/" + projectName + "/cmd/agent/main.go","/" + projectName + "/cmd/agent/doc.go"}},
 		{"main.go",
 			"/" + projectName + "/cmd/agent/main.go",
 			"file",
 			[]string{}},
-		{"readme.md",
-			"/" + projectName + "/cmd/agent/README.md",
-			"file",
-			[]string{},
-		},
 		{"doc.go",
 			"/" + projectName + "/cmd/agent/doc.go",
 			"file",
@@ -314,6 +309,13 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 
 		templateStructure = append(templateStructure, pluginFolder, docFile, optionsFile, implFile)
 	}
+
+	readmeFile := templateStructureItem{"readme.md",
+			"/" + projectName + "/README.md",
+			"file",
+			[]string{},
+		},
+	templateStructure = append(templateStructure, readmeFile)
 
 	return templateStructure
 }

@@ -66,7 +66,6 @@ type File struct{
 	Name           string
 	AbsolutePath   string
 	FileType       string
-	EtcdKey       string
 	Children      []string
 }
 
@@ -382,7 +381,6 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 			Name:    file.Name,
 			AbsolutePath: file.AbsolutePath,
 			FileType:     file.FileType,
-			EtcdKey:   file.EtcdKey,
 			Children:   file.Children,
 		}
 		directoriesList = append(directoriesList, fileEntry)
