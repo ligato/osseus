@@ -176,7 +176,6 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 		{"/"+ projectName + "/README.md", readmeTemplate},
 	}
 
-	// todo: possibly add custom plugin-specific readme file/template
 	//append a struct of name/body for every custom plugin in project
 	for _, customPlugin := range val.CustomPlugin{
 		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
@@ -229,7 +228,7 @@ Template Folder Structure
 =========================
 */
 
-// getTemplateStructure returns path, type, children and etcd-key of each folder and file in generated template
+// getTemplateStructure returns name, path, type, and children of each folder and file in generated template
 func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStructureItem {
 
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
@@ -328,13 +327,16 @@ func(d *ProjectHandler) getFileContents(val *model.Project) []fileContent{
 	readmeTemplate := d.FillReadmeTemplate(val.ProjectName)
 	docTemplate := d.FillDocTemplate("main")
 
-	// add agent-level go file contents to database
-	fileContents = append(fileContents, fileContent{"main.go", mainTemplate})
+	// add readme file to batch file contents
 	fileContents = append(fileContents,
 		fileContent{"readme.go", readmeTemplate})
+
+	// add agent-level go file contents to batch file contents
+	fileContents = append(fileContents, fileContent{"main.go", mainTemplate})
 	fileContents = append(fileContents,
 		fileContent{"doc.go", docTemplate})
 
+	// add custom plugin file contents to batch file contents
 	for _, customPlugin := range val.CustomPlugin {
 		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
 		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
