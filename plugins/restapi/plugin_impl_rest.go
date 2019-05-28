@@ -17,6 +17,8 @@ package restapi
 import (
 	"net/http"
 
+	"github.com/ligato/cn-infra/servicelabel"
+
 	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
@@ -34,6 +36,11 @@ const (
 	DELETE = http.MethodDelete
 )
 
+// LABEL holds the serviceLabel value set by the user
+var (
+	LABEL string
+)
+
 // Plugin holds the internal data structures of the Rest Plugin
 type Plugin struct {
 	Deps
@@ -42,6 +49,7 @@ type Plugin struct {
 // Deps groups the dependencies of the Rest Plugin.
 type Deps struct {
 	infra.PluginDeps
+	ServiceLabel servicelabel.ReaderAPI
 	HTTPHandlers rest.HTTPHandlers
 	KVStore      keyval.KvProtoPlugin
 }
@@ -54,7 +62,9 @@ func (p *Plugin) Init() error {
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
-	p.Log.Debug("REST API Plugin started ")
+	LABEL = p.ServiceLabel.GetAgentLabel()
+
+	p.Log.Debugf("Restapi serviceLabel: %v", LABEL)
 	p.registerHandlersHere()
 	return nil
 }
