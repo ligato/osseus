@@ -19,6 +19,13 @@ import (
 	"strings"
 )
 
+// Syntax of how a plugin is imported, declared and initialized
+type pluginAttr struct {
+	ImportPath     string
+	Declaration    string
+	Initialization string
+}
+
 // fillMain template inserts plugins in main.go into template
 func (d *ProjectHandler) FillMainTemplate(val *model.Project) string {
 
