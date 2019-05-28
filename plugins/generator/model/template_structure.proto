@@ -9,10 +9,13 @@ option (gogoproto.messagename_all) = true;
 message TemplateStructure{
 
     // List of file objects describing directory structure of generated files
-    repeated File file = 1;
+    repeated File structure = 1;
+
+    // List of contents of the generated code files
+    repeated FileContent files = 2;
 }
 
-// File holds the folder path, children, type, and etcdkey of the given file
+// File holds the folder name, path, type, and children of the given file
 message File{
 
     // Name of generated code file or folder
@@ -24,9 +27,6 @@ message File{
     // "Folder" if a folder in the directory or "File" if code file
     string fileType = 3;
 
-    // Key the file is stored under in etcd
-    string etcdKey = 4;
-
     // Absolute path(s) of direct children folders of the file, empty list if no children
     repeated string children = 5;
 };
@@ -34,6 +34,7 @@ message File{
 // FileContent holds the content of the go file
 message FileContent{
 
+    string fileName = 1;
     // Content of the generated code file
-    string content = 1;
+    string content = 2;
 };

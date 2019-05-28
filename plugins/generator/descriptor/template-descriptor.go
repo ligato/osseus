@@ -60,11 +60,11 @@ func NewProjectDescriptor(log logging.PluginLogger, handlers gencalls.ProjectAPI
 
 // Create creates new value.
 func (d *ProjectDescriptor) Create(key string, value *model.Project) (metadata interface{}, err error) {
-	if err := d.handlers.GenAddProj(key, value); err != nil {
+	if err := d.handlers.GenAddProjStructure(key, value); err != nil {
 		d.log.Errorf("Put failed: %v", err)
 	}
 
-	if err := d.handlers.GenAddProjStructure(key, value); err != nil {
+	if err := d.handlers.GenAddProj(key, value); err != nil {
 		d.log.Errorf("Put failed: %v", err)
 	}
 
