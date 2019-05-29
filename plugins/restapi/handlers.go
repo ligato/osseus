@@ -65,20 +65,11 @@ type TemplateStructure struct {
 }
 
 // File struct in Template Structure
-<<<<<<< HEAD
 type File struct{
 	Name           string
 	AbsolutePath   string
 	FileType       string
 	Children      []string
-=======
-type File struct {
-	Name         string
-	AbsolutePath string
-	FileType     string
-	EtcdKey      string
-	Children     []string
->>>>>>> c04500b1f1609e535363b28f7ee34562f297b499
 }
 
 // FilePath struct used to specify file in template structure
@@ -396,12 +387,7 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 			Name:         file.Name,
 			AbsolutePath: file.AbsolutePath,
 			FileType:     file.FileType,
-<<<<<<< HEAD
 			Children:   file.Children,
-=======
-			EtcdKey:      file.EtcdKey,
-			Children:     file.Children,
->>>>>>> c04500b1f1609e535363b28f7ee34562f297b499
 		}
 		directoriesList = append(directoriesList, fileEntry)
 	}

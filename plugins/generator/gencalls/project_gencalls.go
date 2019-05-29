@@ -56,7 +56,8 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 	}
 
 	// Put new value in etcd
-	err := d.broker.Put(val.GetProjectName(), data)
+	key = "zip"
+	err := d.broker.Put(key, data)
 	if err != nil {
 		d.log.Errorf("Could not create template")
 		return err
@@ -313,7 +314,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			"/" + projectName + "/README.md",
 			"file",
 			[]string{},
-		},
+		}
 	templateStructure = append(templateStructure, readmeFile)
 
 	return templateStructure

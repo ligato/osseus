@@ -26,7 +26,7 @@ var (
 	ModelProject = models.Register(&Project{}, models.Spec{
 		Module:  ModuleName,
 		Version: "v1",
-		Type:    "project",
+		Type:    "generate_template",
 	}, models.WithNameTemplate("{{.Name}}"))
 	// ModelTemplate defines the registered model
 	ModelTemplate = models.Register(&Template{}, models.Spec{
