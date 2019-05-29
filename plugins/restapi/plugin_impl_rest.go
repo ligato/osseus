@@ -25,7 +25,6 @@ import (
 	"github.com/ligato/cn-infra/rpc/rest"
 )
 
-//Generate model:
 //go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_project.proto
 //go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_template_structure.proto
 
@@ -37,13 +36,14 @@ const (
 )
 
 // LABEL holds the serviceLabel value set by the user
-var (
-	LABEL string
-)
+var LABEL string
 
 // Plugin holds the internal data structures of the Rest Plugin
 type Plugin struct {
 	Deps
+
+	// broker for etcd operations
+	broker keyval.ProtoBroker
 }
 
 // Deps groups the dependencies of the Rest Plugin.
@@ -57,15 +57,18 @@ type Deps struct {
 // Init initializes the Rest Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
+
+	// Get servicelabel from flag
+	LABEL = p.ServiceLabel.GetAgentLabel()
+
 	return nil
 }
 
 // AfterInit can be used to register HTTP handlers
 func (p *Plugin) AfterInit() (err error) {
-	LABEL = p.ServiceLabel.GetAgentLabel()
-
-	p.Log.Debugf("Restapi serviceLabel: %v", LABEL)
+	// Calls handlers to be exposed
 	p.registerHandlersHere()
+
 	return nil
 }
 

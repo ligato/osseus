@@ -30,11 +30,11 @@ import (
 
 var (
 	// genPrefix has the generator's watcher watching on this key for changes to generate
-	genPrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/generate_template/"
+	genPrefix = "/config/generator/v1/generate_template/"
 	// projectsPrefix has all the saved projects
-	projectsPrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/projects/"
+	projectsPrefix = "/config/generator/v1/projects/"
 	// templatePrefix has the stored structure and zip files
-	templatePrefix = "/vnf-agent/" + LABEL + "/config/generator/v1/template/"
+	templatePrefix = "/config/generator/v1/template/"
 )
 
 // Project struct from etcd for projects
@@ -261,13 +261,14 @@ func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc 
 
 // updates the prefix key with the given project information for generation
 func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
-	broker := p.KVStore.NewBroker(prefix)
+	// broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
 
 	// Get value based on key
 	value := new(restmodel.Project)
 	pluginval := new(restmodel.Plugin)
 	custompluginval := new(restmodel.CustomPlugin)
-	found, _, err := broker.GetValue(key, value)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -309,7 +310,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	}
 
 	// Update value in KV store
-	if err := broker.Put(key, value); err != nil {
+	if err := p.broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
 	p.Log.Debugf("kv store should have (key): %v at (prefix): %v", key, prefix)
@@ -317,11 +318,12 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 
 // returns the Project at specified key {projectName}
 func (p *Plugin) getProject(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
+	// broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
 
 	// Get value based on key
 	value := new(restmodel.Project)
-	found, _, err := broker.GetValue(key, value)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -365,11 +367,12 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 
 // returns template structure as directory of files
 func (p *Plugin) getStructure(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
+	// broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
 
 	// Get value based on key
 	value := new(restmodel.TemplateStructure)
-	found, _, err := broker.GetValue(key, value)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -400,11 +403,12 @@ func (p *Plugin) getStructure(prefix string, key string) interface{} {
 
 // returns contents of specified file
 func (p *Plugin) getFileContents(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
+	// broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
 
 	// Get value based on key
 	value := new(restmodel.FileContent)
-	found, _, err := broker.GetValue(key, value)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -422,13 +426,20 @@ func (p *Plugin) getFileContents(prefix string, key string) interface{} {
 
 // returns true if value at key deleted, false otherwise
 func (p *Plugin) deleteValue(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
-	existed, err := broker.Delete(key)
+	// broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
+	existed, err := p.broker.Delete(key)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return existed
+}
+
+// sets the broker based on passed in prefix
+func (p *Plugin) setBroker(key string) {
+	prefix := "/vnf-agent/" + LABEL + key
+	p.broker = p.KVStore.NewBroker(prefix)
 }
 
 // logError logs non-nil errors from JSON formatter
