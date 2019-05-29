@@ -389,6 +389,7 @@
     "github.com/ligato/cn-infra/logging/logmanager",
     "github.com/ligato/cn-infra/logging/logrus",
     "github.com/ligato/cn-infra/rpc/rest",
+    "github.com/ligato/cn-infra/servicelabel",
     "github.com/ligato/vpp-agent/pkg/models",
     "github.com/ligato/vpp-agent/plugins/kvscheduler",
     "github.com/ligato/vpp-agent/plugins/kvscheduler/api",

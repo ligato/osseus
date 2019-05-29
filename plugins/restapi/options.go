@@ -19,6 +19,7 @@ import (
 
 	"github.com/ligato/cn-infra/db/keyval/etcd"
 	"github.com/ligato/cn-infra/rpc/rest"
+	"github.com/ligato/cn-infra/servicelabel"
 
 	"github.com/ligato/cn-infra/logging"
 )
@@ -31,6 +32,7 @@ func NewPlugin(opts ...Option) *Plugin {
 	p := &Plugin{}
 
 	p.PluginName = "restapi"
+	p.ServiceLabel = &servicelabel.DefaultPlugin
 	p.HTTPHandlers = &rest.DefaultPlugin
 	p.KVStore = &etcd.DefaultPlugin
 
