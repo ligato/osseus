@@ -260,54 +260,57 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		},
 	}
 
-	// append plugin folder item
-	var pluginChildren []string
-	for _, child := range val.CustomPlugin{
-		childPluginName := strings.ToLower(strings.Replace(child.PluginName, " ", "_", -1))
-		pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
-	}
-	pluginFolder := templateStructureItem{
-		"plugins",
-		"/" + projectName + "/plugins",
-		"folder",
-		pluginChildren,
-	}
-	templateStructure = append(templateStructure, pluginFolder)
-
-	// append plugin folder, doc, impl, options items
-	for _,customPlugin := range val.CustomPlugin{
-		pluginName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
-		pluginPath := "/" + projectName + "/plugins/" + pluginName
-
+	// add custom plugin structure
+	if (len(val.CustomPlugin) > 0){
+		// append plugin folder item
+		var pluginChildren []string
+		for _, child := range val.CustomPlugin{
+			childPluginName := strings.ToLower(strings.Replace(child.PluginName, " ", "_", -1))
+			pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
+		}
 		pluginFolder := templateStructureItem{
-			pluginName,
-			pluginPath,
+			"plugins",
+			"/" + projectName + "/plugins",
 			"folder",
-			[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_"+ pluginName + ".go"},
+			pluginChildren,
 		}
+		templateStructure = append(templateStructure, pluginFolder)
 
-		docFile := templateStructureItem{
-			pluginName + "/doc.go",
-			pluginPath + "/doc.go",
-			"file",
-			[]string{},
+		// append plugin folder, doc, impl, options items
+		for _,customPlugin := range val.CustomPlugin{
+			pluginName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
+			pluginPath := "/" + projectName + "/plugins/" + pluginName
+
+			pluginFolder := templateStructureItem{
+				pluginName,
+				pluginPath,
+				"folder",
+				[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_"+ pluginName + ".go"},
+			}
+
+			docFile := templateStructureItem{
+				pluginName + "/doc.go",
+				pluginPath + "/doc.go",
+				"file",
+				[]string{},
+			}
+
+			optionsFile := templateStructureItem{
+				pluginName + "/options.go",
+				pluginPath + "/options.go",
+				"file",
+				[]string{},
+			}
+
+			implFile := templateStructureItem{
+				pluginName + "/plugin_impl.go",
+				pluginPath + "/plugin_impl_" + pluginName + ".go",
+				"file",
+				[]string{},
+			}
+
+			templateStructure = append(templateStructure, pluginFolder, docFile, optionsFile, implFile)
 		}
-
-		optionsFile := templateStructureItem{
-			pluginName + "/options.go",
-			pluginPath + "/options.go",
-			"file",
-			[]string{},
-		}
-
-		implFile := templateStructureItem{
-			pluginName + "/plugin_impl.go",
-			pluginPath + "/plugin_impl_" + pluginName + ".go",
-			"file",
-			[]string{},
-		}
-
-		templateStructure = append(templateStructure, pluginFolder, docFile, optionsFile, implFile)
 	}
 
 	readmeFile := templateStructureItem{"readme.md",
