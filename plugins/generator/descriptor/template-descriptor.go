@@ -48,6 +48,7 @@ func NewProjectDescriptor(log logging.PluginLogger, handlers gencalls.ProjectAPI
 		KeySelector:   model.ModelProject.IsKeyValid,
 		KeyLabel:      model.ModelProject.StripKeyPrefix,
 		Create:        descCtx.Create,
+		Update:        descCtx.Update,
 		Delete:        descCtx.Delete,
 		UpdateWithRecreate: func(key string, oldValue, newValue *model.Project, metadata interface{}) bool {
 			// Modify always performed via re-creation
@@ -65,6 +66,19 @@ func (d *ProjectDescriptor) Create(key string, value *model.Project) (metadata i
 	}
 
 	if err := d.handlers.GenAddProj(key, value); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+
+	return nil, nil
+}
+
+// Updates an existing value
+func (d *ProjectDescriptor) Update(key string, oldValue *model.Project, newValue *model.Project, oldMetadata interface{})(metadata interface{}, err error){
+	if err := d.handlers.GenAddProjStructure(key, newValue); err != nil {
+		d.log.Errorf("Put failed: %v", err)
+	}
+
+	if err := d.handlers.GenAddProj(key, newValue); err != nil {
 		d.log.Errorf("Put failed: %v", err)
 	}
 
