@@ -24,11 +24,11 @@ app.use(cors())
 
 const agent = 'localhost:9191'
 const etcd = 'localhost:12379'
+const label = process.env.MICROSERVICE_LABEL || "vpp1"
 
 io.on('connection', socket => {
     // Saves current project
     socket.on('SEND_SAVE_PROJECT', project => {
-        project.plugins.length = 16;
         const selected = []
         const allPlugins = project.plugins
 
@@ -70,18 +70,8 @@ io.on('connection', socket => {
         })
     })
 
-
-
-
-
-
-
-
-
-
     // Generates current project
     socket.on('GENERATE_PROJECT', async project => {
-        project.plugins.length = 16;
         const selected = []
         const allPlugins = project.plugins
 
@@ -112,7 +102,7 @@ io.on('connection', socket => {
         })
 
         // Encode key to base64
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/${label}/config/generator/v1/template/${project.projectName}`).toString('base64')
 
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works
@@ -132,7 +122,7 @@ io.on('connection', socket => {
     socket.on('DOWNLOAD_TAR', project => {
         console.log("DOWNLOAD_TAR\n" + project)
         fetch(`http://${agent}/v1/templates/structure/${project.projectName}`)
-            .then(response => { 
+            .then(response => {
                 return response.json().catch(err => console.error(err))
             })
             .then(json => {
