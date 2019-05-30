@@ -32,17 +32,17 @@ type fileEntry struct {
 }
 
 // Folder and file structure in the template directory
-type templateStructureItem struct{
-	itemName		string
-	absolutePath	string
-	fileType		string
-	children		[]string
+type templateStructureItem struct {
+	itemName     string
+	absolutePath string
+	fileType     string
+	children     []string
 }
 
 // Contents of a single generated file within template structure
-type fileContent struct{
-	name 	 string
-	content  string
+type fileContent struct {
+	name    string
+	content string
 }
 
 // GenAddProj creates a new generated template under the /template prefix
@@ -67,7 +67,7 @@ func (d *ProjectHandler) GenAddProj(key string, val *model.Project) error {
 }
 
 // GenAddProjStructure adds the file structure of the generated project
-func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) error{
+func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) error {
 	templateStructure := d.getTemplateStructure(val)
 	fileContents := d.getFileContents(val)
 
@@ -78,17 +78,17 @@ func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) err
 	contentItem := new(model.FileContent)
 
 	// convert Template structure into model structure
-	for _, folder := range templateStructure{
+	for _, folder := range templateStructure {
 		templateItem = &model.File{
-			Name: folder.itemName,
+			Name:         folder.itemName,
 			AbsolutePath: folder.absolutePath,
-			FileType: folder.fileType,
-			Children: folder.children,
+			FileType:     folder.fileType,
+			Children:     folder.children,
 		}
 		templateItems = append(templateItems, templateItem)
 	}
 
-	for _, file := range fileContents{
+	for _, file := range fileContents {
 		contentItem = &model.FileContent{
 			FileName: file.name,
 			Content:  file.content,
@@ -98,8 +98,8 @@ func (d *ProjectHandler) GenAddProjStructure(key string, val *model.Project) err
 
 	// Create template structure
 	data := &model.TemplateStructure{
-		Structure:    templateItems,
-		Files:		  contentList,
+		Structure: templateItems,
+		Files:     contentList,
 	}
 
 	// Put new template structure in etcd
@@ -172,28 +172,28 @@ func (d *ProjectHandler) generate(val *model.Project) []fileEntry {
 
 	// Create tar structure
 	var files = []fileEntry{
-		{"/"+ projectName + "/cmd/agent/main.go", mainTemplate},
-		{"/"+ projectName + "/cmd/agent/doc.go", docTemplate},
-		{"/"+ projectName + "/README.md", readmeTemplate},
+		{"/" + projectName + "/cmd/agent/main.go", mainTemplate},
+		{"/" + projectName + "/cmd/agent/doc.go", docTemplate},
+		{"/" + projectName + "/README.md", readmeTemplate},
 	}
 
 	//append a struct of name/body for every custom plugin in project
-	for _, customPlugin := range val.CustomPlugin{
+	for _, customPlugin := range val.CustomPlugin {
 		pluginDirectoryName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
 		pluginDocContents := d.FillDocTemplate(customPlugin.PackageName)
 		pluginOptionsContents := d.FillOptionsTemplate(customPlugin)
 		pluginImplContents := d.FillImplTemplate(customPlugin)
 
 		pluginDocEntry := fileEntry{
-			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/doc.go",
+			"/" + projectName + "/plugins/" + pluginDirectoryName + "/doc.go",
 			pluginDocContents,
 		}
 		pluginOptionsEntry := fileEntry{
-			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/options.go",
+			"/" + projectName + "/plugins/" + pluginDirectoryName + "/options.go",
 			pluginOptionsContents,
 		}
 		pluginImplEntry := fileEntry{
-			"/"+ projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_"+ pluginDirectoryName + ".go",
+			"/" + projectName + "/plugins/" + pluginDirectoryName + "/plugin_impl_" + pluginDirectoryName + ".go",
 			pluginImplContents,
 		}
 		files = append(files, pluginDocEntry, pluginOptionsEntry, pluginImplEntry)
@@ -214,7 +214,7 @@ func (d *ProjectHandler) fillTemplate(name string, templateSkeleton string, data
 		}
 	}
 
-	 t, er := template.New(name).Parse(templateSkeleton)
+	t, er := template.New(name).Parse(templateSkeleton)
 	check(er)
 
 	er = t.Execute(&genCode, data)
@@ -239,7 +239,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{projectName,
 			"/" + projectName,
 			"folder",
-			[]string{"/" + projectName + "/cmd","/" + projectName + "/plugins","/" + projectName + "/README.md"}},
+			[]string{"/" + projectName + "/cmd", "/" + projectName + "/plugins", "/" + projectName + "/README.md"}},
 		{
 			"cmd",
 			"/" + projectName + "/cmd",
@@ -248,7 +248,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		{"agent",
 			"/" + projectName + "/cmd/agent",
 			"folder",
-			[]string{"/" + projectName + "/cmd/agent/main.go","/" + projectName + "/cmd/agent/doc.go"}},
+			[]string{"/" + projectName + "/cmd/agent/main.go", "/" + projectName + "/cmd/agent/doc.go"}},
 		{"main.go",
 			"/" + projectName + "/cmd/agent/main.go",
 			"file",
@@ -261,12 +261,12 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 	}
 
 	// add custom plugin structure
-	if (len(val.CustomPlugin) > 0){
+	if len(val.CustomPlugin) > 0 {
 		// append plugin folder item
 		var pluginChildren []string
-		for _, child := range val.CustomPlugin{
+		for _, child := range val.CustomPlugin {
 			childPluginName := strings.ToLower(strings.Replace(child.PluginName, " ", "_", -1))
-			pluginChildren = append(pluginChildren, "/" + projectName + "/plugins/" + childPluginName)
+			pluginChildren = append(pluginChildren, "/"+projectName+"/plugins/"+childPluginName)
 		}
 		pluginFolder := templateStructureItem{
 			"plugins",
@@ -277,7 +277,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		templateStructure = append(templateStructure, pluginFolder)
 
 		// append plugin folder, doc, impl, options items
-		for _,customPlugin := range val.CustomPlugin{
+		for _, customPlugin := range val.CustomPlugin {
 			pluginName := strings.ToLower(strings.Replace(customPlugin.PluginName, " ", "_", -1))
 			pluginPath := "/" + projectName + "/plugins/" + pluginName
 
@@ -285,7 +285,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 				pluginName,
 				pluginPath,
 				"folder",
-				[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_"+ pluginName + ".go"},
+				[]string{pluginPath + "/doc.go", pluginPath + "/options.go", pluginPath + "/plugin_impl_" + pluginName + ".go"},
 			}
 
 			docFile := templateStructureItem{
@@ -314,17 +314,17 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 	}
 
 	readmeFile := templateStructureItem{"readme.md",
-			"/" + projectName + "/README.md",
-			"file",
-			[]string{},
-		}
+		"/" + projectName + "/README.md",
+		"file",
+		[]string{},
+	}
 	templateStructure = append(templateStructure, readmeFile)
 
 	return templateStructure
 }
 
 // Returns a list of file contents for all generate files
-func(d *ProjectHandler) getFileContents(val *model.Project) []fileContent{
+func (d *ProjectHandler) getFileContents(val *model.Project) []fileContent {
 	var fileContents []fileContent
 
 	mainTemplate := d.FillMainTemplate(val)
@@ -333,7 +333,7 @@ func(d *ProjectHandler) getFileContents(val *model.Project) []fileContent{
 
 	// add readme file to batch file contents
 	fileContents = append(fileContents,
-		fileContent{"readme.go", readmeTemplate})
+		fileContent{"readme.md", readmeTemplate})
 
 	// add agent-level go file contents to batch file contents
 	fileContents = append(fileContents, fileContent{"main.go", mainTemplate})
@@ -348,11 +348,11 @@ func(d *ProjectHandler) getFileContents(val *model.Project) []fileContent{
 		pluginImplContents := d.FillImplTemplate(customPlugin)
 
 		fileContents = append(fileContents,
-			fileContent{pluginDirectoryName +"/doc.go",pluginDocContents})
+			fileContent{pluginDirectoryName + "/doc.go", pluginDocContents})
 		fileContents = append(fileContents,
-			fileContent{pluginDirectoryName +"/options.go", pluginOptionsContents})
+			fileContent{pluginDirectoryName + "/options.go", pluginOptionsContents})
 		fileContents = append(fileContents,
-			fileContent{pluginDirectoryName +"/plugin_impl.go", pluginImplContents})
+			fileContent{pluginDirectoryName + "/plugin_impl.go", pluginImplContents})
 	}
 
 	return fileContents
