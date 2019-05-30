@@ -91,22 +91,17 @@ type FileContents struct {
 
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
+	/*** Handlers for managing projects ***/
 	// save project state
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
-
-	//todo: implement loadAll Handler here
-
 	// delete a project
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
 
+	/*** Handlers for Code Generation ***/
 	// save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
 	// get generated zip file
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates", p.GetGeneratedFileHandler, GET)
-	// get template structure of generated code
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.StructureHandler, GET)
-	// get contents of specified file
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, POST)
 }
 
 /*
@@ -208,59 +203,6 @@ func (p *Plugin) GetGeneratedFileHandler(formatter *render.Render) http.HandlerF
 	}
 }
 
-// StructureHandler handles retrieving generated code folder structure
-func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		// Retrieve value from etcd
-		vars := mux.Vars(req)
-		pID := vars["id"]
-		templateStructure := p.getStructure(templatePrefix, "structure/"+pID)
-
-		// Send value back to client
-		w.Header().Set("Content-Type", "application/json")
-		structureJSON, _ := json.Marshal(&templateStructure)
-
-		w.WriteHeader(http.StatusOK)
-		w.Write(structureJSON)
-	}
-}
-
-// FileContentsHandler handles retrieving contents of a specific generated code file
-func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		// Retrieve value from etcd
-		vars := mux.Vars(req)
-		pID := vars["id"]
-
-		// Capture request body
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		var reqParam FilePath
-		// Store JSON into FilePathName struct
-		err = json.Unmarshal(body, &reqParam)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		fileContents := p.getFileContents(templatePrefix, "structure/"+pID+reqParam.FilePath)
-
-		// Send value back to client
-		w.Header().Set("Content-Type", "application/json")
-		contentsJSON, _ := json.Marshal(fileContents)
-		w.WriteHeader(http.StatusOK)
-		w.Write(contentsJSON)
-	}
-}
-
 /*
 =========================
  ETCD Functions
@@ -345,62 +287,6 @@ func (p *Plugin) getGeneratedFile(prefix string, key string) interface{} {
 	}
 
 	return zipFile
-}
-
-// returns template structure as directory of files
-func (p *Plugin) getStructure(prefix string, key string) interface{} {
-	p.setBroker(prefix)
-
-	// Get value based on key
-	value := new(restmodel.TemplateStructure)
-	found, _, err := p.broker.GetValue(key, value)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No template structure found..")
-	} else {
-		p.Log.Infof("Found template structure: %+v", value)
-	}
-
-	var directoriesList []File
-	for _, file := range value.File {
-		fileEntry := File{
-			Name:         file.Name,
-			AbsolutePath: file.AbsolutePath,
-			FileType:     file.FileType,
-			Children:     file.Children,
-		}
-		directoriesList = append(directoriesList, fileEntry)
-	}
-
-	structure := TemplateStructure{
-		Directories: directoriesList,
-	}
-
-	return structure
-}
-
-// returns contents of specified file
-func (p *Plugin) getFileContents(prefix string, key string) interface{} {
-	p.setBroker(prefix)
-
-	// Get value based on key
-	value := new(restmodel.FileContent)
-	found, _, err := p.broker.GetValue(key, value)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No file contents found..")
-	} else {
-		p.Log.Infof("Found file contents: %+v", value)
-	}
-
-	contents := FileContents{
-		FileContents: value.Content,
-	}
-	return contents
 }
 
 // returns true if value at key deleted, false otherwise
