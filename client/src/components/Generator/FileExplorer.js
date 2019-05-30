@@ -16,11 +16,13 @@ const TreeWrapper = styled.div`
 `;
 
 class FileExplorer extends Component { 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      currentFile: 'main.go'
+      currentFile: 'main.go',
+      template: ''
     };
+
   }
   onSelect = (file) => { 
     this.setState({
@@ -28,6 +30,11 @@ class FileExplorer extends Component {
     });
     this.props.onSelect_1(file);
   };
+
+  /*componentWillReceiveProps({template}) {
+    this.setState({...this.state, template})
+    console.log(template)
+  }*/
 
   render() {
     return (
@@ -38,7 +45,11 @@ class FileExplorer extends Component {
         </div>
         <StyledFileExplorer>
           <TreeWrapper>
-            <Tree onSelect={this.onSelect} />
+            <Tree 
+              onSelect={this.onSelect} 
+              template3={this.props.template2}
+              loading={this.props.loading}
+            />
           </TreeWrapper>
         </StyledFileExplorer>
 

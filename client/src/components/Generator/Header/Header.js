@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import 'chai/register-expect';
 import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
@@ -56,7 +56,7 @@ class Header extends React.Component {
   }
 
   downloadTar() {
-    console.log('download')
+    console.log('header.js redux access: ' + JSON.stringify(pluginModule.template))
   }
 
   //Function will communicate if user edited the project name
@@ -90,11 +90,12 @@ class Header extends React.Component {
               />
             </div>
             <a href={`/template.tgz`} onClick={this.downloadTar} download>
-            <img 
-                className="download-image"
-                src='/images/download.png'
-                alt='oops'>
-            </img></a>
+              <img 
+                  className={this.props.downloadable ? "download-image" : 'download-gray-image'}
+                  src={this.props.downloadable ? '/images/download.png' : '/images/download_gray.png'}
+                  alt='oops'>
+              </img>
+            </a>
           </Grid.Column>
         </Grid>
         <Divider vertical></Divider>
