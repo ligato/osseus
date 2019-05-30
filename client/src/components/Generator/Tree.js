@@ -10,30 +10,14 @@ let i = 0
 
 let data = {};
 
-for(let i = 0; i < pluginModule.structure.length; i++) {
-  let template = pluginModule.structure[i].absolutePath;
-  let templateNode = {
-    [template]: {
-      path: pluginModule.structure[i].absolutePath,
-      type: pluginModule.structure[i].fileType,
-      isRoot: i === 0 ? true : false,
-      isOpen: true,
-      children: pluginModule.structure[i].children,
-      content: pluginModule.files.find(x => x.fileName === pluginModule.structure[i].name)
-    }    
-  }
-  //templateNode.template.content = pluginModule.files.find(x => x.fileName === pluginModule.structure[i].name);
-  if(typeof templateNode[template].content === 'undefined') templateNode[template].content = '';
-  data[template] = templateNode[template];
-}
-
-console.log(data)
-
 class Tree extends Component {
-
-  state = {
-    nodes: data,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      nodes: data,
+    };
+    if((this.props.template3 !== null && this.props.template3 !== ' ')) buildTemplateDataObject(this.props.template3);
+  }
 
   getRootNodes = () => {
     const { nodes } = this.state;
@@ -84,3 +68,26 @@ export default Tree;
 Tree.propTypes = {
   onSelect: PropTypes.func.isRequired,
 };
+
+function buildTemplateDataObject(template) {
+  Object.keys(data).forEach(k => delete data[k])
+  let templateCopy = JSON.parse(JSON.stringify( template ));
+  for(let i = 0; i < templateCopy.structure.length; i++) {
+    let structure = templateCopy.structure[i];
+    let files = templateCopy.files;
+    let absolutePath = templateCopy.structure[i].absolutePath
+    let templateNode = {
+      [absolutePath]: {
+        path: absolutePath,
+        type: structure.fileType,
+        isRoot: i === 0 ? true : false,
+        isOpen: true,
+        children: structure.children,
+        content: files.find(x => x.fileName === structure.name)
+      }    
+    }
+    if(typeof templateNode[absolutePath].content === 'undefined') templateNode[absolutePath].content = '';
+    data[absolutePath] = templateNode[absolutePath];
+  }
+  console.log(data)
+}

@@ -70,15 +70,6 @@ io.on('connection', socket => {
         })
     })
 
-
-
-
-
-
-
-
-
-
     // Generates current project
     socket.on('GENERATE_PROJECT', async project => {
         project.plugins.length = 16;
@@ -112,7 +103,7 @@ io.on('connection', socket => {
         })
 
         // Encode key to base64
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/structure/${project.projectName}`).toString('base64')
 
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works
@@ -124,7 +115,16 @@ io.on('connection', socket => {
         // Shows emitted events
         const emitter = webHooks.getEmitter()
         emitter.once('etcd.success', (name, statusCode, body) => {
-            socket.emit('SEND_TEMPLATE_TO_CLIENT', body)
+
+            const data = JSON.parse(body)
+
+            // Decode value
+            let value = data.kvs[0].value.toString()
+            value = Buffer.from(value, 'base64')
+
+            // Decode tar
+            buffer = Buffer.from(value, 'base64').toString();
+            socket.emit('SEND_TEMPLATE_TO_CLIENT', buffer);
         })
     })
 
@@ -181,22 +181,6 @@ io.on('connection', socket => {
 
     })
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 server.listen(8000, () => console.log(`Server listening on 8000`))
 

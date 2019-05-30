@@ -17,12 +17,12 @@ import { RETURN_TEMPLATE } from "../constants/action-types";
 
 import { socket } from '../../index';
 
+let pluginModule = require('../../components/Model');
 
-const initialState = {
+var initialState = {
   currPopupID: null,
   projects: [],
   currProject: null,
-  tar: null,
   template: null,
 };
 function rootReducer(state = initialState, action) {
@@ -53,9 +53,7 @@ function rootReducer(state = initialState, action) {
   }
   //Retreives the template from the server
   else if (action.type === RETURN_TEMPLATE) {
-    return Object.assign({}, state, {
-      template: action.payload
-    })
+    pluginModule.template = JSON.parse(action.template);
   }
   //Emits the server to call GENERATE_PROJECT
   else if (action.type === GENERATE_CURR_PROJECT) {

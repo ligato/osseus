@@ -1,4 +1,6 @@
 import io from 'socket.io-client'
+//import store from '../redux/store/index';
+//import { returnTemplate } from "../redux/actions/index";
 
 const socket = io('http://localhost:8000');
 

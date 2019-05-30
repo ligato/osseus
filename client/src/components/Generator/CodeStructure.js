@@ -10,6 +10,9 @@ import FileExplorer from './FileExplorer';
 */
  
 class CodeStructure extends React.Component {
+  constructor(props) {
+    super(props);
+  }
   onSelect_2 = (file) => { 
     this.props.onSelect_3(file);
   };
@@ -18,7 +21,10 @@ class CodeStructure extends React.Component {
       <div className="body">
         <div className="split left">
           <div className="filestructure"> 
-            <FileExplorer onSelect_1={this.onSelect_2} />
+            <FileExplorer 
+              onSelect_1={this.onSelect_2} 
+              template2={this.props.template1}
+            />
           </div>
         </div>
       </div>

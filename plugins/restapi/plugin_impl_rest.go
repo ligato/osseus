@@ -36,8 +36,8 @@ const (
 	DELETE = http.MethodDelete
 )
 
-// LABEL holds the serviceLabel value set by the user
-var LABEL string
+// Label holds the serviceLabel value set by the user
+var Label string
 
 // Plugin holds the internal data structures of the Rest Plugin
 type Plugin struct {
@@ -60,7 +60,7 @@ func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
 
 	// Get servicelabel from flag
-	LABEL = p.ServiceLabel.GetAgentLabel()
+	Label = p.ServiceLabel.GetAgentLabel()
 
 	return nil
 }

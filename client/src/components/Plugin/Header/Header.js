@@ -64,7 +64,7 @@ class Header extends React.Component {
   }
 
   generateProject() {
-    //store.dispatch( generateCurrProject(store.getState().currProject) );
+    store.dispatch( generateCurrProject(store.getState().currProject) );
   }
 
   //Function communicates if user edited the project name

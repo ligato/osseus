@@ -272,12 +272,13 @@ var custom_impl_go_contents = {
 
 var files = [main_go_contents, readme_contents, doc_go_contents, custom_doc_go_contents, custom_options_go_contents, custom_impl_go_contents];
 
-
+var template = ' ';
 
 module.exports = {
     project: project,
     images: images,
     categories: categories,
     structure: structure,
-    files: files
+    files: files,
+    template: template
 }

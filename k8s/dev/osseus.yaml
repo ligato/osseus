@@ -53,6 +53,11 @@ spec:
       containers: 
         - name: client
           image: anthonydevelops/front_end:dev
+          env:
+            - name: MICROSERVICE_LABEL
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           ports:
             - containerPort: 3000
             - containerPort: 8000
@@ -103,7 +108,7 @@ spec:
             - name: MICROSERVICE_LABEL
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
+                  fieldPath: spec.nodeName # testrest
           ports:
             - containerPort: 9191
 ---
