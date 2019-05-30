@@ -27,6 +27,7 @@ import (
 
 //go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_project.proto
 //go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_template_structure.proto
+//go:generate protoc --proto_path=restmodel --proto_path=$GOPATH/src --gogo_out=restmodel ./restmodel/rest_template.proto
 
 // REST api methods
 const (
