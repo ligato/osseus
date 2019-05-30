@@ -437,9 +437,9 @@ func (p *Plugin) deleteValue(prefix string, key string) interface{} {
 }
 
 // sets the broker based on passed in prefix
-func (p *Plugin) setBroker(key string) {
-	prefix := "/vnf-agent/" + LABEL + key
-	p.broker = p.KVStore.NewBroker(prefix)
+func (p *Plugin) setBroker(prefix string) {
+	keyPrefix := "/vnf-agent/" + Label + prefix
+	p.broker = p.KVStore.NewBroker(keyPrefix)
 }
 
 // logError logs non-nil errors from JSON formatter
