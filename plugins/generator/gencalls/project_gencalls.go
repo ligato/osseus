@@ -235,11 +235,26 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 
 	// create template structure with agent-level folders and files
-	var templateStructure = []templateStructureItem{
-		{projectName,
-			"/" + projectName,
-			"folder",
-			[]string{"/" + projectName + "/cmd", "/" + projectName + "/plugins", "/" + projectName + "/README.md"}},
+	var templateStructure []templateStructureItem
+
+	if len(val.CustomPlugin) > 0 {
+		templateStructure = append(templateStructure,
+			templateStructureItem{
+				projectName,
+				"/" + projectName,
+				"folder",
+				[]string{"/" + projectName + "/cmd", "/" + projectName + "/plugins", "/" + projectName + "/README.md"}},
+		)
+	} else {
+		templateStructure = append(templateStructure,
+			templateStructureItem{
+				projectName,
+				"/" + projectName,
+				"folder",
+				[]string{"/" + projectName + "/cmd", "/" + projectName + "/README.md"}},
+		)
+	}
+	var templateAgentFiles = []templateStructureItem{
 		{
 			"cmd",
 			"/" + projectName + "/cmd",
@@ -259,6 +274,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 			[]string{},
 		},
 	}
+	templateStructure = append(templateStructure, templateAgentFiles...)
 
 	// add custom plugin structure
 	if len(val.CustomPlugin) > 0 {
