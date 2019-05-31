@@ -26,7 +26,14 @@ const agent = 'localhost:9191'
 const etcd = 'localhost:12379'
 
 io.on('connection', socket => {
-    // Saves current project
+
+    /*
+    ================================
+    Sockets For Project Management
+    ================================
+    */
+
+    // SAVES CURRENT PROJECT
     socket.on('SEND_SAVE_PROJECT', project => {
         project.plugins.length = 16;
         const selected = []
@@ -49,7 +56,7 @@ io.on('connection', socket => {
         }).then(res => console.log(res.statusCode))
     });
 
-    // Loads previous project
+    // LOADS PREVIOUS PROJECT
     socket.on('SEND_LOAD_PROJECT', project => {
         console.log(project)
         fetch(`http://${agent}/v1/projects/${project}`)
@@ -57,12 +64,12 @@ io.on('connection', socket => {
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
     })
 
-    //Loads all the existing projects
+    // LOADS ALL EXISTING PROJECTS (not implemented)
     socket.on('LOAD_ALL_FROM_KV', projects => {
-        console.log('load all')
+
     })
 
-    //Deletes the selected project from the KV store
+    // DELETES SELECTED PROJECT
     socket.on('DELETE_PROJECT_FROM_KV', project => {
         console.log(project)
         fetch(`http://${agent}/v1/projects/${project}`, {
@@ -70,9 +77,16 @@ io.on('connection', socket => {
         })
     })
 
-    // Generates current project
+    /*
+    ========================
+    Sockets For Generation
+    ========================
+    */
+
+    // GENERATES CURRENT PROJECT
     socket.on('GENERATE_PROJECT', async project => {
-        console.log(project)
+
+        // Filter anything out more than the 16 default plugins
         project.plugins.length = 16;
         const selected = []
         const allPlugins = project.plugins
@@ -125,74 +139,38 @@ io.on('connection', socket => {
 
             // Decode tar
             buffer = Buffer.from(value, 'base64').toString();
+            
+            // Emit the socket to send the buffer back to the client
             socket.emit('SEND_TEMPLATE_TO_CLIENT', buffer);
         })
     })
 
-    // Downloads the tar file
+    // DOWNLOADS TAR FILE
     socket.on('DOWNLOAD_TAR', project => {
-        console.log("DOWNLOAD_TAR\n" + project)
-        fetch(`http://${agent}/v1/templates/structure/${project.projectName}`)
+
+        fetch(`http://${agent}/v1/templates`)
             .then(response => { 
                 return response.json().catch(err => console.error(err))
             })
             .then(json => {
-                console.log("template data: " + JSON.stringify(json))
-            })
 
-        // Create object from string response
-        const data = JSON.parse(body)
+                // Create object from string response
+                const data = JSON.parse(JSON.stringify(json.TarFile))
+                
+                // Convert from base64
+                buffer = Buffer.from(data, 'base64')
 
-        // Decode value
-        let value = data.kvs[0].value.toString()
-        value = Buffer.from(value, 'base64')
+                // Create tar folder
+                fs.writeFile('public/template/template.tgz', buffer, function (err) {
+                    if (err) throw err;
+                });
 
-        // Decode tar
-        let buffer = JSON.parse(value)
-        buffer = Buffer.from(buffer.tar_file, 'base64')
-
-        // Displays code to frontend
-        fs.writeFile('public/code.txt', buffer.toString(), function (err) {
-            if (err) throw err;
-        });
-
-        // Deletes out-of-range ascii characters from file
-        fs.readFile('public/code.txt', 'utf8', function (err, data) {
-            if (err) {
-                return console.log(err);
-            }
-
-            // Removal of anything not ascii
-            var withoutNull = data.replace(/[\x00]/g, "");
-            var withoutMetadata = removeMetadata(withoutNull);
-
-            // Captures results and writes it back to file
-            let result = withoutMetadata.join('\n');
-            fs.writeFile('public/code.txt', result, 'utf8', function (err) {
-                if (err) return console.log(err);
-            });
-        });
-
-        // Create tar folder
-        fs.writeFile('public/template.tgz', buffer, function (err) {
-            if (err) throw err;
-        });
-
-        console.log("Tar file generation complete")
-
+                console.log("Tar file generation complete")
+            }).catch(err => console.error(err))
+            
     })
 })
 
 server.listen(8000, () => console.log(`Server listening on 8000`))
 
-// Removes first and last lines of file. These lines contain extra metadata created
-// by the generator, for display these tend to confuse the code highlighter
-function removeMetadata(file) {
-    let fileByLines = file.split('\n');
-    fileByLines.splice(-1, 1);
-    fileByLines.splice(0, 1);
-    fileByLines.unshift(' ', ' ');
-    fileByLines.push('}');
-    return fileByLines;
-}
 

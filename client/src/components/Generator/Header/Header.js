@@ -6,7 +6,7 @@ import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV } from "../../../redux/actions/index";
+import { addCurrProject, saveProjectToKV, loadProjectFromKV, downloadTar } from "../../../redux/actions/index";
 
 import '../../../styles_CSS/Generator/Header/Header.css';
 
@@ -56,7 +56,8 @@ class Header extends React.Component {
   }
 
   downloadTar() {
-    console.log('header.js redux access: ' + JSON.stringify(pluginModule.template))
+    //console.log('header.js redux access: ' + JSON.stringify(pluginModule.template))
+    store.dispatch( downloadTar(store.getState().currProject) )
   }
 
   //Function will communicate if user edited the project name
@@ -89,7 +90,7 @@ class Header extends React.Component {
                 onChange={this.handleEditedProjectName} // handle innerHTML change
               />
             </div>
-            <a href={`/template.tgz`} onClick={this.downloadTar} download>
+            <a href={`/template/template.tgz`} onClick={this.downloadTar} download>
               <img 
                   className={this.props.downloadable ? "download-image" : 'download-gray-image'}
                   src={this.props.downloadable ? '/images/download.png' : '/images/download_gray.png'}

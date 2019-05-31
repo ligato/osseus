@@ -41,8 +41,8 @@ class GeneratorApp extends React.Component {
     return Promise.resolve();
   }
 
-  //Function saves the retrieved new name from the children
-  //of generator app
+  // Function saves the retrieved new name from the children
+  // of generator app
   newProjectName(projectName) {
     this.setState({
       currentProjectName: projectName
