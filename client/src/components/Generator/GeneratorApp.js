@@ -23,15 +23,19 @@ class GeneratorApp extends React.Component {
   }
 
   async componentDidMount() {
-    console.log('loading...')
-
+    //Setting the loader on
     this.setState({ loading: true });
+
+    //setTimeout = .5 seconds
     await new Promise(resolve => { setTimeout(resolve, 500);})
+
+    //Get the template from the model
     let template = getTemplate()
+    console.log(template)
     if(template !== '') {
       this.setState({
         loading: false,
-        template: template
+        template: template,
       });
     }
     return Promise.resolve();
@@ -78,7 +82,9 @@ class GeneratorApp extends React.Component {
           template1={this.state.template}
           loading={this.state.loading}
         />
-        <CodeViewer generatedCode={this.state.selectedFile} />
+        <CodeViewer 
+          generatedCode={this.state.selectedFile} 
+        />
       </div>
     )
   }

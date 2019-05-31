@@ -72,6 +72,7 @@ io.on('connection', socket => {
 
     // Generates current project
     socket.on('GENERATE_PROJECT', async project => {
+        console.log(project)
         project.plugins.length = 16;
         const selected = []
         const allPlugins = project.plugins

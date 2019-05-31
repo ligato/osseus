@@ -10,9 +10,6 @@ import FileExplorer from './FileExplorer';
 */
  
 class CodeStructure extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   onSelect_2 = (file) => { 
     this.props.onSelect_3(file);
   };
@@ -32,5 +29,3 @@ class CodeStructure extends React.Component {
   }
 }
 export default CodeStructure;
-
-//CodeStructure.propTypes = {}

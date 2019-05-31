@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 import TreeNode from './TreeNode';
 
-let pluginModule = require('../Model');
 let i = 0
 
 let data = {};
@@ -89,5 +88,4 @@ function buildTemplateDataObject(template) {
     if(typeof templateNode[absolutePath].content === 'undefined') templateNode[absolutePath].content = '';
     data[absolutePath] = templateNode[absolutePath];
   }
-  console.log(data)
 }

@@ -18,7 +18,6 @@ const CodeViewer = (props) => {
       <div className="split right-viewer">
         <div className="gencode">
           <SyntaxHighlighter language="go" style={coy}>{codeString}</SyntaxHighlighter>
-
         </div>
       </div>
     </div>
@@ -26,5 +25,4 @@ const CodeViewer = (props) => {
 };
 export default CodeViewer;
 
-//CodeViewer.propTypes = {}
 
