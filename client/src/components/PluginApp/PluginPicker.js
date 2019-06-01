@@ -112,7 +112,7 @@ async function getCustomPluginName () {
     focusConfirm: false,
     preConfirm: () => {
       return [
-        document.getElementById('swal-input1').value,
+        document.getElementById('swal-input1').value.toUpperCase(),
         document.getElementById('swal-input2').value
       ]
     }

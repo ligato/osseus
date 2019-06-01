@@ -34,9 +34,7 @@ const StyledTreeNode = styled.div`
   -ms-user-select: none;
   user-select: none; 
   padding-left: ${props => getPaddingLeft(props.level, props.type)}px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  margin-right: -200px;
   &:hover {
     background: lightgray;
   }
