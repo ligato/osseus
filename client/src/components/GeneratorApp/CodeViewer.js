@@ -21,6 +21,14 @@ import { coy } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
+// CodeViewer.js Globals
+
+const toolText = {
+  download: 'Once finished, download a tar containing the project',
+  codeStructure: 'Browse through folders.',
+  codeViewer: 'Click on a file to see code in this view.'
+}
+
 /***************************************************************
 * This component displays the sent in code from the generator
 * 
@@ -29,6 +37,22 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 
 const CodeViewer = (props) => {
   let codeString = props.sentInGeneratedCode
+  console.log(props.sentInShowToolText)
+  if(props.sentInShowToolText) {
+    return (
+      <div className="body">
+        <div className="split right-viewer-gray">
+        <div className="tool-text-container">
+          <p className="tool-text-header-generator">{toolText.download}&emsp;<i className="up-arrow"></i></p>
+          <div className="tool-text-div">
+            <p className="tool-text-generator"><i className="left-arrow"></i>&emsp;{toolText.codeStructure}</p><br></br>
+            <p className="tool-text-generator"><i className="left-arrow"></i>&emsp;{toolText.codeViewer}</p>
+          </div>
+          </div>
+        </div>
+      </div>
+    ); 
+  }
   return (
     <div className="body">
       <div className="split right-viewer">
@@ -44,4 +68,5 @@ export default CodeViewer;
 
 CodeViewer.propTypes = {
   sentInGeneratedCode:  PropTypes.string.isRequired,
+  sentInShowToolText:   PropTypes.bool.isRequired 
 }
