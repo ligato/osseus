@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 import 'chai/register-expect';
 import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
@@ -6,7 +6,7 @@ import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV, downloadTar } from "../../../redux/actions/index";
+import { addCurrProject, saveProjectToKV, loadProjectFromKV } from "../../../redux/actions/index";
 
 import '../../../styles_CSS/Generator/Header/Header.css';
 
@@ -55,9 +55,10 @@ class Header extends React.Component {
     store.dispatch(loadProjectFromKV(store.getState().currProject.projectName));
   }
 
-  downloadTar() {
+  async downloadTar() {
     //console.log('header.js redux access: ' + JSON.stringify(pluginModule.template))
-    store.dispatch( downloadTar(store.getState().currProject) )
+    // store.dispatch( downloadTar(store.getState().currProject) )
+    console.log(store.getState().template)
   }
 
   //Function will communicate if user edited the project name
@@ -91,10 +92,10 @@ class Header extends React.Component {
               />
             </div>
             <a href={`/template/template.tgz`} onClick={this.downloadTar} download>
-              <img 
-                  className={this.props.downloadable ? "download-image" : 'download-gray-image'}
-                  src={this.props.downloadable ? '/images/download.png' : '/images/download_gray.png'}
-                  alt='oops'>
+              <img
+                className={this.props.downloadable ? "download-image" : 'download-gray-image'}
+                src={this.props.downloadable ? '/images/download.png' : '/images/download_gray.png'}
+                alt='oops'>
               </img>
             </a>
           </Grid.Column>

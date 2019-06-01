@@ -13,6 +13,7 @@
 // limitations under the License.
 
 import io from 'socket.io-client'
+import store from '../redux/store/index';
 
 const socket = io('http://localhost:8000');
 
@@ -26,12 +27,12 @@ const configureSocket = dispatch => {
 
     // Returns the project from server to client
     socket.on('SEND_PROJECT_TO_CLIENT', project => {
-        dispatch({ type: 'RETURN_LOAD_PROJECT', project })
+        store.dispatch({ type: 'RETURN_LOAD_PROJECT', project })
     });
 
     // Returns the template from server to client
     socket.on('SEND_TEMPLATE_TO_CLIENT', template => {
-        dispatch({ type: 'RETURN_TEMPLATE', template });
+        store.dispatch({ type: 'RETURN_TEMPLATE', template });
     });
 
     return socket

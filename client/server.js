@@ -139,8 +139,9 @@ io.on('connection', socket => {
 
             // Decode tar
             buffer = Buffer.from(value, 'base64').toString();
-            
+
             // Emit the socket to send the buffer back to the client
+            console.log("Success")
             socket.emit('SEND_TEMPLATE_TO_CLIENT', buffer);
         })
     })
@@ -149,14 +150,14 @@ io.on('connection', socket => {
     socket.on('DOWNLOAD_TAR', project => {
 
         fetch(`http://${agent}/v1/templates`)
-            .then(response => { 
+            .then(response => {
                 return response.json().catch(err => console.error(err))
             })
             .then(json => {
 
                 // Create object from string response
                 const data = JSON.parse(JSON.stringify(json.TarFile))
-                
+
                 // Convert from base64
                 buffer = Buffer.from(data, 'base64')
 
@@ -167,7 +168,7 @@ io.on('connection', socket => {
 
                 console.log("Tar file generation complete")
             }).catch(err => console.error(err))
-            
+
     })
 })
 
