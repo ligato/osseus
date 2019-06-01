@@ -72,8 +72,19 @@ class GeneratorAppHeader extends React.Component {
     store.dispatch(saveProjectToKV(store.getState().currProject));
   }
 
+<<<<<<< HEAD
   downloadTarHandler() {
     store.dispatch(downloadTar(store.getState().currProject))
+=======
+  async downloadTarHandler() {
+    store.dispatch( downloadTar(store.getState().currProject) )
+    await new Promise(resolve => { setTimeout(resolve, 1000);})
+    const link = document.createElement('a');
+    link.href = `/template/template.tgz`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+>>>>>>> 5f40c37124d3a65d0856dafdf5215de6e647d8ee
   }
 
   editedProjectNameHandler = evt => {
@@ -113,7 +124,7 @@ class GeneratorAppHeader extends React.Component {
               />
             </div>
             {/* Anchor tag points the client to the download location */}
-            <a href={`/template/template.tgz`} onClick={this.downloadTarHandler} download>
+            <div onClick={this.downloadTarHandler}>
               {/* If the downloadable tar exists then display a regular download, otherwise
               display a grayed out download image */}
               <img
@@ -121,7 +132,7 @@ class GeneratorAppHeader extends React.Component {
                 src={this.props.sentInDownloadable ? '/images/download.png' : '/images/download_gray.png'}
                 alt='oops'>
               </img>
-            </a>
+            </div>
           </Grid.Column>
         </Grid>
         <Divider vertical></Divider>

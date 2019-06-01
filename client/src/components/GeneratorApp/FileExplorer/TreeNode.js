@@ -29,11 +29,12 @@ const StyledTreeNode = styled.div`
   align-items: center;
   padding: 5px 20px;
   cursor: pointer;
-  -webkit-user-select: none; /* Safari */        
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
+  -webkit-user-select: none;        
+  -moz-user-select: none; 
+  -ms-user-select: none;
+  user-select: none; 
   padding-left: ${props => getPaddingLeft(props.level, props.type)}px;
+  margin-right: -200px;
   &:hover {
     background: lightgray;
   }
