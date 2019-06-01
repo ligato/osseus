@@ -24,15 +24,17 @@ import store from '../../redux/store/index';
 
 let pluginModule = require('../Model');
 
-/***************************************************************
-* This component defines the logic of how the plugin picker and 
-* the plugin palette interface as well as which selectable
-* plugins are within which view.
+/*************************************************************************
+* This component defines the logic of how the Code Viewer and 
+* the code structure interface.
 * 
-* PluginApp.js --> PluginPicker.js    --> SelectablePlugins.js or
-*              --> PluginPalette.js   --> SelectablePlugins.js
-*              --> PluginAppHeader.js --> Dropdown.js
-****************************************************************/
+* GeneratorApp.js --> CodeStructure.js      --> FileExplorer.js -->
+*                                               Tree.js         -->
+*                                               TreeNode.js
+*                                                
+*                 --> CodeViewer.js      
+*                 --> GeneratorAppHeader.js --> Dropdown.js
+*************************************************************************/
 
 class GeneratorApp extends React.Component {
   constructor() {
@@ -98,7 +100,7 @@ class GeneratorApp extends React.Component {
     if(this.state.loading) {
       return (
         <div>
-          {/* Renders the loader if loading is true. This means that the template is not back yet */}
+          {/* Renders the loader if loading is true. Meaning the template DNE yet */}
           <GeneratorAppHeader
             newProjectNameHandlerFromParent={this.newProjectNameHandler}
             sentInCurrentProjectName={this.state.currentProjectName}
