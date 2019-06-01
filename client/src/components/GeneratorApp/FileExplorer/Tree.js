@@ -1,5 +1,3 @@
-<<<<<<< HEAD:client/src/components/Generator/Tree.js
-=======
 // Copyright (c) 2019 Cisco and/or its affiliates.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +11,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
->>>>>>> 6aa6c94ef42a4e63b55d8e582f9c24aa758165fa:client/src/components/GeneratorApp/FileExplorer/Tree.js
 
 import React, { Component } from 'react';
 import values from 'lodash/values';
@@ -37,17 +34,13 @@ class Tree extends Component {
     this.state = {
       nodes: data,
     };
-<<<<<<< HEAD:client/src/components/Generator/Tree.js
-    if ((this.props.template3 !== null && this.props.template3 !== ' ')) buildTemplateDataObject(this.props.template3);
-=======
-    if((this.props.sentInTemplateFromFileExplorer !== null && 
-    this.props.sentInTemplateFromFileExplorer !== ' ')) {
+    if ((this.props.sentInTemplateFromFileExplorer !== null &&
+      this.props.sentInTemplateFromFileExplorer !== ' ')) {
       buildTemplateDataObject(this.props.sentInTemplateFromFileExplorer);
     }
->>>>>>> 6aa6c94ef42a4e63b55d8e582f9c24aa758165fa:client/src/components/GeneratorApp/FileExplorer/Tree.js
   }
 
-   
+
   getRootNodes = () => {
     const { nodes } = this.state;
     return values(nodes).filter(node => node.isRoot === true);
@@ -59,18 +52,13 @@ class Tree extends Component {
     return node.children.map(path => nodes[path]);
   }
 
-<<<<<<< HEAD:client/src/components/Generator/Tree.js
-  onToggle = (node) => {
-    if (node.type === 'folder') {
-=======
   /*
   ================================
   Handler Functions
   ================================
   */
   onToggleHandler = (node) => {
-    if(node.type === 'folder') {
->>>>>>> 6aa6c94ef42a4e63b55d8e582f9c24aa758165fa:client/src/components/GeneratorApp/FileExplorer/Tree.js
+    if (node.type === 'folder') {
       const { nodes } = this.state;
       nodes[node.path].isOpen = !node.isOpen;
       this.setState({ nodes });

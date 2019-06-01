@@ -34,7 +34,7 @@ let pluginModule = require('../../Model');
 * GeneratorApp.js --> Header.js
 ****************************************************************/
 
-class Header extends React.Component {
+class GeneratorAppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -129,12 +129,19 @@ class Header extends React.Component {
     );
   }
 }
-export default Header;
+export default GeneratorAppHeader;
 
+<<<<<<< HEAD:client/src/components/GeneratorApp/Header/Header.js
 Header.propTypes = {
   newProjectNameHandlerFromParent: PropTypes.func.isRequired,
   sentInCurrentProjectName: PropTypes.string.isRequired,
   sentInDownloadable: PropTypes.bool.isRequired,
+=======
+GeneratorAppHeader.propTypes = {
+  newProjectNameHandlerFromParent:   PropTypes.func.isRequired,    
+  sentInCurrentProjectName:          PropTypes.string.isRequired,
+  sentInDownloadable:                PropTypes.bool.isRequired,
+>>>>>>> ba2cfa8b5c45e9298ddb19d092c3e2b37cb60611:client/src/components/GeneratorApp/Header/GeneratorAppHeader.js
 }
 
 /*

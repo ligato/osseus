@@ -38,6 +38,18 @@
   opacity: 1;
   overflow: scroll;}
 
+.right-viewer-gray {
+  height: 100%;
+  width: 82.5%;
+  right: 0;
+  color: #00BCEB;
+  background-color: blue;
+  background: #DFDFDF;
+  display: flex;
+  justify-content: center;
+  opacity: 1;
+  overflow: scroll;}
+
 .gencode {
   font: 16px;
   padding: 40px;
@@ -125,5 +137,19 @@
   }
 }
 
+.tool-text-generator {
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  color: #A9A9A9;
+  font-size: 24px;
+}
 
-/*# sourceMappingURL=GeneratorApp.css.map */
+.tool-text-header-generator {
+  position: absolute;
+  font-family: Arial, Helvetica, sans-serif;
+  letter-spacing: -0.5px;
+  color: #A9A9A9;
+  font-size: 24px;
+  right: 13px;
+  top: 70px;
+}

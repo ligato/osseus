@@ -16,7 +16,7 @@ import React from 'react';
 
 import CodeStructure from './CodeStructure';
 import CodeViewer from './CodeViewer';
-import Header from './Header/Header';
+import GeneratorAppHeader from './Header/GeneratorAppHeader';
 
 import "../../styles_CSS/Generator/GeneratorApp.css";
 
@@ -42,7 +42,8 @@ class GeneratorApp extends React.Component {
       selectedFile: 'main.go',
       loading: false,
       downloadable: true,
-      template: null
+      template: null, 
+      showToolText: true
     };
     this.newProjectNameHandler = this.newProjectNameHandler.bind(this);
     this.onParentSelectHandler = this.onParentSelectHandler.bind(this);
@@ -81,7 +82,10 @@ class GeneratorApp extends React.Component {
 
   onParentSelectHandler = (file) => { 
     if(file.type === 'file') {
-      this.setState({ selectedFile: file.content.content })
+      this.setState({ 
+        selectedFile: file.content.content, 
+        showToolText: false
+      })
     }
   }
 
@@ -95,7 +99,7 @@ class GeneratorApp extends React.Component {
       return (
         <div>
           {/* Renders the loader if loading is true. This means that the template is not back yet */}
-          <Header
+          <GeneratorAppHeader
             newProjectNameHandlerFromParent={this.newProjectNameHandler}
             sentInCurrentProjectName={this.state.currentProjectName}
             sentInDownloadable={this.state.downloadable}
@@ -109,7 +113,7 @@ class GeneratorApp extends React.Component {
     return (
       <div>
         {/* Renders the regular view of the file and code structure */}
-        <Header
+        <GeneratorAppHeader
           newProjectNameHandlerFromParent={this.newProjectNameHandler}
           sentInCurrentProjectName={this.state.currentProjectName}
           sentInDownloadable={this.state.downloadable}
@@ -120,6 +124,7 @@ class GeneratorApp extends React.Component {
         />
         <CodeViewer 
           sentInGeneratedCode={this.state.selectedFile} 
+          sentInShowToolText={this.state.showToolText}
         />
       </div>
     )
