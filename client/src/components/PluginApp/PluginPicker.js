@@ -1,40 +1,64 @@
+// Copyright (c) 2019 Cisco and/or its affiliates.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from 'react';
 import PropTypes from 'prop-types'
 import ReactTooltip from 'react-tooltip'
 import Swal from 'sweetalert2'
+
 import "../../styles_CSS/App.css";
 import "../../styles_CSS/Plugin/Splitleft.css";
 
-/*
+/***************************************************************
 * This component represents the left webpage division where the
-* plugins will reside initially. The plugins are being represented
-* by the incoming prop.children. Presumedly in the future the 
-* prop children can be stored in an array instead of initializing
-* one-by-one.
-*/
+* plugins will reside initially. 
+*
+* PluginApp.js --> PluginPicker.js
+****************************************************************/
+
 const PluginPicker = (props) => {
   var pluginArray = React.Children.toArray(props.children);
-  //This will loop through pluginArray splicing out elements based
-  //on if the element of sentInArrayObject at the index of the 
-  //current counter (i) is === 1. The net result is that if for example 
-  //sentInArrayObject = [0,1,1,0], plugins with the id attribute 0 and 3
-  //are rendered within PluginPicker and not PluginPalette.
-  for(let i = props.sentInArray.length; i >= 0; i--) {
-    if(props.sentInArray[i] === 1 || props.sentInArray[i] === true) { pluginArray.splice(i,1); }
+
+  // Loop through to find out which plugins are not in the plugin picker. 1 = not in plugin picker.
+  for(let i = props.sentInPlugins.length; i >= 0; i--) {
+    if(props.sentInPlugins[i] === 1 || props.sentInPlugins[i] === true) { pluginArray.splice(i,1); }
   }
 
+  /*
+  ================================
+  Helper Function
+  ================================
+  */
+  // Handles custom heading or '+' image click to create a custom plugin.
   function handleHeadingClick(heading) {
     if(heading === 'Custom') {
       (async () => {
-        let customPluginData = await getName();
+        let customPluginData = await getCustomPluginName();
         if(!customPluginData) return;
         props.sendCustomPlugin(customPluginData);
       })()
     }
   }
  
+  /*
+  ================================
+  Render
+  ================================
+  */
   return (
     <div className="body">
+      {/* Renders the custom plugin heading as well as all existing plugins */}
       <p 
         className={props.sentInCategory === 'Custom' ? "custom-heading":"pluginheadingtext"} 
         onClick={() => {handleHeadingClick(props.sentInCategory)}}>
@@ -50,9 +74,13 @@ const PluginPicker = (props) => {
         </img>
         : null
       }
+
+      {/* Renders all other headings and the default plugins */}
       <div className="grid-container" style={{borderColor : (props.sentInCategory === 'Custom' ? "white" : "#CECECE")}}>
         {pluginArray}
       </div>
+
+      {/* Creates an on hover tooltip using the ReactToolTip library */}
       <ReactTooltip
         place="bottom"
         effect="solid"
@@ -64,10 +92,18 @@ export default PluginPicker;
 
 PluginPicker.propTypes = {
   sentInCategory:      PropTypes.string.isRequired,
-  sentInArray:         PropTypes.array.isRequired,
+  sentInPlugins:         PropTypes.array.isRequired,
+  sendCustomPlugin:    PropTypes.func.isRequired
 }
 
-async function getName () {
+/*
+================================
+Handler Functions
+================================
+*/
+// Gets the name and the package of a new custom plugin
+// using a swal2 (popup library) popup.
+async function getCustomPluginName () {
   const {value: formValues} = await Swal.fire({
     title: 'Custom Plugin',
     html:
@@ -83,10 +119,3 @@ async function getName () {
   })
   return formValues;
 }
- /* function sendPluginData(data) {
-    let customPluginCopy = JSON.parse(JSON.stringify( customPlugin ));
-    customPluginCopy.customPluginName = data[0];
-    customPluginCopy.package = data[1];
-    pluginModule.project.customPlugins.push(customPluginCopy);
-  }
-}*/

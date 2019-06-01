@@ -1,13 +1,32 @@
-    
+// Copyright (c) 2019 Cisco and/or its affiliates.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React, { Component } from 'react';
 import values from 'lodash/values';
 import PropTypes from 'prop-types';
 
 import TreeNode from './TreeNode';
 
+//Tree.js Globals
 let i = 0
-
 let data = {};
+
+/**********************************************************************
+* This component defines the logic of the file structure.
+* 
+* GeneratorApp.js --> CodeStructure.js --> FileExplorer.js --> Tree.js
+***********************************************************************/
 
 class Tree extends Component {
   constructor(props) {
@@ -15,9 +34,13 @@ class Tree extends Component {
     this.state = {
       nodes: data,
     };
-    if((this.props.template3 !== null && this.props.template3 !== ' ')) buildTemplateDataObject(this.props.template3);
+    if((this.props.sentInTemplateFromFileExplorer !== null && 
+    this.props.sentInTemplateFromFileExplorer !== ' ')) {
+      buildTemplateDataObject(this.props.sentInTemplateFromFileExplorer);
+    }
   }
 
+   
   getRootNodes = () => {
     const { nodes } = this.state;
     return values(nodes).filter(node => node.isRoot === true);
@@ -29,22 +52,32 @@ class Tree extends Component {
     return node.children.map(path => nodes[path]);
   }  
 
-  onToggle = (node) => {
+  /*
+  ================================
+  Handler Functions
+  ================================
+  */
+  onToggleHandler = (node) => {
     if(node.type === 'folder') {
       const { nodes } = this.state;
       nodes[node.path].isOpen = !node.isOpen;
       this.setState({ nodes });
     } else {
       let sendNode = JSON.parse(JSON.stringify(node));
-      this.props.onSelect(sendNode);
+      this.props.onParentSelectHandlerFromFileExplorer(sendNode);
     }
   }
 
-  onNodeSelect = node => {
+  onNodeSelectHandler = node => {
     let sendNode = JSON.parse(JSON.stringify(node));
-    this.props.onSelect(sendNode);
+    this.props.onParentSelectHandlerFromFileExplorer(sendNode);
   }
 
+  /*
+  ================================
+  Render
+  ================================
+  */
   render() {
     const rootNodes = this.getRootNodes();
     return (
@@ -53,8 +86,7 @@ class Tree extends Component {
           <TreeNode 
             node={node}
             getChildNodes={this.getChildNodes}
-            onToggle={this.onToggle}
-            onNodeSelect={this.onNodeSelect}
+            onToggleHandlerFromParent={this.onToggleHandler}
             key={i++}
           />
         ))}
@@ -65,9 +97,17 @@ class Tree extends Component {
 export default Tree;
 
 Tree.propTypes = {
-  onSelect: PropTypes.func.isRequired,
+  onParentSelectHandlerFromFileExplorer: PropTypes.func.isRequired,
 };
 
+/*
+================================
+Helper Functions
+================================
+*/
+// Builds a template node's object and pushes it to the 
+// data map containing information about ever file or folder
+// in the template.
 function buildTemplateDataObject(template) {
   Object.keys(data).forEach(k => delete data[k])
   let templateCopy = JSON.parse(JSON.stringify( template ));
