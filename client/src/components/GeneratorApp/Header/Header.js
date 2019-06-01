@@ -1,22 +1,38 @@
+// Copyright (c) 2019 Cisco and/or its affiliates.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import 'chai/register-expect';
 import Swal from 'sweetalert2'
 import ContentEditable from 'react-contenteditable'
 import { Divider, Grid, Segment } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-import store from '../../../redux/store/index';
-import { addCurrProject, saveProjectToKV, loadProjectFromKV } from "../../../redux/actions/index";
-
 import '../../../styles_CSS/Generator/Header/Header.css';
+
+import store from '../../../redux/store/index';
+import { addCurrProject, saveProjectToKV, downloadTar } from "../../../redux/actions/index";
 
 let pluginModule = require('../../Model');
 
-/*
-* This header has a link to the plugin app page and two buttons
-* for download the tar file and annother for saving the project 
-* within the generator page.
-*/
+/***************************************************************
+* This component represents the header for the generator app. It 
+* contains downloading and back page functionality.
+* 
+* GeneratorApp.js --> Header.js
+****************************************************************/
 
 class Header extends React.Component {
   constructor(props) {
@@ -24,12 +40,17 @@ class Header extends React.Component {
     this.state = {
       displayedName: ' '
     };
-    this.handleEditedProjectName = this.handleEditedProjectName.bind(this);
-    this.downloadTar = this.downloadTar.bind(this);
-    this.saveProject = this.saveProject.bind(this);
+    this.saveProjectHandler = this.saveProjectHandler.bind(this);
+    this.downloadTarHandler = this.downloadTarHandler.bind(this);
+    this.editedProjectNameHandler = this.editedProjectNameHandler.bind(this);
   }
 
-  saveProject() {
+  /*
+  ================================
+  Handler Functions
+  ================================
+  */
+  saveProjectHandler() {
     const projectCopy = JSON.parse(JSON.stringify(store.getState().currProject));
     let projectCopyName = projectCopy.projectName;
     let isDuplicateName = determineIfDuplicate(projectCopyName);
@@ -47,33 +68,32 @@ class Header extends React.Component {
       syncProjectNameState(projectCopyName);
       successfulRenameToast();
     }
-    this.props.newProjectNameHandler(projectCopyName);
+    this.props.newProjectNameHandlerFromParent(projectCopyName);
     store.dispatch(saveProjectToKV(store.getState().currProject));
   }
 
-  tellMeToLoad() {
-    store.dispatch(loadProjectFromKV(store.getState().currProject.projectName));
+  downloadTarHandler() {
+    store.dispatch(downloadTar(store.getState().currProject))
   }
 
-  async downloadTar() {
-    //console.log('header.js redux access: ' + JSON.stringify(pluginModule.template))
-    // store.dispatch( downloadTar(store.getState().currProject) )
-    console.log(store.getState().template)
-  }
-
-  //Function will communicate if user edited the project name
-  handleEditedProjectName = evt => {
+  editedProjectNameHandler = evt => {
     let editedProjectName = evt.target.value;
     store.getState().currProject.projectName = editedProjectName;
     pluginModule.project.projectName = editedProjectName;
-    this.props.newProjectNameHandler(editedProjectName)
+    this.props.newProjectNameHandlerFromParent(editedProjectName)
   };
 
+  /*
+  ================================
+  Render
+  ================================
+  */
   render() {
     return (
       <Segment>
         <Grid columns={1} relaxed='very'>
           <Grid.Column className="header-column-gen"  >
+            {/* Defines the back button to go back */}
             <Link to="/">
               <img
                 className="back-image"
@@ -82,19 +102,23 @@ class Header extends React.Component {
               </img>
             </Link>
             <div className="headergentext">
+              {/* Renders the project name */}
               <p className="current-project">Current Project: </p>
               <ContentEditable
                 spellCheck={false}
                 className="project-name"
-                html={this.props.currentProjectName} // innerHTML of the editable div
-                disabled={false} // use true to disable edition
-                onChange={this.handleEditedProjectName} // handle innerHTML change
+                html={this.props.sentInCurrentProjectName}
+                disabled={false}
+                onChange={this.editedProjectNameHandler}
               />
             </div>
-            <a href={`/template/template.tgz`} onClick={this.downloadTar} download>
+            {/* Anchor tag points the client to the download location */}
+            <a href={`/template/template.tgz`} onClick={this.downloadTarHandler} download>
+              {/* If the downloadable tar exists then display a regular download, otherwise
+              display a grayed out download image */}
               <img
-                className={this.props.downloadable ? "download-image" : 'download-gray-image'}
-                src={this.props.downloadable ? '/images/download.png' : '/images/download_gray.png'}
+                className={this.props.sentInDownloadable ? "download-image" : 'download-gray-image'}
+                src={this.props.sentInDownloadable ? '/images/download.png' : '/images/download_gray.png'}
                 alt='oops'>
               </img>
             </a>
@@ -107,8 +131,17 @@ class Header extends React.Component {
 }
 export default Header;
 
+Header.propTypes = {
+  newProjectNameHandlerFromParent: PropTypes.func.isRequired,
+  sentInCurrentProjectName: PropTypes.string.isRequired,
+  sentInDownloadable: PropTypes.bool.isRequired,
+}
 
-
+/*
+================================
+Helper Functions
+================================
+*/
 //Function will search through all existing project names
 //to determine a match. Return true if a match is found.
 function determineIfDuplicate(projectName) {

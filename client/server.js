@@ -36,18 +36,18 @@ io.on('connection', socket => {
     // SAVES CURRENT PROJECT
     socket.on('SEND_SAVE_PROJECT', project => {
         project.plugins.length = 16;
-        const selected = []
-        const allPlugins = project.plugins
+        const selectedPlugins = [];
+        const allPlugins = project.plugins;
 
         // Filter out selected plugins
         allPlugins.map(plugin => {
             if (plugin.selected) {
-                selected.push(plugin)
+                selectedPlugins.push(plugin)
             }
         })
 
         // Set selected plugins for generation
-        project.plugins = selected
+        project.plugins = selectedPlugins
 
         console.log(project)
         fetch(`http://${agent}/v1/projects`, {
@@ -88,18 +88,28 @@ io.on('connection', socket => {
 
         // Filter anything out more than the 16 default plugins
         project.plugins.length = 16;
-        const selected = []
-        const allPlugins = project.plugins
+
+        const selectedPlugins = [];
+        const selectedCustomPlugins = [];
+        const allPlugins = project.plugins;
+        const allCustomPlugins = project.customPlugins;
 
         // Filter out selected plugins
         allPlugins.map(plugin => {
             if (plugin.selected) {
-                selected.push(plugin)
+                selectedPlugins.push(plugin)
             }
         })
+        // Filter out selected custom plugins
+        allCustomPlugins.map(plugin => {
+            if (plugin.selected) {
+                selectedCustomPlugins.push(plugin)
+            }
+        })         
 
         // Set selected plugins for generation
-        project.plugins = selected
+        project.plugins = selectedPlugins;
+        project.customPlugins = selectedCustomPlugins;
 
         // Send project to API /v1/templates/{id}
         const generate = await fetch(`http://${agent}/v1/templates/${project.projectName}`, {
@@ -173,5 +183,3 @@ io.on('connection', socket => {
 })
 
 server.listen(8000, () => console.log(`Server listening on 8000`))
-
-
