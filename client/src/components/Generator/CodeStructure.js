@@ -8,18 +8,18 @@ import FileExplorer from './FileExplorer';
 * This component represents the left webpage division. This will
 * contain the file structure of the generated code.
 */
- 
+
 class CodeStructure extends React.Component {
-  onSelect_2 = (file) => { 
+  onSelect_2 = (file) => {
     this.props.onSelect_3(file);
   };
   render() {
     return (
       <div className="body">
         <div className="split left">
-          <div className="filestructure"> 
-            <FileExplorer 
-              onSelect_1={this.onSelect_2} 
+          <div className="filestructure">
+            <FileExplorer
+              onSelect_1={this.onSelect_2}
               template2={this.props.template1}
             />
           </div>

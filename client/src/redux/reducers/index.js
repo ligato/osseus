@@ -51,7 +51,6 @@ function rootReducer(state = initialState, action) {
   }
   //Retreives the template from the server
   else if (action.type === RETURN_TEMPLATE) {
-    console.log(action.template)
     return Object.assign({}, {
       template: state.projects.concat(action.template)
     })

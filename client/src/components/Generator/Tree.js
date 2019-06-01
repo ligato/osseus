@@ -1,4 +1,4 @@
-    
+
 import React, { Component } from 'react';
 import values from 'lodash/values';
 import PropTypes from 'prop-types';
@@ -15,7 +15,7 @@ class Tree extends Component {
     this.state = {
       nodes: data,
     };
-    if((this.props.template3 !== null && this.props.template3 !== ' ')) buildTemplateDataObject(this.props.template3);
+    if ((this.props.template3 !== null && this.props.template3 !== ' ')) buildTemplateDataObject(this.props.template3);
   }
 
   getRootNodes = () => {
@@ -27,10 +27,10 @@ class Tree extends Component {
     const { nodes } = this.state;
     if (!node.children) return [];
     return node.children.map(path => nodes[path]);
-  }  
+  }
 
   onToggle = (node) => {
-    if(node.type === 'folder') {
+    if (node.type === 'folder') {
       const { nodes } = this.state;
       nodes[node.path].isOpen = !node.isOpen;
       this.setState({ nodes });
@@ -49,8 +49,8 @@ class Tree extends Component {
     const rootNodes = this.getRootNodes();
     return (
       <div>
-        { rootNodes.map(node => (
-          <TreeNode 
+        {rootNodes.map(node => (
+          <TreeNode
             node={node}
             getChildNodes={this.getChildNodes}
             onToggle={this.onToggle}
@@ -70,8 +70,9 @@ Tree.propTypes = {
 
 function buildTemplateDataObject(template) {
   Object.keys(data).forEach(k => delete data[k])
-  let templateCopy = JSON.parse(JSON.stringify( template ));
-  for(let i = 0; i < templateCopy.structure.length; i++) {
+  console.log(template)
+  let templateCopy = JSON.parse(JSON.stringify(template));
+  for (let i = 0; i < templateCopy.structure.length; i++) {
     let structure = templateCopy.structure[i];
     let files = templateCopy.files;
     let absolutePath = templateCopy.structure[i].absolutePath
@@ -83,9 +84,9 @@ function buildTemplateDataObject(template) {
         isOpen: true,
         children: structure.children,
         content: files.find(x => x.fileName === structure.name)
-      }    
+      }
     }
-    if(typeof templateNode[absolutePath].content === 'undefined') templateNode[absolutePath].content = '';
+    if (typeof templateNode[absolutePath].content === 'undefined') templateNode[absolutePath].content = '';
     data[absolutePath] = templateNode[absolutePath];
   }
 }

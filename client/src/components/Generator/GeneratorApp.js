@@ -16,29 +16,30 @@ class GeneratorApp extends React.Component {
       selectedFile: 'main.go',
       loading: false,
       downloadable: true,
-      template: null
+      template: null,
+      tempTemplate: null,
     };
     this.newProjectName = this.newProjectName.bind(this);
     this.onSelectParent = this.onSelectParent.bind(this);
   }
 
   async componentDidMount() {
-    //Setting the loader on
+    // Setting the loader on
     this.setState({ loading: true });
 
-    //setTimeout = .5 seconds
-    await new Promise(resolve => { setTimeout(resolve, 500);})
-
-    //Get the template from the model
-    let template = getTemplate()
-    console.log(template)
-    if(template !== '') {
+    // Get the template from the model
+    let template = store.subscribe(() => {
+      this.state.tempTemplate = store.getState().template
+    })
+    console.log(this.state.tempTemplate)
+    if (this.state.tempTemplate !== null) {
       this.setState({
         loading: false,
-        template: template,
+        template: this.state.tempTemplate,
       });
     }
-    return Promise.resolve();
+    template()
+    // return Promise.resolve();
   }
 
   // Function saves the retrieved new name from the children
@@ -49,14 +50,14 @@ class GeneratorApp extends React.Component {
     });
   }
 
-  onSelectParent = (file) => { 
-    if(file.type === 'file') {
+  onSelectParent = (file) => {
+    if (file.type === 'file') {
       this.setState({ selectedFile: file.content.content })
     }
   }
 
   render() {
-    if(this.state.loading) {
+    if (this.state.loading) {
       return (
         <div>
           <Header
@@ -77,13 +78,13 @@ class GeneratorApp extends React.Component {
           currentProjectName={this.state.currentProjectName}
           downloadable={this.state.downloadable}
         />
-        <CodeStructure 
+        <CodeStructure
           onSelect_3={this.onSelectParent}
           template1={this.state.template}
           loading={this.state.loading}
         />
-        <CodeViewer 
-          generatedCode={this.state.selectedFile} 
+        <CodeViewer
+          generatedCode={this.state.selectedFile}
         />
       </div>
     )
@@ -91,6 +92,7 @@ class GeneratorApp extends React.Component {
 }
 
 export default (GeneratorApp);
+//export default connect(mapStateToProps)(GeneratorApp);
 
 function getTemplate() {
   return pluginModule.template;
