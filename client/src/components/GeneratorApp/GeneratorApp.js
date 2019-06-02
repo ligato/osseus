@@ -44,7 +44,7 @@ class GeneratorApp extends React.Component {
       selectedFile: 'main.go',
       loading: false,
       downloadable: true,
-      template: null, 
+      template: null,
       showToolText: true
     };
     this.newProjectNameHandler = this.newProjectNameHandler.bind(this);
@@ -58,11 +58,11 @@ class GeneratorApp extends React.Component {
     this.setState({ loading: true });
 
     //setTimeout = .5 seconds
-    await new Promise(resolve => { setTimeout(resolve, 500);})
+    await new Promise(resolve => { setTimeout(resolve, 500); })
 
     //Get the template from the model
     let template = getTemplate()
-    if(template !== '') {
+    if (template !== '') {
       this.setState({
         loading: false,
         template: template,
@@ -82,10 +82,10 @@ class GeneratorApp extends React.Component {
     });
   }
 
-  onParentSelectHandler = (file) => { 
-    if(file.type === 'file') {
-      this.setState({ 
-        selectedFile: file.content.content, 
+  onParentSelectHandler = (file) => {
+    if (file.type === 'file') {
+      this.setState({
+        selectedFile: file.content.content,
         showToolText: false
       })
     }
@@ -97,7 +97,7 @@ class GeneratorApp extends React.Component {
   ================================
   */
   render() {
-    if(this.state.loading) {
+    if (this.state.loading) {
       return (
         <div>
           {/* Renders the loader if loading is true. Meaning the template DNE yet */}
@@ -120,12 +120,12 @@ class GeneratorApp extends React.Component {
           sentInCurrentProjectName={this.state.currentProjectName}
           sentInDownloadable={this.state.downloadable}
         />
-        <CodeStructure 
+        <CodeStructure
           onParentSelectHandlerFromParent={this.onParentSelectHandler}
           sentInTemplateFromParent={this.state.template}
         />
-        <CodeViewer 
-          sentInGeneratedCode={this.state.selectedFile} 
+        <CodeViewer
+          sentInGeneratedCode={this.state.selectedFile}
           sentInShowToolText={this.state.showToolText}
         />
       </div>
@@ -141,6 +141,6 @@ Helper Function
 ================================
 */
 function getTemplate() {
-  return pluginModule.template;
+  return store.getState().template;
 }
 

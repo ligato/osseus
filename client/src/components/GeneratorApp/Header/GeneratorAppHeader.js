@@ -72,19 +72,14 @@ class GeneratorAppHeader extends React.Component {
     store.dispatch(saveProjectToKV(store.getState().currProject));
   }
 
-<<<<<<< HEAD
-  downloadTarHandler() {
-    store.dispatch(downloadTar(store.getState().currProject))
-=======
   async downloadTarHandler() {
-    store.dispatch( downloadTar(store.getState().currProject) )
-    await new Promise(resolve => { setTimeout(resolve, 1000);})
+    store.dispatch(downloadTar(store.getState().currProject))
+    await new Promise(resolve => { setTimeout(resolve, 1000); })
     const link = document.createElement('a');
     link.href = `/template/template.tgz`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
->>>>>>> 5f40c37124d3a65d0856dafdf5215de6e647d8ee
   }
 
   editedProjectNameHandler = evt => {
@@ -142,17 +137,10 @@ class GeneratorAppHeader extends React.Component {
 }
 export default GeneratorAppHeader;
 
-<<<<<<< HEAD:client/src/components/GeneratorApp/Header/Header.js
-Header.propTypes = {
+GeneratorAppHeader.propTypes = {
   newProjectNameHandlerFromParent: PropTypes.func.isRequired,
   sentInCurrentProjectName: PropTypes.string.isRequired,
   sentInDownloadable: PropTypes.bool.isRequired,
-=======
-GeneratorAppHeader.propTypes = {
-  newProjectNameHandlerFromParent:   PropTypes.func.isRequired,    
-  sentInCurrentProjectName:          PropTypes.string.isRequired,
-  sentInDownloadable:                PropTypes.bool.isRequired,
->>>>>>> ba2cfa8b5c45e9298ddb19d092c3e2b37cb60611:client/src/components/GeneratorApp/Header/GeneratorAppHeader.js
 }
 
 /*
