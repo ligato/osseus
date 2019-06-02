@@ -26,7 +26,7 @@ import { setCurrProject } from "../../redux/actions/index";
 
 // PluginApp globals
 let pluginModule = require('../Model');
-store.dispatch( setCurrProject(pluginModule.project) );
+store.dispatch(setCurrProject(pluginModule.project));
 
 let deselectButtonVisibility;
 let OFFSET = buildOFFSET();
@@ -51,7 +51,7 @@ class PluginApp extends React.Component {
   constructor() {
     super();
     this.state = {
-      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.', 'Custom'], 
+      sentInCategories: ['RPC', 'Data Store', 'Logging', 'Health', 'Misc.', 'Custom'],
       pluginPickedArray: getPluginsSelected(),
       currentProjectName: store.getState().currProject.projectName,
     };
@@ -62,7 +62,7 @@ class PluginApp extends React.Component {
     this.handleCustomPluginCreation = this.handleCustomPluginCreation.bind(this);
     deselectButtonVisibility = determineDeselectButtonVisibility(this.state.pluginPickedArray)
   }
-    
+
   /*
   ================================
   Handler Functions
@@ -70,23 +70,23 @@ class PluginApp extends React.Component {
   */
   handlePluginSelection = (index) => {
     let tempArray = this.state.pluginPickedArray;
-    tempArray[index] = !tempArray[index]*1;
+    tempArray[index] = !tempArray[index] * 1;
     this.setState({
       pluginPickedArray: tempArray
     });
     pluginModule.project.plugins[index].selected = !pluginModule.project.plugins[index].selected;
-    if(this.state.pluginPickedArray[index] === 0) {
+    if (this.state.pluginPickedArray[index] === 0) {
       deselectButtonVisibility[index] = 'hidden';
     } else {
       deselectButtonVisibility[index] = 'visible';
     }
-    store.dispatch( setCurrProject(pluginModule.project));
+    store.dispatch(setCurrProject(pluginModule.project));
   }
 
   handleNewProjectCreation = () => {
     (async () => {
       let nameCapture = await getNewProjectName();
-      if(!nameCapture) return;
+      if (!nameCapture) return;
       this.setState({
         currentProjectName: nameCapture
       });
@@ -140,51 +140,51 @@ class PluginApp extends React.Component {
           sentInCurrentProjectName={this.state.currentProjectName}
         />
         <div className="left-column-background"></div>
-          <div className="plugin-column">
-            {/* Maps over each category to render each category's plugins */}
-            {this.state.sentInCategories.map((sentInCategory, outerIndex) => {
-              return (
-                <PluginPicker 
-                  key={outerIndex} 
-                  sentInCategory={sentInCategory} 
-                  sentInPlugins={this.state.pluginPickedArray.slice(Number(OFFSET[outerIndex]),Number(OFFSET[outerIndex+1]))}
-                  sendCustomPlugin={this.handleCustomPluginCreation}
-                >
-                  {/* Maps over all the plguins within a category to render the plugins within that category */}
-                  {pluginModule.project.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex+1])).map((i, innerIndex) => {
-                    return (
-                      <SelectablePlugins
-                        sentInPluginName={pluginModule.project.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
-                        sentInImage={pluginModule.images[Number(OFFSET[outerIndex]) + innerIndex]}
-                        selectedPluginHandlerFromParent={this.handlePluginSelection}
-                        sentInID={Number(OFFSET[outerIndex]) + innerIndex}
-                        key={Number(OFFSET[outerIndex]) + innerIndex} 
-                        sentInVisibilty={deselectButtonVisibility[Number(OFFSET[outerIndex]) + innerIndex]}
-                      />
-                    )
-                  })}     
-                </PluginPicker>
-              )
-            })}
-          </div>
-          {/* Render the plugin palette, where selected plugins show. */}
-          <PluginPalette 
-            sentInArray={this.state.pluginPickedArray}
-          >
-            {/* Maps over all the plugins rendering all the plugins that are selected */}
-            {pluginModule.project.plugins.map((i, index) => {
-              return (
-                <SelectablePlugins
-                  sentInPluginName={pluginModule.project.plugins[index].pluginName}
-                  sentInImage={pluginModule.images[index]}
-                  selectedPluginHandlerFromParent={this.handlePluginSelection}
-                  sentInID={index}
-                  key={index}
-                  sentInVisibilty={deselectButtonVisibility[index]}
-                />
-              )
-            })}   
-          </PluginPalette>
+        <div className="plugin-column">
+          {/* Maps over each category to render each category's plugins */}
+          {this.state.sentInCategories.map((sentInCategory, outerIndex) => {
+            return (
+              <PluginPicker
+                key={outerIndex}
+                sentInCategory={sentInCategory}
+                sentInPlugins={this.state.pluginPickedArray.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex + 1]))}
+                sendCustomPlugin={this.handleCustomPluginCreation}
+              >
+                {/* Maps over all the plguins within a category to render the plugins within that category */}
+                {pluginModule.project.plugins.slice(Number(OFFSET[outerIndex]), Number(OFFSET[outerIndex + 1])).map((i, innerIndex) => {
+                  return (
+                    <SelectablePlugins
+                      sentInPluginName={pluginModule.project.plugins[Number(OFFSET[outerIndex]) + innerIndex].pluginName}
+                      sentInImage={pluginModule.images[Number(OFFSET[outerIndex]) + innerIndex]}
+                      selectedPluginHandlerFromParent={this.handlePluginSelection}
+                      sentInID={Number(OFFSET[outerIndex]) + innerIndex}
+                      key={Number(OFFSET[outerIndex]) + innerIndex}
+                      sentInVisibilty={deselectButtonVisibility[Number(OFFSET[outerIndex]) + innerIndex]}
+                    />
+                  )
+                })}
+              </PluginPicker>
+            )
+          })}
+        </div>
+        {/* Render the plugin palette, where selected plugins show. */}
+        <PluginPalette
+          sentInArray={this.state.pluginPickedArray}
+        >
+          {/* Maps over all the plugins rendering all the plugins that are selected */}
+          {pluginModule.project.plugins.map((i, index) => {
+            return (
+              <SelectablePlugins
+                sentInPluginName={pluginModule.project.plugins[index].pluginName}
+                sentInImage={pluginModule.images[index]}
+                selectedPluginHandlerFromParent={this.handlePluginSelection}
+                sentInID={index}
+                key={index}
+                sentInVisibilty={deselectButtonVisibility[index]}
+              />
+            )
+          })}
+        </PluginPalette>
       </div>
     );
   }
@@ -197,13 +197,13 @@ Helper Functions
 ================================
 */
 // Gets the name of a new project using a swal2 (popup library) popup.
-async function getNewProjectName () {
-  const {value: text} = await Swal.fire({
+async function getNewProjectName() {
+  const { value: text } = await Swal.fire({
     title: 'CN-infra Generator App',
     input: 'textarea',
     inputPlaceholder: 'New Project Name',
     showCancelButton: true,
-    allowEnterKey:	true,
+    allowEnterKey: true,
   })
   return text;
 }
@@ -212,21 +212,22 @@ async function getNewProjectName () {
 function resetAppState() {
   pluginModule.project.plugins.length = 16;
   pluginModule.project.customPlugins = [];
-  for(let i = 0; i < pluginModule.project.plugins.length; i++) {
+  for (let i = 0; i < pluginModule.project.plugins.length; i++) {
     pluginModule.project.plugins[i].selected = false;
     pluginModule.project.plugins[i].port = 0;
   }
-  store.dispatch( setCurrProject(pluginModule.project));
+  store.dispatch(setCurrProject(pluginModule.project));
   deselectButtonVisibility = determineDeselectButtonVisibility(getPluginsSelected())
 }
 
 // Determines the plugins selected.
 function getPluginsSelected() {
+  console.log(store.getState().currProject)
   let selectedArray = store.getState().currProject.plugins;
   let array = [];
-  for(let i = 0; i < selectedArray.length; i++) {
-    if(selectedArray[i].selected) array.push(Number(1))
-    else array.push(Number(0)) 
+  for (let i = 0; i < selectedArray.length; i++) {
+    if (selectedArray[i].selected) array.push(Number(1))
+    else array.push(Number(0))
   }
   return array;
 }
@@ -236,8 +237,8 @@ function getPluginsSelected() {
 // button, else, don't.
 function determineDeselectButtonVisibility(sentInArray) {
   var array = [];
-  for(let i = 0; i < sentInArray.length; i++) {
-    if(sentInArray[i] === 0) {
+  for (let i = 0; i < sentInArray.length; i++) {
+    if (sentInArray[i] === 0) {
       array[i] = 'hidden';
     } else {
       array[i] = 'visible';
@@ -253,10 +254,10 @@ function determineDeselectButtonVisibility(sentInArray) {
 function buildOFFSET() {
   let array = [[0]];
   var previouslength = 0;
-  for(let i = 0; i < pluginModule.categories.length; i++) {
+  for (let i = 0; i < pluginModule.categories.length; i++) {
     let subarray = [pluginModule.categories[i].length + previouslength]
     array.push(subarray)
-    previouslength = Number(array[i+1]);
+    previouslength = Number(array[i + 1]);
   }
   return array;
 }
@@ -268,5 +269,5 @@ function buildCustomPlugin(data) {
   pluginModule.project.customPlugins.push(data)
   pluginModule.project.plugins.push(data)
   pluginModule.categories[5].push([data.pluginName, 'CUSTOM'])
-  store.dispatch( setCurrProject(pluginModule.project));
+  store.dispatch(setCurrProject(pluginModule.project));
 }
