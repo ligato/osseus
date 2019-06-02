@@ -111,7 +111,7 @@ Helper Functions
 function buildTemplateDataObject(template) {
   Object.keys(data).forEach(k => delete data[k])
   console.log(template)
-  let templateCopy = JSON.parse(JSON.stringify(template));
+  let templateCopy = JSON.parse(template);
   for (let i = 0; i < templateCopy.structure.length; i++) {
     let structure = templateCopy.structure[i];
     let files = templateCopy.files;
