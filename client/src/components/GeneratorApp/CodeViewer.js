@@ -37,7 +37,6 @@ const toolText = {
 
 const CodeViewer = (props) => {
   let codeString = props.sentInGeneratedCode
-  console.log(props.sentInShowToolText)
   if(props.sentInShowToolText) {
     return (
       <div className="body">
