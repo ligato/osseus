@@ -22,8 +22,6 @@ import "../../styles_CSS/Generator/GeneratorApp.css";
 
 import store from '../../redux/store/index';
 
-let pluginModule = require('../Model');
-
 /*************************************************************************
 * This component defines the logic of how the Code Viewer and 
 * the code structure interface.
@@ -141,6 +139,6 @@ Helper Function
 ================================
 */
 function getTemplate() {
-  return pluginModule.template;
+  return store.getState().template;
 }
 
