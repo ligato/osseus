@@ -155,7 +155,7 @@ func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc
 	}
 }
 
-// GenerateHandler handles generating a new template project
+// GenerateHandler handles generating a new project template, or updating an existing one
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		var reqParam Project
@@ -191,6 +191,7 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 func (p *Plugin) GetGeneratedFileHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 
+		// Retrieve generated zip file from etcd
 		key := "zip"
 		zipFile := p.getGeneratedFile(templatePrefix, key)
 
@@ -251,6 +252,7 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 		customPluginsList = append(customPluginsList, custompluginval)
 	}
 
+	//create Project object to be stored in etcd
 	value = &restmodel.Project{
 		ProjectName:  proj.ProjectName,
 		Plugin:       pluginsList,
@@ -265,11 +267,11 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	p.Log.Debugf("kv store should have (key): %v at (prefix): %v", key, prefix)
 }
 
-// returns the generateFile
+// returns the generated zip file
 func (p *Plugin) getGeneratedFile(prefix string, key string) interface{} {
 	p.setBroker(prefix)
 
-	// Get value based on key
+	// Get value based on key (zip, because only 1 zip entry is stored per project)
 	value := new(restmodel.Template)
 	found, _, err := p.broker.GetValue(key, value)
 
@@ -281,6 +283,7 @@ func (p *Plugin) getGeneratedFile(prefix string, key string) interface{} {
 		p.Log.Infof("Found some plugins: %+v", value)
 	}
 
+	// map zip contents into ZipFile object
 	zipFile := ZipFile{
 		Name:    value.Name,
 		TarFile: value.TarFile,
@@ -289,7 +292,8 @@ func (p *Plugin) getGeneratedFile(prefix string, key string) interface{} {
 	return zipFile
 }
 
-// returns true if value at key deleted, false otherwise
+// returns true if value at key is deleted, false otherwise
+// used to delete project entries in etcd
 func (p *Plugin) deleteValue(prefix string, key string) interface{} {
 	p.setBroker(prefix)
 	existed, err := p.broker.Delete(key)
@@ -300,7 +304,7 @@ func (p *Plugin) deleteValue(prefix string, key string) interface{} {
 	return existed
 }
 
-// sets the broker based on passed in prefix
+// sets the broker based on passed-in prefix
 func (p *Plugin) setBroker(prefix string) {
 	keyPrefix := "/vnf-agent/" + Label + prefix
 	p.broker = p.KVStore.NewBroker(keyPrefix)

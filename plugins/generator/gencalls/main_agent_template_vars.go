@@ -31,7 +31,7 @@ const (
 	prometheusInit = `Prometheus:    &prometheus.DefaultPlugin,`
 
 	// Etcd
-	//assuming the kvstore tutorial method; not newEtcdConnectionWithBytes()
+	//using the kvstore method; not newEtcdConnectionWithBytes()
 	etcdImport = `"github.com/ligato/cn-infra/db/keyval"
     "github.com/ligato/cn-infra/db/keyval/etcd"`
 	etcdDecl = `KVStore    keyval.KvProtoPlugin`
@@ -89,7 +89,7 @@ const (
 	idxMapDecl = `mapping    idxmap.NamedMappingRW`
 	idxMapInit = `mapping:    mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction),`
 
-// Service Label
+	// Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
 	serviceLblDecl = `ServiceLabel    *servicelabel.Plugin`
 	serviceLblInit = `ServiceLabel:    &servicelabel.DefaultPlugin,`
