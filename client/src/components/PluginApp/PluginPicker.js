@@ -31,8 +31,8 @@ const PluginPicker = (props) => {
   var pluginArray = React.Children.toArray(props.children);
 
   // Loop through to find out which plugins are not in the plugin picker. 1 = not in plugin picker.
-  for(let i = props.sentInPlugins.length; i >= 0; i--) {
-    if(props.sentInPlugins[i] === 1 || props.sentInPlugins[i] === true) { pluginArray.splice(i,1); }
+  for(let i = props.pluginsFromPluginApp.length; i >= 0; i--) {
+    if(props.pluginsFromPluginApp[i] === 1 || props.pluginsFromPluginApp[i] === true) { pluginArray.splice(i,1); }
   }
 
   /*
@@ -46,7 +46,7 @@ const PluginPicker = (props) => {
       (async () => {
         let customPluginData = await getCustomPluginName();
         if(!customPluginData) return;
-        props.sendCustomPlugin(customPluginData);
+        props.customPluginCreationHandlerFromPluginApp(customPluginData);
       })()
     }
   }
@@ -60,11 +60,11 @@ const PluginPicker = (props) => {
     <div className="body">
       {/* Renders the custom plugin heading as well as all existing plugins */}
       <p 
-        className={props.sentInCategory === 'Custom' ? "custom-heading":"pluginheadingtext"} 
-        onClick={() => {handleHeadingClick(props.sentInCategory)}}>
-          {props.sentInCategory}
+        className={props.categoryFromPluginApp === 'Custom' ? "custom-heading":"pluginheadingtext"} 
+        onClick={() => {handleHeadingClick(props.categoryFromPluginApp)}}>
+          {props.categoryFromPluginApp}
       </p>
-      {props.sentInCategory === 'Custom' ? 
+      {props.categoryFromPluginApp === 'Custom' ? 
         <img
           className="add-plugin-image"
           src='/images/add.png'
@@ -76,7 +76,7 @@ const PluginPicker = (props) => {
       }
 
       {/* Renders all other headings and the default plugins */}
-      <div className="grid-container" style={{borderColor : (props.sentInCategory === 'Custom' ? "white" : "#CECECE")}}>
+      <div className="grid-container" style={{borderColor : (props.categoryFromPluginApp === 'Custom' ? "white" : "#CECECE")}}>
         {pluginArray}
       </div>
 
@@ -91,9 +91,9 @@ const PluginPicker = (props) => {
 export default PluginPicker;
 
 PluginPicker.propTypes = {
-  sentInCategory:      PropTypes.string.isRequired,
-  sentInPlugins:         PropTypes.array.isRequired,
-  sendCustomPlugin:    PropTypes.func.isRequired
+  categoryFromPluginApp:                       PropTypes.string.isRequired,
+  pluginsFromPluginApp:                        PropTypes.array.isRequired,
+  customPluginCreationHandlerFromPluginApp:    PropTypes.func.isRequired
 }
 
 /*

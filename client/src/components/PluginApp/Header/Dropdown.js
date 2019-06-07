@@ -51,7 +51,7 @@ class Dropdown extends React.Component {
   dropdownClickHandler = (event) => {
     event.preventDefault();
     store.dispatch(setCurrProject(loadProjectState(event.currentTarget.dataset.id)));
-    this.props.loadedProjectHandlerFromParent(store.getState().projects[event.currentTarget.dataset.id].projectName);
+    this.props.loadedProjectHandlerFromPluginAppHeader(store.getState().projects[event.currentTarget.dataset.id].projectName);
     flip = false;
   }
 
@@ -126,7 +126,7 @@ class Dropdown extends React.Component {
 export default Dropdown;
 
 Dropdown.propTypes = {
-  loadedProjectHandlerFromParent:      PropTypes.func.isRequired,    
+  loadedProjectHandlerFromPluginAppHeader:      PropTypes.func.isRequired,    
 }
 
 /*

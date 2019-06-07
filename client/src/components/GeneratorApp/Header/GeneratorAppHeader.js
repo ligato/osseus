@@ -68,7 +68,7 @@ class GeneratorAppHeader extends React.Component {
       syncProjectNameState(projectCopyName);
       successfulRenameToast();
     }
-    this.props.newProjectNameHandlerFromParent(projectCopyName);
+    this.props.newProjectNameHandlerFromGeneratorApp(projectCopyName);
     store.dispatch(saveProjectToKV(store.getState().currProject));
   }
 
@@ -86,7 +86,7 @@ class GeneratorAppHeader extends React.Component {
     let editedProjectName = evt.target.value;
     store.getState().currProject.projectName = editedProjectName;
     pluginModule.project.projectName = editedProjectName;
-    this.props.newProjectNameHandlerFromParent(editedProjectName)
+    this.props.newProjectNameHandlerFromGeneratorApp(editedProjectName)
   };
 
   /*
@@ -113,7 +113,7 @@ class GeneratorAppHeader extends React.Component {
               <ContentEditable
                 spellCheck={false}
                 className="project-name"
-                html={this.props.sentInCurrentProjectName}
+                html={this.props.currentProjectNameFromGeneratorApp}
                 disabled={false}
                 onChange={this.editedProjectNameHandler}
               />
@@ -123,8 +123,8 @@ class GeneratorAppHeader extends React.Component {
               {/* If the downloadable tar exists then display a regular download, otherwise
               display a grayed out download image */}
               <img
-                className={this.props.sentInDownloadable ? "download-image" : 'download-gray-image'}
-                src={this.props.sentInDownloadable ? '/images/download.png' : '/images/download_gray.png'}
+                className={this.props.downloadableFromGeneratorApp ? "download-image" : 'download-gray-image'}
+                src={this.props.downloadableFromGeneratorApp ? '/images/download.png' : '/images/download_gray.png'}
                 alt='oops'>
               </img>
             </div>
@@ -138,9 +138,9 @@ class GeneratorAppHeader extends React.Component {
 export default GeneratorAppHeader;
 
 GeneratorAppHeader.propTypes = {
-  newProjectNameHandlerFromParent: PropTypes.func.isRequired,
-  sentInCurrentProjectName: PropTypes.string.isRequired,
-  sentInDownloadable: PropTypes.bool.isRequired,
+  newProjectNameHandlerFromGeneratorApp: PropTypes.func.isRequired,
+  currentProjectNameFromGeneratorApp:    PropTypes.string.isRequired,
+  downloadableFromGeneratorApp:          PropTypes.bool.isRequired,
 }
 
 /*

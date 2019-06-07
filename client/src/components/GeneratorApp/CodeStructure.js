@@ -32,8 +32,8 @@ class CodeStructure extends React.Component {
   Handler Function
   ================================
   */
-  onParentSelectHandler = (file) => { 
-    this.props.onParentSelectHandlerFromParent(file);
+  onNodeSelectHandler = (file) => { 
+    this.props.onNodeSelectHandlerFromGeneratorApp(file);
   };
 
   /*
@@ -47,8 +47,8 @@ class CodeStructure extends React.Component {
         <div className="split left">
           <div className="filestructure"> 
             <FileExplorer 
-              onParentSelectHandlerFromCodeStructure={this.onParentSelectHandler} 
-              sentInTemplateFromCodeStructure={this.props.sentInTemplateFromParent}
+              onNodeSelectHandlerFromCodeStructure={this.onNodeSelectHandler} 
+              templateFromCodeStructure={this.props.templateFromGeneratorApp}
             />
           </div>
         </div>
@@ -59,5 +59,5 @@ class CodeStructure extends React.Component {
 export default CodeStructure;
 
 CodeStructure.propTypes = {
-  onParentSelectHandlerFromParent:      PropTypes.func.isRequired,   
+  onNodeSelectHandlerFromGeneratorApp:      PropTypes.func.isRequired,   
 }

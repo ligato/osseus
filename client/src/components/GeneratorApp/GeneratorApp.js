@@ -39,14 +39,14 @@ class GeneratorApp extends React.Component {
     super();
     this.state = {
       currentProjectName: store.getState().currProject.projectName,
-      selectedFile: 'main.go',
+      selectedFile: ' ',
       loading: false,
       downloadable: true,
       template: null,
       showToolText: true
     };
     this.newProjectNameHandler = this.newProjectNameHandler.bind(this);
-    this.onParentSelectHandler = this.onParentSelectHandler.bind(this);
+    this.onNodeSelectHandler = this.onNodeSelectHandler.bind(this);
   }
 
   // On component mount, the loader will be rendered and promise is made and resolved
@@ -80,7 +80,7 @@ class GeneratorApp extends React.Component {
     });
   }
 
-  onParentSelectHandler = (file) => {
+  onNodeSelectHandler = (file) => {
     if (file.type === 'file') {
       this.setState({
         selectedFile: file.content.content,
@@ -100,9 +100,9 @@ class GeneratorApp extends React.Component {
         <div>
           {/* Renders the loader if loading is true. Meaning the template DNE yet */}
           <GeneratorAppHeader
-            newProjectNameHandlerFromParent={this.newProjectNameHandler}
-            sentInCurrentProjectName={this.state.currentProjectName}
-            sentInDownloadable={this.state.downloadable}
+            newProjectNameHandlerFromGeneratorApp={this.newProjectNameHandler}
+            currentProjectNameFromGeneratorApp={this.state.currentProjectName}
+            downloadableFromGeneratorApp={this.state.downloadable}
           />
           <div className="loader-div">
             <div className="loader" />
@@ -114,17 +114,17 @@ class GeneratorApp extends React.Component {
       <div>
         {/* Renders the regular view of the file and code structure */}
         <GeneratorAppHeader
-          newProjectNameHandlerFromParent={this.newProjectNameHandler}
-          sentInCurrentProjectName={this.state.currentProjectName}
-          sentInDownloadable={this.state.downloadable}
+          newProjectNameHandlerFromGeneratorApp={this.newProjectNameHandler}
+          currentProjectNameFromGeneratorApp={this.state.currentProjectName}
+          downloadableFromGeneratorApp={this.state.downloadable}
         />
         <CodeStructure
-          onParentSelectHandlerFromParent={this.onParentSelectHandler}
-          sentInTemplateFromParent={this.state.template}
+          onNodeSelectHandlerFromGeneratorApp={this.onNodeSelectHandler}
+          templateFromGeneratorApp={this.state.template}
         />
         <CodeViewer
-          sentInGeneratedCode={this.state.selectedFile}
-          sentInShowToolText={this.state.showToolText}
+          generatedCodeFromGeneratorApp={this.state.selectedFile}
+          shownToolTextFromGeneratorApp={this.state.showToolText}
         />
       </div>
     )
