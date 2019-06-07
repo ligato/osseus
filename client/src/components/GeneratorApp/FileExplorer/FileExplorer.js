@@ -42,8 +42,7 @@ class FileExplorer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentFile: 'main.go',
-      template: ''
+      currentFile: '',
     };
 
   }
@@ -53,11 +52,11 @@ class FileExplorer extends Component {
   Handler Functions
   ================================
   */
-  onParentSelectHandler = (file) => { 
+  onNodeSelectHandler = (file) => { 
     this.setState({
       currentFile: file.content.fileName
     });
-    this.props.onParentSelectHandlerFromCodeStructure(file);
+    this.props.onNodeSelectHandlerFromCodeStructure(file);
   };
 
   /*
@@ -75,8 +74,8 @@ class FileExplorer extends Component {
         <StyledFileExplorer>
           <TreeWrapper>
             <Tree 
-              onParentSelectHandlerFromFileExplorer={this.onParentSelectHandler} 
-              sentInTemplateFromFileExplorer={this.props.sentInTemplateFromCodeStructure}
+              onNodeSelectHandlerFromFileExplorer={this.onNodeSelectHandler} 
+              templateFromFileExplorer={this.props.templateFromCodeStructure}
               loading={this.props.loading}
             />
           </TreeWrapper>
@@ -89,5 +88,5 @@ class FileExplorer extends Component {
 export default FileExplorer
 
 FileExplorer.propTypes = {
-  onParentSelectHandlerFromCodeStructure: PropTypes.func.isRequired,   
+  onNodeSelectHandlerFromCodeStructure: PropTypes.func.isRequired,   
 }

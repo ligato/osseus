@@ -78,7 +78,7 @@ class PluginAppHeader extends React.Component {
     }
 
     // Save project to redux.
-    this.props.newProjectNameHandlerFromParent(projectCopyName)
+    this.props.newProjectNameHandlerFromPluginApp(projectCopyName)
     store.dispatch( saveProjectToKV(store.getState().currProject) )
   }
 
@@ -94,15 +94,15 @@ class PluginAppHeader extends React.Component {
     let editedProjectName = evt.target.value;
     store.getState().currProject.projectName = editedProjectName;
     pluginModule.project.projectName = editedProjectName;
-    this.props.newProjectNameHandlerFromParent(editedProjectName)
+    this.props.newProjectNameHandlerFromPluginApp(editedProjectName)
   };
 
   resetProjectStateHandler = () => {
-    this.props.newProjectHandlerFromParent();
+    this.props.newProjectCreationHandlerFromPluginApp();
   }
 
   sendLoadedProjectHandler = (name) => {
-    this.props.loadedProjectHandlerFromParent(name);
+    this.props.loadedProjectHandlerFromPluginApp(name);
   }
 
   /*
@@ -129,7 +129,7 @@ class PluginAppHeader extends React.Component {
               {/* Renders the dropdown */}
               <Dropdown
                 className="new-project-link"
-                loadedProjectHandlerFromParent={this.sendLoadedProjectHandler}
+                loadedProjectHandlerFromPluginAppHeader={this.sendLoadedProjectHandler}
               />
               {/* Renders the '+' add image */}
               <img
@@ -145,7 +145,7 @@ class PluginAppHeader extends React.Component {
                 <ContentEditable
                   spellCheck={false}
                   className="projectname"
-                  html={this.props.sentInCurrentProjectName}
+                  html={this.props.currentProjectNameFromPluginApp}
                   disabled={false} 
                   onChange={this.editedProjectNameHandler} 
                 />
@@ -176,10 +176,10 @@ class PluginAppHeader extends React.Component {
 export default PluginAppHeader;
 
 PluginAppHeader.propTypes = {
-  newProjectHandlerFromParent:      PropTypes.func.isRequired,    
-  newProjectNameHandlerFromParent:  PropTypes.func.isRequired,
-  loadedProjectHandlerFromParent:   PropTypes.func.isRequired,
-  sentInCurrentProjectName:         PropTypes.string.isRequired
+  newProjectCreationHandlerFromPluginApp:   PropTypes.func.isRequired,    
+  newProjectNameHandlerFromPluginApp:       PropTypes.func.isRequired,
+  loadedProjectHandlerFromPluginApp:        PropTypes.func.isRequired,
+  currentProjectNameFromPluginApp:    PropTypes.string.isRequired
 }
 
 /*

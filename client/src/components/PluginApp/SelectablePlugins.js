@@ -42,10 +42,10 @@ class SelectablePlugins extends React.Component {
   clickedPluginHandler = (event) => { 
     event.preventDefault();
     store.dispatch( setCurrPopupID(event.currentTarget.dataset.id) );
-    if(this.props.sentInImage === '/images/custom.png' && this.props.sentInVisibilty === 'visible') {
-      customPluginPopup(this.props.sentInPluginName)
-    } else if(this.props.sentInVisibilty === 'hidden'){
-      this.props.selectedPluginHandlerFromParent(event.currentTarget.dataset.id);
+    if(this.props.imageFromPluginApp === '/images/custom.png' && this.props.visibiltyFromPluginApp === 'visible') {
+      customPluginPopup(this.props.pluginNameFromPluginApp)
+    } else if(this.props.visibiltyFromPluginApp === 'hidden'){
+      this.props.pluginSelectionHandlerFromPluginApp(event.currentTarget.dataset.id);
     } else {
       setPort(event);
     }
@@ -53,7 +53,7 @@ class SelectablePlugins extends React.Component {
 
   changePluginSelectionHandler = (event) => {
     event.stopPropagation();
-    this.props.selectedPluginHandlerFromParent(event.currentTarget.dataset.id);
+    this.props.pluginSelectionHandlerFromPluginApp(event.currentTarget.dataset.id);
   }
   
   /*
@@ -63,25 +63,25 @@ class SelectablePlugins extends React.Component {
   */
   render() {
     return ( 
-      <div className="cardbody" data-id={this.props.sentInID} onClick={this.clickedPluginHandler}>
+      <div className="cardbody" data-id={this.props.IDFromPluginApp} onClick={this.clickedPluginHandler}>
         <div className="img-holder">
           <div>
             <img 
               className="main-img" 
-              src={window.location.origin + this.props.sentInImage}
+              src={window.location.origin + this.props.imageFromPluginApp}
               alt='main'
             ></img>
             <img 
               className="close-img" 
               src={'/images/close.png'}
               alt='close'
-              data-id={this.props.sentInID}
-              style={{visibility: this.props.sentInVisibilty}}
+              data-id={this.props.IDFromPluginApp}
+              style={{visibility: this.props.visibiltyFromPluginApp}}
               onClick={this.changePluginSelectionHandler}
             ></img>
           </div>
           <div>
-            <p className="cardtext">{this.props.sentInPluginName}</p>
+            <p className="cardtext">{this.props.pluginNameFromPluginApp}</p>
           </div>
         </div>
       </div>
@@ -91,11 +91,11 @@ class SelectablePlugins extends React.Component {
 export default SelectablePlugins;
 
 SelectablePlugins.propTypes = {
-  sentInPluginName:                  PropTypes.string.isRequired,
-  sentInImage:                       PropTypes.string.isRequired,
-  selectedPluginHandlerFromParent:   PropTypes.func.isRequired,
-  sentInID:                          PropTypes.number.isRequired,
-  sentInVisibilty:                   PropTypes.string.isRequired
+  pluginNameFromPluginApp:         PropTypes.string.isRequired,
+  imageFromPluginApp:              PropTypes.string.isRequired,
+  pluginSelectionHandlerFromPluginApp:   PropTypes.func.isRequired,
+  IDFromPluginApp:                 PropTypes.number.isRequired,
+  visibiltyFromPluginApp:          PropTypes.string.isRequired
 }
 
 /*

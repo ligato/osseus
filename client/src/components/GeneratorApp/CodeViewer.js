@@ -36,8 +36,8 @@ const toolText = {
 ****************************************************************/
 
 const CodeViewer = (props) => {
-  let codeString = props.sentInGeneratedCode
-  if(props.sentInShowToolText) {
+  let codeString = props.generatedCodeFromGeneratorApp
+  if(props.shownToolTextFromGeneratorApp) {
     return (
       <div className="body">
         <div className="split right-viewer-gray">
@@ -66,6 +66,6 @@ const CodeViewer = (props) => {
 export default CodeViewer;
 
 CodeViewer.propTypes = {
-  sentInGeneratedCode:  PropTypes.string.isRequired,
-  sentInShowToolText:   PropTypes.bool.isRequired 
+  generatedCodeFromGeneratorApp:  PropTypes.string.isRequired,
+  shownToolTextFromGeneratorApp:   PropTypes.bool.isRequired 
 }

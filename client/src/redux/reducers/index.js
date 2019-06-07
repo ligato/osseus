@@ -66,7 +66,7 @@ function rootReducer(state = initialState, action) {
   //Retreives the template from the server
   else if (action.type === RETURN_TEMPLATE) {
     return Object.assign({}, state, {
-      template: state.projects.concat(action.template)
+      template: action.template
     })
   }
   //Emits the server to call GENERATE_PROJECT

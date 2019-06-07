@@ -43,10 +43,10 @@ const PluginPalette = (props) => {
   var pluginArray = React.Children.toArray(props.children);
   
   // Loop through to find out which plugins are not in the plugin picker. 1 = in plugin picker.
-  for(let i = props.sentInArray.length; i >= 0; i--) {
-    if(props.sentInArray[i] === 0 || props.sentInArray[i] === false) { pluginArray.splice(i,1); }
+  for(let i = props.arrayFromPluginApp.length; i >= 0; i--) {
+    if(props.arrayFromPluginApp[i] === 0 || props.arrayFromPluginApp[i] === false) { pluginArray.splice(i,1); }
   }
-  if(props.sentInArray.includes(1)) textVisibilty = 'hidden';
+  if(props.arrayFromPluginApp.includes(1)) textVisibilty = 'hidden';
   else textVisibilty = 'visible';
 
   /*
@@ -102,7 +102,7 @@ const PluginPalette = (props) => {
 export default PluginPalette;
 
 PluginPalette.propTypes = {
-  sentInArray:   PropTypes.array.isRequired,
+  arrayFromPluginApp:   PropTypes.array.isRequired,
 }
 
 /*
@@ -116,7 +116,6 @@ function handleNewAgentName() {
     let nameCapture = await getAgentName();
     if(!nameCapture) return;
     pluginModule.project.agentName = nameCapture[0];
-    console.log(pluginModule.project.agentName)
   })()
 }
 

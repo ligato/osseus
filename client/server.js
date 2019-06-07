@@ -35,9 +35,14 @@ io.on('connection', socket => {
 
     // SAVES CURRENT PROJECT
     socket.on('SEND_SAVE_PROJECT', project => {
+
+        // Filter anything out more than the 16 default plugins
         project.plugins.length = 16;
+
         const selectedPlugins = [];
+        const selectedCustomPlugins = [];
         const allPlugins = project.plugins;
+        const allCustomPlugins = project.customPlugins;
 
         // Filter out selected plugins
         allPlugins.map(plugin => {
@@ -45,20 +50,25 @@ io.on('connection', socket => {
                 selectedPlugins.push(plugin)
             }
         })
+        // Filter out selected custom plugins
+        allCustomPlugins.map(plugin => {
+            if (plugin.selected) {
+                selectedCustomPlugins.push(plugin)
+            }
+        })         
 
         // Set selected plugins for generation
-        project.plugins = selectedPlugins
+        project.plugins = selectedPlugins;
+        project.customPlugins = selectedCustomPlugins;
 
-        console.log(project)
         fetch(`http://${agent}/v1/projects`, {
             method: "POST",
             body: JSON.stringify(project),
-        }).then(res => console.log(res.statusCode))
+        }).then(res => console.log('response code: ' + res.statusCode))
     });
 
     // LOADS PREVIOUS PROJECT
     socket.on('SEND_LOAD_PROJECT', project => {
-        console.log(project)
         fetch(`http://${agent}/v1/projects/${project}`)
             .then(res => console.log(res.body))
             .then(data => socket.broadcast.emit('SEND_PROJECT_TO_CLIENT', data))
@@ -71,7 +81,6 @@ io.on('connection', socket => {
 
     // DELETES SELECTED PROJECT
     socket.on('DELETE_PROJECT_FROM_KV', project => {
-        console.log(project)
         fetch(`http://${agent}/v1/projects/${project}`, {
             method: "DELETE",
         })
@@ -151,7 +160,7 @@ io.on('connection', socket => {
             buffer = Buffer.from(value, 'base64').toString();
 
             // Emit the socket to send the buffer back to the client
-            console.log("Success")
+            console.log("Generation Success")
             socket.emit('SEND_TEMPLATE_TO_CLIENT', buffer);
         })
     })

@@ -34,9 +34,9 @@ class Tree extends Component {
     this.state = {
       nodes: data,
     };
-    if ((this.props.sentInTemplateFromFileExplorer !== null &&
-      this.props.sentInTemplateFromFileExplorer !== ' ')) {
-      buildTemplateDataObject(this.props.sentInTemplateFromFileExplorer);
+    if ((this.props.templateFromFileExplorer !== null &&
+      this.props.templateFromFileExplorer !== ' ')) {
+      buildTemplateDataObject(this.props.templateFromFileExplorer);
     }
   }
 
@@ -64,13 +64,13 @@ class Tree extends Component {
       this.setState({ nodes });
     } else {
       let sendNode = JSON.parse(JSON.stringify(node));
-      this.props.onParentSelectHandlerFromFileExplorer(sendNode);
+      this.props.onNodeSelectHandlerFromFileExplorer(sendNode);
     }
   }
 
   onNodeSelectHandler = node => {
     let sendNode = JSON.parse(JSON.stringify(node));
-    this.props.onParentSelectHandlerFromFileExplorer(sendNode);
+    this.props.onNodeSelectHandlerFromFileExplorer(sendNode);
   }
 
   /*
@@ -97,7 +97,7 @@ class Tree extends Component {
 export default Tree;
 
 Tree.propTypes = {
-  onParentSelectHandlerFromFileExplorer: PropTypes.func.isRequired,
+  onNodeSelectHandlerFromFileExplorer: PropTypes.func.isRequired,
 };
 
 /*
