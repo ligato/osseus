@@ -14,8 +14,10 @@
 
 package gencalls
 
+// text/template for doc.go files
 const docTemplate = `package {{.PackageName}}`
 
+// text/template for README.md files
 const readmeTemplate = `
 # {{.ProjectName}}
 

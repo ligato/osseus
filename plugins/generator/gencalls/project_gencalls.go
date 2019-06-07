@@ -234,7 +234,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 
 	projectName := strings.ToLower(strings.Replace(val.ProjectName, " ", "_", -1))
 
-	// create template structure with agent-level folders and files
+	// create template structure of project-level folders
 	var templateStructure []templateStructureItem
 
 	if len(val.CustomPlugin) > 0 {
@@ -254,6 +254,8 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 				[]string{"/" + projectName + "/cmd", "/" + projectName + "/README.md"}},
 		)
 	}
+	
+	// create template structure with agent-level folders and files
 	var templateAgentFiles = []templateStructureItem{
 		{
 			"cmd",
@@ -329,6 +331,7 @@ func (d *ProjectHandler) getTemplateStructure(val *model.Project) []templateStru
 		}
 	}
 
+	// add project-level readme file to structure
 	readmeFile := templateStructureItem{"readme.md",
 		"/" + projectName + "/README.md",
 		"file",

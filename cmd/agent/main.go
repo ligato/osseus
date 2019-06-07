@@ -73,7 +73,7 @@ func (oa *OsseusAgent) Init() error {
 	return nil
 }
 
-// AfterInit normally executes resync, nothing for now.
+// AfterInit executes resync
 func (oa *OsseusAgent) AfterInit() error {
 	resync.DefaultPlugin.DoResync()
 	return nil
@@ -89,6 +89,7 @@ func (oa *OsseusAgent) String() string {
 	return "osseus-agent"
 }
 
+// main creates and starts a new agent
 func main() {
 	osseusAgent := New()
 
@@ -99,6 +100,7 @@ func main() {
 	}
 }
 
+// init initializes loggers
 func init() {
 	log.DefaultLogger().SetOutput(os.Stdout)
 	log.DefaultLogger().SetLevel(logging.DebugLevel)
