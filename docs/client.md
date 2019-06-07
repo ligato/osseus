@@ -1,5 +1,6 @@
 ---
 title: "Understanding key parts of the Client"
+last updated: "June 2019"
 ---
 
 # :zap: Getting started: Client
@@ -137,7 +138,7 @@ Now we'll go on to go over the two most important react.js files which define th
   }
 ...
 ```
-2. `/client/src/GeneratorApp/GeneratorApp.js`, passes down template data, project data and the shown to be shown to its child components.  
+2. `/client/src/GeneratorApp/GeneratorApp.js`, passes down template data (CodeStructure.js), project data (GeneratorAppHeader.js) and the code to be shown (CodeViewer.js) to its child components.
 ```javascript
 ...
     return (
