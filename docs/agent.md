@@ -85,5 +85,3 @@ The generated code contents are created by populating ```text/template``` templa
 This is done through the ```fillXTemplate()``` methods found in the ```codeGen_X.go``` files in the ```gencalls``` directory, where X is a name describing the generated file template. These fillXTemplate() methods specify the data and label to be used in the template. It also calls the generic ```fillTemplate()``` method specifying the template name, template (which can be found in the respective ```X_template.go``` files), and data values (as an object) to be inserted into the template. Additionally, data values for each of the 16 agent-level plugins used to populate the generated main.go can be found in ```main_agent_template_vars.go```.
 
 Finally, to create the tar file with the generated folders and files, the ```generate()``` method in project_gencalls.go creates the project directory with generated code contents, and ```createTar()``` writes that content from generate() into a tar representation.
-
-
