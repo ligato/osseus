@@ -22,10 +22,15 @@ const fs = require('fs')
 
 app.use(cors())
 
+// Get env variable for webhook key
+const label = process.env.MICROSERVICE_LABEL || 'vpp1'
+
+// Set global variables for connection to API & Etcd
 const agent = 'localhost:9191'
 const etcd = 'localhost:12379'
 
 io.on('connection', socket => {
+    console.log(`UI and Server connected; MICROSERVICE_LABEL: ${label}`)
 
     /*
     ================================
@@ -55,7 +60,7 @@ io.on('connection', socket => {
             if (plugin.selected) {
                 selectedCustomPlugins.push(plugin)
             }
-        })         
+        })
 
         // Set selected plugins for generation
         project.plugins = selectedPlugins;
@@ -114,7 +119,7 @@ io.on('connection', socket => {
             if (plugin.selected) {
                 selectedCustomPlugins.push(plugin)
             }
-        })         
+        })
 
         // Set selected plugins for generation
         project.plugins = selectedPlugins;
@@ -137,7 +142,7 @@ io.on('connection', socket => {
         })
 
         // Encode key to base64
-        const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/structure/${project.projectName}`).toString('base64')
+        const base64Key = Buffer.from(`/vnf-agent/${label}/config/generator/v1/template/structure/${project.projectName}`).toString('base64')
 
         // Add webhook to get value from specified project key
         // (TODO) Figure out why /v3beta/watch no longer works

@@ -62,7 +62,7 @@ socket.on('GENERATE_PROJECT', async project => {
    })
 
    // Encode key to base64
-   const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
+   const base64Key = Buffer.from(`/vnf-agent/${label}/config/generator/v1/template/${project.projectName}`).toString('base64')
 
    // Add webhook to get value from specified project key
    // (TODO) Figure out why /v3beta/watch no longer works

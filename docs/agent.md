@@ -18,18 +18,17 @@ Our restapi plugin uses CN-Infra's **rest** library to help build our handlers t
 ```golang
 ...
 // RESTAPI HANDLERS
-/*** Handlers for managing projects ***/
-	// save project state
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
-	// delete a project
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
 
-	/*** Handlers for Code Generation ***/
-	// save project plugins to generate code
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
-	// get generated zip file
-    p.HTTPHandlers.RegisterHTTPHandler("/v1/templates", p.GetGeneratedFileHandler, GET)
-    // Notice that while the code generator stores into etcd an object describing file structure and contents, there is no REST endpoin to retrieve that information. This is because the generated template structure is retrieved directly from etcd by the frontend.
+// save project state
+p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
+// delete a project
+p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
+// save project plugins to generate code
+p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
+// get generated zip file
+p.HTTPHandlers.RegisterHTTPHandler("/v1/templates", p.GetGeneratedFileHandler, GET)
+
+// Notice that while the code generator stores into etcd an object describing file structure and contents, there is no REST endpoin to retrieve that information. This is because the generated template structure is retrieved directly from etcd by the frontend.
 ...
 ```
 
