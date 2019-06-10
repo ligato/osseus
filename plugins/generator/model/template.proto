@@ -7,10 +7,10 @@ option (gogoproto.messagename_all) = true;
 
 // Template holds the data that will be generated
 message Template {
+
+  // Name of generated file
   string name = 1;
-  int32 id = 2;
-  float version = 3;
-  string category = 4;
-  repeated string dependencies = 5;
+
+  // Encoding of generated tar file
   string tar_file = 6;
 };

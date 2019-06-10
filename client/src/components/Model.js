@@ -1,11 +1,23 @@
-//in order to reference or change the state of these plugins declare as global:
-//     let pluginModule = require('../Plugins');
+// Copyright (c) 2019 Cisco and/or its affiliates.
 //
-//in order to reference the name of the REST_API object for example:
-//     pluginModule.plugins[0].pluginName //log: 'REST API'
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
 //
-//in order to change the name of the REST_API object for example:
-//     pluginModule.plugins[0]pluginName = 'peep'
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/*
+================================
+Project Definition
+================================
+*/
+var projectName = 'untitled';
 
 var REST_API = {
     pluginName: 'REST API',
@@ -119,34 +131,15 @@ var CONFIG = {
     port: 0
 };
 
-var categories = [
-/*RPC*/     [['REST_API', 'RPC'],      ['GRPC', 'RPC'],         ['PROMETHEUS', 'RPC']],  
-/*DS*/      [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
-/*LOGGING*/ [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
-/*HEALTH*/  [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
-/*MISC*/    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']],
-/*CUSTOM*/  [['untitled', 'CUSTOM']],
-]
-
-var images = [
-/*RPC*/     '/images/rpc.png',     '/images/rpc.png',     '/images/rpc.png',
-/*DS*/      '/images/ds.png',      '/images/ds.png',      '/images/ds.png',   '/images/ds.png',    
-/*LOGGING*/ '/images/logging.png', '/images/logging.png', 
-/*HEALTH*/  '/images/health.png',  '/images/health.png',   
-/*MISC*/    '/images/misc.png',    '/images/misc.png',    '/images/misc.png', '/images/misc.png', '/images/misc.png',
-]
-
-var projectName = 'untitled';
-
-var agentName = 'untitled'
-
 var plugins = [
-/*RPC*/      REST_API,   GRPC,      PROMETHEUS,   
-/*DS*/       ETCD,       REDIS,     CASSANDRA,  CONSUL,  
-/*LOGGING*/  LOGRUS,     LOG_MNGR,
-/*HEALTH*/   STTS_CHECK, PROBE,
-/*MISC*/     KAFKA,      DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG
+    /*RPC*/      REST_API,   GRPC,      PROMETHEUS,   
+    /*DS*/       ETCD,       REDIS,     CASSANDRA,  CONSUL,  
+    /*LOGGING*/  LOGRUS,     LOG_MNGR,
+    /*HEALTH*/   STTS_CHECK, PROBE,
+    /*MISC*/     KAFKA,      DATASYNC,  IDX_MAP,    SRVC_LABEL,   CONFIG
 ];
+
+var agentName = 'untitled';
 
 var customPlugins = [];
 
@@ -156,13 +149,38 @@ var project = {
     agentName,
     customPlugins
 };
+ 
+/*
+================================
+Global Utility Definitions
+================================
+*/
+// Images used for plugin icons
+var images = [
+    /*RPC*/     '/images/rpc.png',     '/images/rpc.png',     '/images/rpc.png',
+    /*DS*/      '/images/ds.png',      '/images/ds.png',      '/images/ds.png',   '/images/ds.png',    
+    /*LOGGING*/ '/images/logging.png', '/images/logging.png', 
+    /*HEALTH*/  '/images/health.png',  '/images/health.png',   
+    /*MISC*/    '/images/misc.png',    '/images/misc.png',    '/images/misc.png', '/images/misc.png', '/images/misc.png',
+]
 
+// Categories used for determining the type of each plugin
+var categories = [
+/*RPC*/     [['REST_API', 'RPC'],      ['GRPC', 'RPC'],         ['PROMETHEUS', 'RPC']],  
+/*DS*/      [['ETCD', 'DS'],           ['REDIS', 'DS'],         ['CASSANDRA', 'DS'],    ['CONSUL', 'DS']],  
+/*LOGGING*/ [['LOGRUS', 'LOGGING'],    ['LOG_MNGR', 'LOGGING']],
+/*HEALTH*/  [['STTS_CHECK', 'HEALTH'], ['PROBE', 'HEALTH']],    
+/*MISC*/    [['KAFKA', 'MISC'],        ['DATA_SYNC', 'MISC'],   ['IDX_MAP', 'MISC'],    ['SRVC_LABEL', 'MISC'], ['CONFIG', 'MISC']],
+/*CUSTOM*/  [['untitled', 'CUSTOM']],
+]
+
+// Once project is generated the template is stored here for client usage
+var template = ' ';
+
+// Module Export
 module.exports = {
     project: project,
     images: images,
     categories: categories,
+    template: template
 }
-
-
-
-

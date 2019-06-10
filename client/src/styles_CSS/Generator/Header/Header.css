@@ -50,6 +50,19 @@
   cursor: pointer;
 }
 
+.download-gray-image {
+  position: relative;
+  width: 28px;
+  height: auto;
+  float: right;
+  margin-top: -45px;
+  pointer-events: none;
+  -webkit-user-select: none;     
+  -moz-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none; 
+}
+
 .back-image {
   position: absolute;
   width: 16px;

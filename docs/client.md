@@ -1,5 +1,6 @@
 ---
 title: "Understanding key parts of the Client"
+last updated: "June 2019"
 ---
 
 # :zap: Getting started: Client
@@ -18,7 +19,7 @@ If you're not familiar with what React is or how to get started with it, refer t
 
 ## Key Files in Client
 
-There are many files that play a big role within client, but for now we'll look at a few which handle the core processes and connections.
+There are many files that play a big role within client, first we'll look at a few files relevant to node.js, which handle the core processes and connections.
 
 1. `/client/package.json` is where we list all our dependencies for both our server and client side code, but also where we specify our proxy between the two, using:
 ```javascript 
@@ -61,7 +62,7 @@ socket.on('GENERATE_PROJECT', async project => {
    })
 
    // Encode key to base64
-   const base64Key = Buffer.from(`/vnf-agent/vpp1/config/generator/v1/template/${project.projectName}`).toString('base64')
+   const base64Key = Buffer.from(`/vnf-agent/${label}/config/generator/v1/template/${project.projectName}`).toString('base64')
 
    // Add webhook to get value from specified project key
    // (TODO) Figure out why /v3beta/watch no longer works
@@ -88,21 +89,75 @@ else if (action.type === LOAD_ALL_PROJECTS) {
 }
 ...
 ```
-
-4. `/client/src/index.js`, is our inital entry point of our application. It configures our socket client and calls our application (including all the folders in /src) to be rendered to the user by `/client/public/index.html` on port 3000:
+4. `/client/src/utils/socket.js`, handles our connection back from the node.js server to get data from our backend to our client. This includes the ability to return the template and a loaded project:
 ```javascript
 ...
-// Setup redux store
-const store = createStore(reducer);
+// SETS SOCKET ACTIONS
+const configureSocket = dispatch => {
 
-// Setup socket client connection
-export const socket = configureSocket(store.dispatch);
+    // Start the node server on start
+    socket.on('connect', () => {
+        console.log('connected to server');
+    });
 
-// Render application to id=root
-ReactDOM.render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
-    document.getElementById('root'));
+    // Returns the project from server to client
+    socket.on('SEND_PROJECT_TO_CLIENT', project => {
+        store.dispatch({ type: 'RETURN_LOAD_PROJECT', project })
+    });
+
+    // Returns the template from server to client
+    socket.on('SEND_TEMPLATE_TO_CLIENT', template => {
+        store.dispatch({ type: 'RETURN_TEMPLATE', template });
+    });
+
+    return socket
+}
+...
+```
+Now we'll go on to go over the two most important react.js files which define the logic and behavior of the two pages of the UI: the Plugin App and the Generator App.
+
+1. `/client/src/component/PluginApp/PluginApp.js`, defines the behavior of which plugins are picked and which view the selected plugins are rendered in:
+```javascript
+...
+  // Receives information on which plugin was picked and alters the state to 
+  // reflect this change, rerendering as a result as well.
+  pluginSelectionHandler = (index) => {
+    let tempArray = this.state.pluginPickedArray;
+    tempArray[index] = !tempArray[index] * 1;
+    this.setState({
+      pluginPickedArray: tempArray
+    });
+    pluginModule.project.plugins[index].selected = !pluginModule.project.plugins[index].selected;
+    // If the plugin is picked then render a deselect button 'x' next to its icon
+    if (this.state.pluginPickedArray[index] === 0) {
+      deselectButtonVisibility[index] = 'hidden';
+    } else {
+      deselectButtonVisibility[index] = 'visible';
+    }
+    store.dispatch(setCurrProject(pluginModule.project));
+  }
+...
+```
+2. `/client/src/GeneratorApp/GeneratorApp.js`, passes down template data (CodeStructure.js), project data (GeneratorAppHeader.js) and the code to be shown (CodeViewer.js) to its child components.
+```javascript
+...
+    return (
+      <div>
+        {/* Renders the regular view of the file and code structure */}
+        <GeneratorAppHeader
+          newProjectNameHandlerFromGeneratorApp={this.newProjectNameHandler}
+          currentProjectNameFromGeneratorApp={this.state.currentProjectName}
+          downloadableFromGeneratorApp={this.state.downloadable}
+        />
+        <CodeStructure
+          onNodeSelectHandlerFromGeneratorApp={this.onNodeSelectHandler}
+          templateFromGeneratorApp={this.state.template}
+        />
+        <CodeViewer
+          generatedCodeFromGeneratorApp={this.state.selectedFile}
+          shownToolTextFromGeneratorApp={this.state.showToolText}
+        />
+      </div>
+    )
 ...
 ```

@@ -23,28 +23,31 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/ligato/osseus/plugins/restapi/model"
+	"github.com/ligato/osseus/plugins/restapi/restmodel"
 
 	"github.com/unrolled/render"
 )
 
-const (
-	genPrefix      = "/vnf-agent/vpp1/config/generator/v1/project/"
-	projectsPrefix = "/projects/v1/plugins/"
-	templatePrefix = "/vnf-agent/vpp1/config/generator/v1/template/"
+var (
+	// genPrefix has the generator's watcher watching on this key for changes to generate
+	genPrefix = "/config/generator/v1/generate_template/"
+	// projectsPrefix has all the saved projects
+	projectsPrefix = "/config/generator/v1/projects/"
+	// templatePrefix has the stored structure and zip files
+	templatePrefix = "/config/generator/v1/template/"
 )
 
 // Project struct from etcd for projects
 type Project struct {
-	ProjectName string
-	Plugins     []Plugins
-	AgentName   string
+	ProjectName   string
+	Plugins       []Plugins
+	AgentName     string
 	CustomPlugins []CustomPlugin
 }
 
-// CustomPlugins struct to marshal input
-type CustomPlugin struct{
-	PluginName string
+// CustomPlugin struct to marshal input
+type CustomPlugin struct {
+	PluginName  string
 	PackageName string
 }
 
@@ -52,49 +55,53 @@ type CustomPlugin struct{
 type Plugins struct {
 	PluginName string
 	Selected   bool
-	Id         int32
+	ID         int32
 	Port       int32
 }
 
-// Template Structure struct from etcd for code structure
-type TemplateStructure struct{
-	Directories    []File
+// TemplateStructure struct from etcd for code structure
+type TemplateStructure struct {
+	Directories []File
 }
 
 // File struct in Template Structure
-type File struct{
-	Name           string
-	AbsolutePath   string
-	FileType       string
-	EtcdKey       string
-	Children      []string
+type File struct {
+	Name         string
+	AbsolutePath string
+	FileType     string
+	Children     []string
+}
+
+// ZipFile struct used to marshal generated code file
+type ZipFile struct {
+	Name    string
+	TarFile string
 }
 
 // FilePath struct used to specify file in template structure
 // can be "/{pluginName}/doc" or "/doc" if agent-level file
-type FilePath struct{
-	FilePath    string
+type FilePath struct {
+	FilePath string
 }
 
 // FileContents struct to return contents of generated code file
-type FileContents struct{
+type FileContents struct {
 	FileContents string
 }
 
 // Registers REST handlers
 func (p *Plugin) registerHandlersHere() {
+	/*** Handlers for managing projects ***/
 	// save project state
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects", p.SaveProjectHandler, POST)
-	// load project state for project with name = {id}
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.LoadProjectHandler, GET)
 	// delete a project
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/projects/{id}", p.DeleteProjectHandler, DELETE)
+
+	/*** Handlers for Code Generation ***/
 	// save project plugins to generate code
 	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/{id}", p.GenerateHandler, POST)
-	// get template structure of generated code
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.StructureHandler, GET)
-	// get contents of specified file
-	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates/structure/{id}", p.FileContentsHandler, POST)
+	// get generated zip file
+	p.HTTPHandlers.RegisterHTTPHandler("/v1/templates", p.GetGeneratedFileHandler, GET)
 }
 
 /*
@@ -133,23 +140,6 @@ func (p *Plugin) SaveProjectHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-// LoadProjectHandler loads a project from etcd
-func (p *Plugin) LoadProjectHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		// Retrieve value from etcd
-		vars := mux.Vars(req)
-		pID := vars["id"]
-		projectInfo := p.getProject(projectsPrefix, pID)
-
-		// Send value back to client
-		w.Header().Set("Content-Type", "application/json")
-		projectJSON, _ := json.Marshal(projectInfo)
-
-		w.WriteHeader(http.StatusOK)
-		w.Write(projectJSON)
-	}
-}
-
 // DeleteProjectHandler deletes a stored project from etcd
 func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -165,7 +155,7 @@ func (p *Plugin) DeleteProjectHandler(formatter *render.Render) http.HandlerFunc
 	}
 }
 
-// GenerateHandler handles generating a new template project
+// GenerateHandler handles generating a new project template, or updating an existing one
 func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		var reqParam Project
@@ -197,56 +187,20 @@ func (p *Plugin) GenerateHandler(formatter *render.Render) http.HandlerFunc {
 	}
 }
 
-// StructureHandler handles retrieving generated code folder structure
-func (p *Plugin) StructureHandler(formatter *render.Render) http.HandlerFunc {
+// GetGeneratedFileHandler loads the generated code file from etcd
+func (p *Plugin) GetGeneratedFileHandler(formatter *render.Render) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		// Retrieve value from etcd
-		vars := mux.Vars(req)
-		pID := vars["id"]
-		templateStructure := p.getStructure(templatePrefix, "structure/" + pID)
+
+		// Retrieve generated zip file from etcd
+		key := "zip"
+		zipFile := p.getGeneratedFile(templatePrefix, key)
 
 		// Send value back to client
 		w.Header().Set("Content-Type", "application/json")
-		structureJson, _ := json.Marshal(&templateStructure)
+		zipFileJSON, _ := json.Marshal(zipFile)
 
 		w.WriteHeader(http.StatusOK)
-		w.Write(structureJson)
-	}
-}
-
-// FileContentsHandler handles retrieving contents of a specific generated code file
-func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		// Retrieve value from etcd
-		vars := mux.Vars(req)
-		pID := vars["id"]
-
-		// Capture request body
-		body, err := ioutil.ReadAll(req.Body)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to parse request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		var reqParam FilePath
-		// Store JSON into FilePathName struct
-		err = json.Unmarshal(body, &reqParam)
-		if err != nil {
-			errMsg := fmt.Sprintf("400 Bad request: failed to unmarshall request body: %v\n", err)
-			p.Log.Error(errMsg)
-			p.logError(formatter.JSON(w, http.StatusBadRequest, errMsg))
-			return
-		}
-
-		fileContents := p.getFileContents(templatePrefix, "structure/" + pID + reqParam.FilePath)
-
-		// Send value back to client
-		w.Header().Set("Content-Type", "application/json")
-		contentsJson, _ := json.Marshal(fileContents)
-		w.WriteHeader(http.StatusOK)
-		w.Write(contentsJson)
+		w.Write(zipFileJSON)
 	}
 }
 
@@ -258,13 +212,13 @@ func (p *Plugin) FileContentsHandler(formatter *render.Render) http.HandlerFunc 
 
 // updates the prefix key with the given project information for generation
 func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
-	broker := p.KVStore.NewBroker(prefix)
+	p.setBroker(prefix)
 
 	// Get value based on key
-	value := new(model.Project)
-	pluginval := new(model.Plugin)
-	custompluginval := new(model.CustomPlugin)
-	found, _, err := broker.GetValue(key, value)
+	value := new(restmodel.Project)
+	pluginval := new(restmodel.Plugin)
+	custompluginval := new(restmodel.CustomPlugin)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -275,14 +229,14 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	}
 
 	// Prepare data
-	var pluginsList []*model.Plugin
-	var customPluginsList []*model.CustomPlugin
+	var pluginsList []*restmodel.Plugin
+	var customPluginsList []*restmodel.CustomPlugin
 
 	// Create a Plugins list that will be stored in etcd
-	for _, plugin :=  range proj.Plugins{
-		pluginval = &model.Plugin{
+	for _, plugin := range proj.Plugins {
+		pluginval = &restmodel.Plugin{
 			PluginName: plugin.PluginName,
-			Id:         plugin.Id,
+			Id:         plugin.ID,
 			Selected:   plugin.Selected,
 			Port:       plugin.Port,
 		}
@@ -290,35 +244,36 @@ func (p *Plugin) genUpdater(proj Project, prefix string, key string) {
 	}
 
 	//create CustomPlugins list that will be stored in etcd
-	for _, customPlugin := range proj.CustomPlugins{
-		custompluginval = &model.CustomPlugin{
-			PluginName:    customPlugin.PluginName,
-			PackageName: 		 customPlugin.PackageName,
+	for _, customPlugin := range proj.CustomPlugins {
+		custompluginval = &restmodel.CustomPlugin{
+			PluginName:  customPlugin.PluginName,
+			PackageName: customPlugin.PackageName,
 		}
 		customPluginsList = append(customPluginsList, custompluginval)
 	}
 
-	value = &model.Project{
-		ProjectName: proj.ProjectName,
-		Plugin:      pluginsList,
-		AgentName:   proj.AgentName,
+	//create Project object to be stored in etcd
+	value = &restmodel.Project{
+		ProjectName:  proj.ProjectName,
+		Plugin:       pluginsList,
+		AgentName:    proj.AgentName,
 		CustomPlugin: customPluginsList,
 	}
 
 	// Update value in KV store
-	if err := broker.Put(key, value); err != nil {
+	if err := p.broker.Put(key, value); err != nil {
 		p.Log.Errorf("Put failed: %v", err)
 	}
 	p.Log.Debugf("kv store should have (key): %v at (prefix): %v", key, prefix)
 }
 
-// returns the Project at specified key {projectName}
-func (p *Plugin) getProject(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
+// returns the generated zip file
+func (p *Plugin) getGeneratedFile(prefix string, key string) interface{} {
+	p.setBroker(prefix)
 
-	// Get value based on key
-	value := new(model.Project)
-	found, _, err := broker.GetValue(key, value)
+	// Get value based on key (zip, because only 1 zip entry is stored per project)
+	value := new(restmodel.Template)
+	found, _, err := p.broker.GetValue(key, value)
 
 	if err != nil {
 		p.Log.Errorf("GetValue failed: %v", err)
@@ -328,105 +283,31 @@ func (p *Plugin) getProject(prefix string, key string) interface{} {
 		p.Log.Infof("Found some plugins: %+v", value)
 	}
 
-	var pluginsList []Plugins
-	var customPluginsList []CustomPlugin
-
-	// Create a Plugins list to be returned
-	for _, plugin := range value.Plugin{
-		pluginval := Plugins{
-			PluginName: plugin.PluginName,
-			Id:         plugin.Id,
-			Selected:   plugin.Selected,
-			Port:       plugin.Port,
-		}
-		pluginsList = append(pluginsList, pluginval)
+	// map zip contents into ZipFile object
+	zipFile := ZipFile{
+		Name:    value.Name,
+		TarFile: value.TarFile,
 	}
 
-	//create CustomPlugins list to be returned
-	for _, customPlugin := range value.CustomPlugin{
-		custompluginval := CustomPlugin{
-			PluginName:    customPlugin.PluginName,
-			PackageName: 		 customPlugin.PackageName,
-		}
-		customPluginsList = append(customPluginsList, custompluginval)
-	}
-	project := Project{
-		ProjectName: value.ProjectName,
-		Plugins:     pluginsList,
-		AgentName:   value.AgentName,
-		CustomPlugins:	customPluginsList,
-	}
-
-	return project
+	return zipFile
 }
 
-// returns template structure as directory of files
-func (p *Plugin) getStructure(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
-
-	// Get value based on key
-	value := new(model.TemplateStructure)
-	found, _, err := broker.GetValue(key, value)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No template structure found..")
-	} else {
-		p.Log.Infof("Found template structure: %+v", value)
-	}
-
-	var directoriesList []File
-	for _, file := range value.File{
-		fileEntry := File{
-			Name:    file.Name,
-			AbsolutePath: file.AbsolutePath,
-			FileType:     file.FileType,
-			EtcdKey:   file.EtcdKey,
-			Children:   file.Children,
-		}
-		directoriesList = append(directoriesList, fileEntry)
-	}
-
-	structure := TemplateStructure{
-		Directories: directoriesList,
-	}
-
-	return structure
-}
-
-// returns contents of specified file
-func (p *Plugin) getFileContents(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
-
-	// Get value based on key
-	value := new(model.FileContent)
-	found, _, err := broker.GetValue(key, value)
-
-	if err != nil {
-		p.Log.Errorf("GetValue failed: %v", err)
-	} else if !found {
-		p.Log.Info("No file contents found..")
-	} else {
-		p.Log.Infof("Found file contents: %+v", value)
-	}
-
-	contents := FileContents{
-		FileContents:    value.Content,
-	}
-	return contents
-}
-
-
-// returns true if value at key deleted, false otherwise
+// returns true if value at key is deleted, false otherwise
+// used to delete project entries in etcd
 func (p *Plugin) deleteValue(prefix string, key string) interface{} {
-	broker := p.KVStore.NewBroker(prefix)
-	existed, err := broker.Delete(key)
+	p.setBroker(prefix)
+	existed, err := p.broker.Delete(key)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	return existed
+}
+
+// sets the broker based on passed-in prefix
+func (p *Plugin) setBroker(prefix string) {
+	keyPrefix := "/vnf-agent/" + Label + prefix
+	p.broker = p.KVStore.NewBroker(keyPrefix)
 }
 
 // logError logs non-nil errors from JSON formatter

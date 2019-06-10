@@ -1,3 +1,17 @@
+// Copyright (c) 2019 Cisco and/or its affiliates.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package gencalls
 
 const (
@@ -17,7 +31,7 @@ const (
 	prometheusInit = `Prometheus:    &prometheus.DefaultPlugin,`
 
 	// Etcd
-	//assuming the kvstore tutorial method; not newEtcdConnectionWithBytes()
+	//using the kvstore method; not newEtcdConnectionWithBytes()
 	etcdImport = `"github.com/ligato/cn-infra/db/keyval"
     "github.com/ligato/cn-infra/db/keyval/etcd"`
 	etcdDecl = `KVStore    keyval.KvProtoPlugin`
@@ -75,7 +89,7 @@ const (
 	idxMapDecl = `mapping    idxmap.NamedMappingRW`
 	idxMapInit = `mapping:    mem.NewNamedMapping(logging.DefaultLogger, "mappingName", IndexFunction),`
 
-// Service Label
+	// Service Label
 	serviceLblImport = `"github.com/ligato/cn-infra/servicelabel"`
 	serviceLblDecl = `ServiceLabel    *servicelabel.Plugin`
 	serviceLblInit = `ServiceLabel:    &servicelabel.DefaultPlugin,`

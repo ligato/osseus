@@ -39,9 +39,9 @@ type ProjectHandler struct {
 }
 
 // NewProjectHandler creates new instance of ProjectHandler
-func NewProjectHandler(log logging.Logger, KVStore keyval.KvProtoPlugin) *ProjectHandler {
+func NewProjectHandler(log logging.Logger, KVStore keyval.KvProtoPlugin, label string) *ProjectHandler {
 	return &ProjectHandler{
 		log:    log,
-		broker: KVStore.NewBroker("/vnf-agent/vpp1/" + model.ModelTemplate.KeyPrefix()),
+		broker: KVStore.NewBroker(label + "/" +model.ModelTemplate.KeyPrefix()),
 	}
 }

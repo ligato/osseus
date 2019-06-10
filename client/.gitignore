@@ -3,6 +3,7 @@
 # generation files
 /public/code.txt
 /public/template.tgz
+/public/template
 
 # db json
 webHooksDB.json

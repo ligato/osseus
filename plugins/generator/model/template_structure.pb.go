@@ -21,55 +21,68 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
-// FileContent holds the content of the go file
-type FileContent struct {
-	Content              string   `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+//TemplateStructure holds the directory and folder structure of the project
+type TemplateStructure struct {
+	// List of file objects describing directory structure of generated files
+	Structure []*File `protobuf:"bytes,1,rep,name=structure,proto3" json:"structure,omitempty"`
+	// List of contents of the generated code files
+	Files                []*FileContent `protobuf:"bytes,2,rep,name=files,proto3" json:"files,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *FileContent) Reset()         { *m = FileContent{} }
-func (m *FileContent) String() string { return proto.CompactTextString(m) }
-func (*FileContent) ProtoMessage()    {}
-func (*FileContent) Descriptor() ([]byte, []int) {
+func (m *TemplateStructure) Reset()         { *m = TemplateStructure{} }
+func (m *TemplateStructure) String() string { return proto.CompactTextString(m) }
+func (*TemplateStructure) ProtoMessage()    {}
+func (*TemplateStructure) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d06b0c468bb01978, []int{0}
 }
-func (m *FileContent) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_FileContent.Unmarshal(m, b)
+func (m *TemplateStructure) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TemplateStructure.Unmarshal(m, b)
 }
-func (m *FileContent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_FileContent.Marshal(b, m, deterministic)
+func (m *TemplateStructure) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TemplateStructure.Marshal(b, m, deterministic)
 }
-func (m *FileContent) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FileContent.Merge(m, src)
+func (m *TemplateStructure) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TemplateStructure.Merge(m, src)
 }
-func (m *FileContent) XXX_Size() int {
-	return xxx_messageInfo_FileContent.Size(m)
+func (m *TemplateStructure) XXX_Size() int {
+	return xxx_messageInfo_TemplateStructure.Size(m)
 }
-func (m *FileContent) XXX_DiscardUnknown() {
-	xxx_messageInfo_FileContent.DiscardUnknown(m)
+func (m *TemplateStructure) XXX_DiscardUnknown() {
+	xxx_messageInfo_TemplateStructure.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_FileContent proto.InternalMessageInfo
+var xxx_messageInfo_TemplateStructure proto.InternalMessageInfo
 
-func (m *FileContent) GetContent() string {
+func (m *TemplateStructure) GetStructure() []*File {
 	if m != nil {
-		return m.Content
+		return m.Structure
 	}
-	return ""
+	return nil
 }
 
-func (*FileContent) XXX_MessageName() string {
-	return "model.FileContent"
+func (m *TemplateStructure) GetFiles() []*FileContent {
+	if m != nil {
+		return m.Files
+	}
+	return nil
 }
 
-// File holds the folder path, children, type, and etcdkey of the given file
+func (*TemplateStructure) XXX_MessageName() string {
+	return "model.TemplateStructure"
+}
+
+// File holds the folder name, path, type, and children of the given file
 type File struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	AbsolutePath         string   `protobuf:"bytes,2,opt,name=absolutePath,proto3" json:"absolutePath,omitempty"`
-	FileType             string   `protobuf:"bytes,3,opt,name=fileType,proto3" json:"fileType,omitempty"`
-	EtcdKey              string   `protobuf:"bytes,4,opt,name=etcdKey,proto3" json:"etcdKey,omitempty"`
+	// Name of generated code file or folder
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Path of generated code file
+	AbsolutePath string `protobuf:"bytes,2,opt,name=absolutePath,proto3" json:"absolutePath,omitempty"`
+	// "Folder" if a folder in the directory or "File" if code file
+	FileType string `protobuf:"bytes,3,opt,name=fileType,proto3" json:"fileType,omitempty"`
+	// Absolute path(s) of direct children folders of the file, empty list if no children
 	Children             []string `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -121,13 +134,6 @@ func (m *File) GetFileType() string {
 	return ""
 }
 
-func (m *File) GetEtcdKey() string {
-	if m != nil {
-		return m.EtcdKey
-	}
-	return ""
-}
-
 func (m *File) GetChildren() []string {
 	if m != nil {
 		return m.Children
@@ -139,72 +145,81 @@ func (*File) XXX_MessageName() string {
 	return "model.File"
 }
 
-//TemplateStructure holds the directory and folder structure of the project
-type TemplateStructure struct {
-	File                 []*File  `protobuf:"bytes,1,rep,name=file,proto3" json:"file,omitempty"`
+// FileContent holds the content of the go file
+type FileContent struct {
+	FileName string `protobuf:"bytes,1,opt,name=fileName,proto3" json:"fileName,omitempty"`
+	// Content of the generated code file
+	Content              string   `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *TemplateStructure) Reset()         { *m = TemplateStructure{} }
-func (m *TemplateStructure) String() string { return proto.CompactTextString(m) }
-func (*TemplateStructure) ProtoMessage()    {}
-func (*TemplateStructure) Descriptor() ([]byte, []int) {
+func (m *FileContent) Reset()         { *m = FileContent{} }
+func (m *FileContent) String() string { return proto.CompactTextString(m) }
+func (*FileContent) ProtoMessage()    {}
+func (*FileContent) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d06b0c468bb01978, []int{2}
 }
-func (m *TemplateStructure) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TemplateStructure.Unmarshal(m, b)
+func (m *FileContent) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_FileContent.Unmarshal(m, b)
 }
-func (m *TemplateStructure) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TemplateStructure.Marshal(b, m, deterministic)
+func (m *FileContent) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_FileContent.Marshal(b, m, deterministic)
 }
-func (m *TemplateStructure) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TemplateStructure.Merge(m, src)
+func (m *FileContent) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FileContent.Merge(m, src)
 }
-func (m *TemplateStructure) XXX_Size() int {
-	return xxx_messageInfo_TemplateStructure.Size(m)
+func (m *FileContent) XXX_Size() int {
+	return xxx_messageInfo_FileContent.Size(m)
 }
-func (m *TemplateStructure) XXX_DiscardUnknown() {
-	xxx_messageInfo_TemplateStructure.DiscardUnknown(m)
+func (m *FileContent) XXX_DiscardUnknown() {
+	xxx_messageInfo_FileContent.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TemplateStructure proto.InternalMessageInfo
+var xxx_messageInfo_FileContent proto.InternalMessageInfo
 
-func (m *TemplateStructure) GetFile() []*File {
+func (m *FileContent) GetFileName() string {
 	if m != nil {
-		return m.File
+		return m.FileName
 	}
-	return nil
+	return ""
 }
 
-func (*TemplateStructure) XXX_MessageName() string {
-	return "model.TemplateStructure"
+func (m *FileContent) GetContent() string {
+	if m != nil {
+		return m.Content
+	}
+	return ""
+}
+
+func (*FileContent) XXX_MessageName() string {
+	return "model.FileContent"
 }
 func init() {
-	proto.RegisterType((*FileContent)(nil), "model.FileContent")
-	proto.RegisterType((*File)(nil), "model.File")
 	proto.RegisterType((*TemplateStructure)(nil), "model.TemplateStructure")
+	proto.RegisterType((*File)(nil), "model.File")
+	proto.RegisterType((*FileContent)(nil), "model.FileContent")
 }
 
 func init() { proto.RegisterFile("template_structure.proto", fileDescriptor_d06b0c468bb01978) }
 
 var fileDescriptor_d06b0c468bb01978 = []byte{
-	// 249 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0x3d, 0x4e, 0xc4, 0x30,
-	0x10, 0x85, 0x65, 0xe2, 0xe5, 0x67, 0x42, 0x83, 0x2b, 0x6b, 0x0b, 0x88, 0xd2, 0xb0, 0x0d, 0x59,
-	0x09, 0x38, 0x01, 0x48, 0x34, 0x34, 0x68, 0xd9, 0x1e, 0x25, 0xce, 0x6c, 0x12, 0xc9, 0x89, 0xa3,
-	0xec, 0xb8, 0xc8, 0x2d, 0x38, 0x16, 0xf7, 0xe0, 0x22, 0xc8, 0x93, 0x04, 0x69, 0xbb, 0xf7, 0xf9,
-	0xf9, 0x79, 0x3c, 0x0f, 0x34, 0x61, 0xdb, 0xdb, 0x9c, 0xf0, 0xeb, 0x48, 0x83, 0x37, 0xe4, 0x07,
-	0xcc, 0xfa, 0xc1, 0x91, 0x53, 0xab, 0xd6, 0x95, 0x68, 0xd7, 0x0f, 0x55, 0x43, 0xb5, 0x2f, 0x32,
-	0xe3, 0xda, 0x6d, 0xe5, 0x2a, 0xb7, 0x65, 0xb7, 0xf0, 0x07, 0x26, 0x06, 0x56, 0x53, 0x2a, 0xbd,
-	0x87, 0xf8, 0xad, 0xb1, 0xf8, 0xea, 0x3a, 0xc2, 0x8e, 0x94, 0x86, 0x0b, 0x33, 0x49, 0x2d, 0x12,
-	0xb1, 0xb9, 0xda, 0x2d, 0x98, 0x7e, 0x0b, 0x90, 0xe1, 0xa6, 0x52, 0x20, 0xbb, 0xbc, 0xc5, 0xd9,
-	0x67, 0xad, 0x52, 0xb8, 0xce, 0x8b, 0xa3, 0xb3, 0x9e, 0xf0, 0x23, 0xa7, 0x5a, 0x9f, 0xb1, 0x77,
-	0x72, 0xa6, 0xd6, 0x70, 0x79, 0x68, 0x2c, 0xee, 0xc7, 0x1e, 0x75, 0xc4, 0xfe, 0x3f, 0x87, 0xb1,
-	0x48, 0xa6, 0x7c, 0xc7, 0x51, 0xcb, 0x69, 0xec, 0x8c, 0x21, 0x65, 0xea, 0xc6, 0x96, 0x03, 0x76,
-	0x7a, 0x95, 0x44, 0x21, 0xb5, 0x70, 0xfa, 0x0c, 0x37, 0xfb, 0xb9, 0x8d, 0xcf, 0xa5, 0x0c, 0x75,
-	0x07, 0x32, 0x3c, 0xab, 0x45, 0x12, 0x6d, 0xe2, 0xc7, 0x38, 0xe3, 0x56, 0xb2, 0xf0, 0xf3, 0x1d,
-	0x1b, 0x2f, 0xf2, 0xe7, 0xf7, 0x56, 0x14, 0xe7, 0xbc, 0xfe, 0xd3, 0x5f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0x87, 0xb1, 0xd0, 0x59, 0x50, 0x01, 0x00, 0x00,
+	// 252 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0xc1, 0x4e, 0x83, 0x40,
+	0x10, 0x86, 0xd3, 0x02, 0x6a, 0x07, 0x2f, 0xce, 0x69, 0xd3, 0x83, 0x69, 0x38, 0xe1, 0x41, 0x9a,
+	0xe8, 0x1b, 0xd8, 0xc4, 0xa3, 0x31, 0xd8, 0xbb, 0x01, 0x3a, 0x05, 0x92, 0x85, 0x25, 0x30, 0x6b,
+	0xe2, 0x1b, 0xfa, 0x1e, 0xbe, 0x88, 0xd9, 0xa1, 0xd0, 0x7a, 0x9b, 0x7f, 0xbe, 0x7f, 0xbf, 0x4c,
+	0x16, 0x14, 0x53, 0xd3, 0xe9, 0x8c, 0xe9, 0x73, 0xe0, 0xde, 0x16, 0x6c, 0x7b, 0x4a, 0xba, 0xde,
+	0xb0, 0xc1, 0xa0, 0x31, 0x07, 0xd2, 0xeb, 0xc7, 0xb2, 0xe6, 0xca, 0xe6, 0x49, 0x61, 0x9a, 0x6d,
+	0x69, 0x4a, 0xb3, 0x15, 0x9a, 0xdb, 0xa3, 0x24, 0x09, 0x32, 0x8d, 0xaf, 0xa2, 0x0a, 0xee, 0xf6,
+	0x27, 0xe3, 0xc7, 0x24, 0xc4, 0x07, 0x58, 0xcd, 0x76, 0xb5, 0xd8, 0x78, 0x71, 0xf8, 0x14, 0x26,
+	0xa2, 0x4f, 0x5e, 0x6b, 0x4d, 0xe9, 0x99, 0x62, 0x0c, 0xc1, 0xb1, 0xd6, 0x34, 0xa8, 0xa5, 0xd4,
+	0xf0, 0xa2, 0xb6, 0x33, 0x2d, 0x53, 0xcb, 0xe9, 0x58, 0x88, 0xbe, 0xc0, 0x77, 0x5b, 0x44, 0xf0,
+	0xdb, 0xac, 0x71, 0xde, 0x45, 0xbc, 0x4a, 0x65, 0xc6, 0x08, 0x6e, 0xb3, 0x7c, 0x30, 0xda, 0x32,
+	0xbd, 0x67, 0x5c, 0xa9, 0xa5, 0xb0, 0x7f, 0x3b, 0x5c, 0xc3, 0x8d, 0x13, 0xed, 0xbf, 0x3b, 0x52,
+	0x9e, 0xf0, 0x39, 0x3b, 0x56, 0x54, 0xb5, 0x3e, 0xf4, 0xd4, 0xaa, 0x60, 0xe3, 0x39, 0x36, 0xe5,
+	0x68, 0x07, 0xe1, 0xc5, 0x35, 0x93, 0xe6, 0xed, 0x7c, 0xc2, 0x9c, 0x51, 0xc1, 0x75, 0x31, 0xd6,
+	0x4e, 0x17, 0x4c, 0xf1, 0xc5, 0xff, 0xf9, 0xbd, 0x5f, 0xe4, 0x57, 0xf2, 0x67, 0xcf, 0x7f, 0x01,
+	0x00, 0x00, 0xff, 0xff, 0xad, 0x7c, 0xe1, 0xdb, 0x85, 0x01, 0x00, 0x00,
 }

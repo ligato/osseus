@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package restmodel;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+option (gogoproto.messagename_all) = true;
+
+// Project holds the data fields stored
+message Project {
+
+    // Name of project provided by user
+    string projectName = 1;
+
+    // List of cn-infra plugins
+    repeated Plugin plugin = 2;
+
+    // Name of agent that runs cn-infra plugins provided by user
+    string agentName = 3;
+
+    // List of custom plugins
+    repeated CustomPlugin customPlugin = 4;
+}
+
+// A plugin resource
+message Plugin {
+
+    // Name or type of cn-infra plugin; i.e. kafka, etcd
+    string pluginName = 1;
+
+    // Frontend-assigned ID for the plugin
+    int32 id = 2;
+
+    // True if plugin is selected in the frontend, false if not
+    bool selected = 3;
+
+    // IP port plugin uses for connection
+    int32 port = 4;
+};
+
+// A custom plugin resource
+message CustomPlugin {
+
+    // Name of custom plugin provided by user
+    string pluginName = 1;
+
+    // Name of package for custom plugin provided by user
+    string packageName = 2;
+};

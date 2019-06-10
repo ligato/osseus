@@ -21,11 +21,86 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
+// Project holds the data fields stored
+type Project struct {
+	// Name of project provided by user
+	ProjectName string `protobuf:"bytes,1,opt,name=projectName,proto3" json:"projectName,omitempty"`
+	// List of cn-infra plugins
+	Plugin []*Plugin `protobuf:"bytes,2,rep,name=plugin,proto3" json:"plugin,omitempty"`
+	// Name of agent that runs cn-infra plugins provided by user
+	AgentName string `protobuf:"bytes,3,opt,name=agentName,proto3" json:"agentName,omitempty"`
+	// List of custom plugins
+	CustomPlugin         []*CustomPlugin `protobuf:"bytes,4,rep,name=customPlugin,proto3" json:"customPlugin,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *Project) Reset()         { *m = Project{} }
+func (m *Project) String() string { return proto.CompactTextString(m) }
+func (*Project) ProtoMessage()    {}
+func (*Project) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8340e6318dfdfac2, []int{0}
+}
+func (m *Project) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Project.Unmarshal(m, b)
+}
+func (m *Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Project.Marshal(b, m, deterministic)
+}
+func (m *Project) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Project.Merge(m, src)
+}
+func (m *Project) XXX_Size() int {
+	return xxx_messageInfo_Project.Size(m)
+}
+func (m *Project) XXX_DiscardUnknown() {
+	xxx_messageInfo_Project.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Project proto.InternalMessageInfo
+
+func (m *Project) GetProjectName() string {
+	if m != nil {
+		return m.ProjectName
+	}
+	return ""
+}
+
+func (m *Project) GetPlugin() []*Plugin {
+	if m != nil {
+		return m.Plugin
+	}
+	return nil
+}
+
+func (m *Project) GetAgentName() string {
+	if m != nil {
+		return m.AgentName
+	}
+	return ""
+}
+
+func (m *Project) GetCustomPlugin() []*CustomPlugin {
+	if m != nil {
+		return m.CustomPlugin
+	}
+	return nil
+}
+
+func (*Project) XXX_MessageName() string {
+	return "model.Project"
+}
+
 // A plugin resource
 type Plugin struct {
-	PluginName           string   `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
-	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
-	Selected             bool     `protobuf:"varint,3,opt,name=selected,proto3" json:"selected,omitempty"`
+	// Name or type of cn-infra plugin; i.e. kafka, etcd
+	PluginName string `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Frontend-assigned ID for the plugin
+	Id int32 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	// True if plugin is selected in the frontend, false if not
+	Selected bool `protobuf:"varint,3,opt,name=selected,proto3" json:"selected,omitempty"`
+	// IP port plugin uses for connection
 	Port                 int32    `protobuf:"varint,4,opt,name=port,proto3" json:"port,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -36,7 +111,7 @@ func (m *Plugin) Reset()         { *m = Plugin{} }
 func (m *Plugin) String() string { return proto.CompactTextString(m) }
 func (*Plugin) ProtoMessage()    {}
 func (*Plugin) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8340e6318dfdfac2, []int{0}
+	return fileDescriptor_8340e6318dfdfac2, []int{1}
 }
 func (m *Plugin) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Plugin.Unmarshal(m, b)
@@ -90,7 +165,9 @@ func (*Plugin) XXX_MessageName() string {
 
 // A custom plugin resource
 type CustomPlugin struct {
-	PluginName           string   `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Name of custom plugin provided by user
+	PluginName string `protobuf:"bytes,1,opt,name=pluginName,proto3" json:"pluginName,omitempty"`
+	// Name of package for custom plugin provided by user
 	PackageName          string   `protobuf:"bytes,2,opt,name=packageName,proto3" json:"packageName,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -101,7 +178,7 @@ func (m *CustomPlugin) Reset()         { *m = CustomPlugin{} }
 func (m *CustomPlugin) String() string { return proto.CompactTextString(m) }
 func (*CustomPlugin) ProtoMessage()    {}
 func (*CustomPlugin) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8340e6318dfdfac2, []int{1}
+	return fileDescriptor_8340e6318dfdfac2, []int{2}
 }
 func (m *CustomPlugin) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CustomPlugin.Unmarshal(m, b)
@@ -138,98 +215,31 @@ func (m *CustomPlugin) GetPackageName() string {
 func (*CustomPlugin) XXX_MessageName() string {
 	return "model.CustomPlugin"
 }
-
-// Project holds the data fields stored
-type Project struct {
-	ProjectName          string          `protobuf:"bytes,1,opt,name=projectName,proto3" json:"projectName,omitempty"`
-	Plugin               []*Plugin       `protobuf:"bytes,2,rep,name=plugin,proto3" json:"plugin,omitempty"`
-	AgentName            string          `protobuf:"bytes,3,opt,name=agentName,proto3" json:"agentName,omitempty"`
-	CustomPlugin         []*CustomPlugin `protobuf:"bytes,4,rep,name=customPlugin,proto3" json:"customPlugin,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
-}
-
-func (m *Project) Reset()         { *m = Project{} }
-func (m *Project) String() string { return proto.CompactTextString(m) }
-func (*Project) ProtoMessage()    {}
-func (*Project) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8340e6318dfdfac2, []int{2}
-}
-func (m *Project) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Project.Unmarshal(m, b)
-}
-func (m *Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Project.Marshal(b, m, deterministic)
-}
-func (m *Project) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Project.Merge(m, src)
-}
-func (m *Project) XXX_Size() int {
-	return xxx_messageInfo_Project.Size(m)
-}
-func (m *Project) XXX_DiscardUnknown() {
-	xxx_messageInfo_Project.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Project proto.InternalMessageInfo
-
-func (m *Project) GetProjectName() string {
-	if m != nil {
-		return m.ProjectName
-	}
-	return ""
-}
-
-func (m *Project) GetPlugin() []*Plugin {
-	if m != nil {
-		return m.Plugin
-	}
-	return nil
-}
-
-func (m *Project) GetAgentName() string {
-	if m != nil {
-		return m.AgentName
-	}
-	return ""
-}
-
-func (m *Project) GetCustomPlugin() []*CustomPlugin {
-	if m != nil {
-		return m.CustomPlugin
-	}
-	return nil
-}
-
-func (*Project) XXX_MessageName() string {
-	return "model.Project"
-}
 func init() {
+	proto.RegisterType((*Project)(nil), "model.Project")
 	proto.RegisterType((*Plugin)(nil), "model.Plugin")
 	proto.RegisterType((*CustomPlugin)(nil), "model.CustomPlugin")
-	proto.RegisterType((*Project)(nil), "model.Project")
 }
 
 func init() { proto.RegisterFile("project.proto", fileDescriptor_8340e6318dfdfac2) }
 
 var fileDescriptor_8340e6318dfdfac2 = []byte{
-	// 264 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x41, 0x4e, 0xc3, 0x30,
-	0x10, 0x45, 0x65, 0x27, 0x0d, 0xed, 0xb4, 0x65, 0x61, 0x36, 0x56, 0x85, 0x2a, 0x2b, 0x12, 0x52,
-	0x36, 0xa4, 0x12, 0x2c, 0xd8, 0xc3, 0x1e, 0x45, 0xbe, 0x41, 0xe2, 0x18, 0x37, 0x90, 0xd4, 0x56,
-	0xea, 0x1c, 0x8a, 0x9b, 0x70, 0x0f, 0x2e, 0x82, 0x34, 0x8e, 0xc0, 0xec, 0xba, 0xfb, 0xf3, 0xe7,
-	0xe7, 0xc5, 0xf3, 0x61, 0xeb, 0x46, 0xfb, 0xae, 0x95, 0x2f, 0xdd, 0x68, 0xbd, 0x65, 0x8b, 0xc1,
-	0xb6, 0xba, 0xdf, 0xdd, 0x9b, 0xce, 0x1f, 0xa7, 0xa6, 0x54, 0x76, 0x38, 0x18, 0x6b, 0xec, 0x01,
-	0xb7, 0xcd, 0xf4, 0x86, 0x13, 0x0e, 0xa8, 0xc2, 0x57, 0xf9, 0x11, 0xb2, 0xaa, 0x9f, 0x4c, 0x77,
-	0x62, 0x7b, 0x00, 0x87, 0xea, 0xb5, 0x1e, 0x34, 0x27, 0x82, 0x14, 0x2b, 0x19, 0x39, 0xec, 0x1a,
-	0x68, 0xd7, 0x72, 0x2a, 0x48, 0xb1, 0x90, 0xb4, 0x6b, 0xd9, 0x0e, 0x96, 0x67, 0xdd, 0x6b, 0xe5,
-	0x75, 0xcb, 0x13, 0x41, 0x8a, 0xa5, 0xfc, 0x9d, 0x19, 0x83, 0xd4, 0xd9, 0xd1, 0xf3, 0x14, 0xd3,
-	0xa8, 0xf3, 0x0a, 0x36, 0x2f, 0xd3, 0xd9, 0xdb, 0xe1, 0xc2, 0xff, 0x09, 0x58, 0xbb, 0x5a, 0x7d,
-	0xd4, 0x46, 0x63, 0x80, 0x62, 0x20, 0xb6, 0xf2, 0x4f, 0x02, 0x57, 0x55, 0xe8, 0x00, 0xd3, 0x41,
-	0x46, 0xb8, 0xd8, 0x62, 0x77, 0x90, 0x05, 0x3a, 0xa7, 0x22, 0x29, 0xd6, 0x0f, 0xdb, 0x12, 0x0b,
-	0x2b, 0xc3, 0x73, 0xe4, 0xbc, 0x64, 0xb7, 0xb0, 0xaa, 0x8d, 0x3e, 0x05, 0x4c, 0x82, 0x98, 0x3f,
-	0x83, 0x3d, 0xc1, 0x46, 0x45, 0x47, 0xf0, 0x14, 0x51, 0x37, 0x33, 0x2a, 0xbe, 0x4f, 0xfe, 0x0b,
-	0x3e, 0xa7, 0x5f, 0xdf, 0x7b, 0xd2, 0x64, 0x58, 0xfa, 0xe3, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x86, 0x51, 0xce, 0x0b, 0xbb, 0x01, 0x00, 0x00,
+	// 265 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0xc1, 0x4e, 0xc3, 0x30,
+	0x0c, 0x86, 0x95, 0xac, 0x2b, 0x9b, 0xb7, 0x71, 0x30, 0x97, 0x68, 0x42, 0x53, 0x55, 0x09, 0xa9,
+	0x17, 0x3a, 0x09, 0x0e, 0xdc, 0xe1, 0x8e, 0xaa, 0xbc, 0x41, 0x9b, 0x86, 0xac, 0xd0, 0x2e, 0x55,
+	0x97, 0x3e, 0x14, 0x6f, 0xc2, 0x7b, 0xf0, 0x22, 0x08, 0xa7, 0x62, 0xe1, 0xb4, 0x9b, 0xfd, 0xdb,
+	0xfe, 0xfc, 0xeb, 0x87, 0x4d, 0x3f, 0xd8, 0x77, 0xad, 0x5c, 0xde, 0x0f, 0xd6, 0x59, 0x9c, 0x77,
+	0xb6, 0xd6, 0xed, 0xf6, 0xde, 0x34, 0xee, 0x30, 0x56, 0xb9, 0xb2, 0xdd, 0xde, 0x58, 0x63, 0xf7,
+	0x34, 0xad, 0xc6, 0x37, 0xea, 0xa8, 0xa1, 0xca, 0x5f, 0xa5, 0x9f, 0x0c, 0xae, 0x0a, 0xcf, 0xc1,
+	0x04, 0x56, 0x13, 0xf2, 0xb5, 0xec, 0xb4, 0x60, 0x09, 0xcb, 0x96, 0x32, 0x94, 0xf0, 0x0e, 0xe2,
+	0xbe, 0x1d, 0x4d, 0x73, 0x14, 0x3c, 0x99, 0x65, 0xab, 0x87, 0x4d, 0x4e, 0x4f, 0xf3, 0x82, 0x44,
+	0x39, 0x0d, 0xf1, 0x16, 0x96, 0xa5, 0xd1, 0x47, 0x8f, 0x99, 0x11, 0xe6, 0x2c, 0xe0, 0x13, 0xac,
+	0xd5, 0x78, 0x72, 0xb6, 0xf3, 0x57, 0x22, 0x22, 0xd4, 0xcd, 0x84, 0x7a, 0x09, 0x46, 0xf2, 0xdf,
+	0x62, 0x7a, 0x80, 0xd8, 0x57, 0xb8, 0x03, 0xf0, 0xaf, 0x02, 0xa3, 0x81, 0x82, 0xd7, 0xc0, 0x9b,
+	0x5a, 0xf0, 0x84, 0x65, 0x73, 0xc9, 0x9b, 0x1a, 0xb7, 0xb0, 0x38, 0xe9, 0x56, 0x2b, 0xa7, 0x6b,
+	0xf2, 0xb3, 0x90, 0x7f, 0x3d, 0x22, 0x44, 0xbd, 0x1d, 0x9c, 0x88, 0x68, 0x9b, 0xea, 0xb4, 0x80,
+	0x75, 0xe8, 0xe3, 0xe2, 0xbf, 0xdf, 0xe4, 0x4a, 0xf5, 0x51, 0x1a, 0x4d, 0x0b, 0x7c, 0x4a, 0xee,
+	0x2c, 0x3d, 0x47, 0x5f, 0xdf, 0x3b, 0x56, 0xc5, 0x14, 0xfa, 0xe3, 0x4f, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x0f, 0x7e, 0x3b, 0xb1, 0xbb, 0x01, 0x00, 0x00,
 }

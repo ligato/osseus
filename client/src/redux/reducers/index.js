@@ -1,3 +1,17 @@
+// Copyright (c) 2019 Cisco and/or its affiliates.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Used by UI
 import { ADD_CURR_PROJECT } from "../constants/action-types";
 import { SET_CURR_PROJECT } from "../constants/action-types";
@@ -9,25 +23,19 @@ import { DELETE_PROJECT } from "../constants/action-types";
 import { LOAD_ALL_PROJECTS } from "../constants/action-types";
 import { LOAD_PROJECT_FROM_KV } from "../constants/action-types";
 import { SAVE_PROJECT_TO_KV } from "../constants/action-types";
-import { DOWNLOAD_TEMPLATE } from "../constants/action-types";
-import { DOWNLOAD_GO } from "../constants/action-types";
 import { DOWNLOAD_TAR } from "../constants/action-types";
 
 // Returned from server
 import { RETURN_LOAD_PROJECT } from "../constants/action-types";
 import { RETURN_TEMPLATE } from "../constants/action-types";
-import { RETURN_GO } from "../constants/action-types";
 
 import { socket } from '../../index';
 
-
-const initialState = {
+var initialState = {
   currPopupID: null,
   projects: [],
   currProject: null,
-  tar: null,
   template: null,
-  goFiles: []
 };
 function rootReducer(state = initialState, action) {
   //Add the current project to the array of saved projects
@@ -58,13 +66,7 @@ function rootReducer(state = initialState, action) {
   //Retreives the template from the server
   else if (action.type === RETURN_TEMPLATE) {
     return Object.assign({}, state, {
-      template: action.payload
-    })
-  }
-  //Retreives the GO file from the server
-  else if (action.type === RETURN_GO) {
-    return Object.assign({}, state, {
-      goFiles: state.goFiles.concat(action.payload)
+      template: action.template
     })
   }
   //Emits the server to call GENERATE_PROJECT
@@ -86,14 +88,6 @@ function rootReducer(state = initialState, action) {
   //Emits the server to call SEND_SAVE_PROJECT
   else if (action.type === SAVE_PROJECT_TO_KV) {
     socket && socket.emit('SEND_SAVE_PROJECT', action.payload)
-  }
-  //Emits the server to call DOWNLOAD_TEMPLATE
-  else if (action.type === DOWNLOAD_TEMPLATE) {
-    socket && socket.emit('DOWNLOAD_TEMPLATE', action.payload)
-  }
-  //Emits the server to call DOWNLOAD_GO
-  else if (action.type === DOWNLOAD_GO) {
-    socket && socket.emit('DOWNLOAD_GO', action.payload)
   }
   //Emits the server to call DOWNLOAD_TAR
   else if (action.type === DOWNLOAD_TAR) {

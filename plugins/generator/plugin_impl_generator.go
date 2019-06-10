@@ -25,6 +25,7 @@ import (
 	"github.com/ligato/cn-infra/db/keyval"
 	"github.com/ligato/cn-infra/infra"
 	"github.com/ligato/cn-infra/logging"
+	"github.com/ligato/cn-infra/servicelabel"
 	"github.com/ligato/osseus/plugins/generator/descriptor"
 
 	"github.com/ligato/osseus/plugins/generator/gencalls"
@@ -42,16 +43,18 @@ type Plugin struct {
 // Deps represent Plugin dependencies.
 type Deps struct {
 	infra.PluginDeps
-	KVStore     keyval.KvProtoPlugin
-	KVScheduler kvs.KVScheduler
+	ServiceLabel servicelabel.ReaderAPI
+	KVStore      keyval.KvProtoPlugin
+	KVScheduler  kvs.KVScheduler
 }
 
 // Init initializes the Generator Plugin
 func (p *Plugin) Init() error {
 	p.Log.SetLevel(logging.DebugLevel)
+	label := etcdKeyPrefix(p.ServiceLabel.GetAgentLabel())
 
 	// Init handlers
-	p.genHandler = gencalls.NewProjectHandler(p.Log, p.KVStore)
+	p.genHandler = gencalls.NewProjectHandler(p.Log, p.KVStore, label)
 
 	// Init & register descriptor
 	pluginDescriptor := descriptor.NewProjectDescriptor(p.Log, p.genHandler)
@@ -72,4 +75,9 @@ func (p *Plugin) AfterInit() (err error) {
 // Close stops all associated go routines & channels
 func (p *Plugin) Close() error {
 	return nil
+}
+
+// The ETCD key prefix label
+func etcdKeyPrefix(agentLabel string) string {
+	return "/vnf-agent/" + agentLabel
 }

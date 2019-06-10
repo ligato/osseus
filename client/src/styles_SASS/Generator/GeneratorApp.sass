@@ -23,6 +23,7 @@
   left: 0
   width: 17.5%
   background-color: #FFFFFF
+  border-right: 5px solid #CECECE
   z-index: 200
 
 .right-viewer 
@@ -31,9 +32,21 @@
   right: 0
   color: #00BCEB
   background-color: blue
-  background: #DFDFDF
+  background: #FDFDFD
   font-family: Arial, Helvetica, sans-serif
   font-weight: bold
+  display: flex
+  justify-content: center
+  opacity: 1
+  overflow: scroll
+
+.right-viewer-gray 
+  height: 100%
+  width: 82.5%
+  right: 0
+  color: #00BCEB
+  background-color: blue
+  background: #DFDFDF
   display: flex
   justify-content: center
   opacity: 1
@@ -43,16 +56,15 @@
   font: 16px
   padding: 40px
   position: absolute
+  left: 10px
 
 .filestructure 
   margin-top: 20px
   position: absolute
 
-
 .current-file-div 
   border-bottom: 5px solid #CECECE
   height: 35px
-
 
 .current-file-heading 
   padding-left: 10px
@@ -61,7 +73,6 @@
   color: #959FAE
   font-size: 17px
 
-
 .current-file-text 
   padding-left: 10px
   color: #00BCEB
@@ -69,12 +80,74 @@
   letter-spacing: -0.5px
   font-size: 17px
 
-
 .node-name 
   color: #3C73B7
   font-family: Arial, Helvetica, sans-serif
   letter-spacing: -0.5px
   font-size: 17px
+
+.loader-div 
+  text-align: center
+  margin-top: 25%
+
+.loader,
+.loader:after 
+  border-radius: 50%
+  width: 10em
+  height: 10em
+
+.loader 
+  margin: 60px auto
+  font-size: 10px
+  position: relative
+  text-indent: -9999em
+  border-top: 1.1em solid #CECECE
+  border-right: 1.1em solid #CECECE
+  border-bottom: 1.1em solid #CECECE
+  border-left: 1.1em solid #00BCEB
+  -webkit-transform: translateZ(0)
+  -ms-transform: translateZ(0)
+  transform: translateZ(0)
+  -webkit-animation: load8 1.1s infinite linear
+  animation: load8 1.1s infinite linear
+
+@-webkit-keyframes load8 
+  0% 
+    -webkit-transform: rotate(0deg)
+    transform: rotate(0deg)
+  
+  100% 
+    -webkit-transform: rotate(360deg)
+    transform: rotate(360deg)
+  
+
+@keyframes load8 
+  0% 
+    -webkit-transform: rotate(0deg)
+    transform: rotate(0deg)
+  
+  100% 
+    -webkit-transform: rotate(360deg)
+    transform: rotate(360deg)
+  
+
+
+.tool-text-generator 
+  font-family: Arial, Helvetica, sans-serif
+  letter-spacing: -0.5px
+  color: #A9A9A9
+  font-size: 24px
+
+.tool-text-header-generator 
+  position: absolute
+  font-family: Arial, Helvetica, sans-serif
+  letter-spacing: -0.5px
+  color: #A9A9A9
+  font-size: 24px
+  right: 13px
+  top: 70px
+
+  
 
 
   
